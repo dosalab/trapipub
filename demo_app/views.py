@@ -1,4 +1,4 @@
 from django.shortcuts import render
-
- yourndex(request):
-    return HttpResponse("Hello, welocme to tracker site.") 
+from django.http import HttpResponse
+def index(request):
+    return HttpResponse("Hello, world. You're at the tracking system")
