@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+ yourndex(request):
+    return HttpResponse("Hello, welocme to tracker site.") 
