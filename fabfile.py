@@ -4,6 +4,7 @@ env.hosts=['ubuntu@ec2-54-64-56-135.ap-northeast-1.compute.amazonaws.com']
 
 def pre_deploy():
     "Things that should be done before deployment"
+    local("py.test")
     local("git push")
 
 def deploy(tree='master'):
