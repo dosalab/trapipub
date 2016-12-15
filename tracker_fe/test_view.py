@@ -3,11 +3,8 @@ from .views import index
 import pytest
 from django.urls import reverse
 
-
-class indextest(TestCase):
-    def test_index_view(self):
-        #res=index(self)
-        response = self.client.get(reverse('tracker_fe:index'))
-        self.assertEqual("Hello, world. You\'re at the tracking system" , response.content)
+def test_index_view(client):
+    response = client.get(reverse('tracker_fe:index'))
+    assert "Hello, world. You\'re at the tracking system" in response.content
     
 
