@@ -20,7 +20,7 @@ def deploy(tree='master'):
     sudo("sudo service supervisor stop")
 
     with cd("/home/ubuntu"):
-        run("rm current")
+        run("rm -f current")
         run("ln -s deployments/{} current".format(tree))
 
     sudo("sudo service supervisor restart")
