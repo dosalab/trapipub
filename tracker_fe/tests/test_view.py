@@ -1,7 +1,6 @@
-from django.test import TestCase
-from .views import index 
-import pytest
 from django.urls import reverse
+
+from ..views import index 
 
 def test_index_view(client):
     response = client.get(reverse('tracker_fe:index'))
