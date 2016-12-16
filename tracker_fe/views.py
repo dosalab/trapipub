@@ -1,4 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.template import loader
+
 def index(request):
-    return HttpResponse("Hello, world. You're at the tracking system")
+    template=loader.get_template('tracker_fe/index.html')
+    context={'message':"Hello, world. You are at the tracking system"}
+    return render(request,'tracker_fe/index.html',context)
+
+    
