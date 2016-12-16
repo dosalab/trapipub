@@ -9,16 +9,18 @@ def pre_deploy():
 
 def deploy(tree='master'):
     pre_deploy()
-    with cd("/home/ubuntu/track-pull"):
+    with cd("/home/ubuntu/deployments/trapi"):
         run("git pull")
-        run("git archive --prefix={tree}/ --output={tree}.tar {tree}".format(tree=tree))
+        run("git archive --prefix={tree}/ --output=../{tree}.tar {tree}".format(tree=tree))
+
+    with cd("/home/ubuntu/deployments/"):
         run("tar -xvf {tree}.tar".format(tree=tree))
         run("rm {}.tar".format(tree))
 
-    sudo("service supervisor stop")
+    sudo("sudo service supervisor stop")
 
     with cd("/home/ubuntu"):
-        run("rm track-system")
-        run("ln -s track-pull/{} track-system".format(tree))
+        run("rm current")
+        run("ln -s deployments/{} current".format(tree))
 
-    sudo("service supervisor restart")
+    sudo("sudo service supervisor restart")
