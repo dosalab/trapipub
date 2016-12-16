@@ -11,8 +11,8 @@ def deploy(tree='master'):
     pre_deploy()
     with cd("/home/ubuntu/track-pull"):
         run("git pull")
-        run("git archive --prefix={tree}/ --output=../{tree}.tar {tree}".format(tree=tree))
-        run("tar xvf {tree}.tar".format(tree=tree))
+        run("git archive --prefix={tree}/ --output={tree}.tar {tree}".format(tree=tree))
+        run("tar -xvf {tree}.tar".format(tree=tree))
         run("rm {}.tar".format(tree))
 
     sudo("service supervisor stop")
