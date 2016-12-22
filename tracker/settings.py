@@ -30,7 +30,15 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+
 INSTALLED_APPS = [
+    'tracker_api.apps.TrackerApiConfig',
     'tracker_fe.apps.TrackerFrontEnd',
     'django.contrib.admin',
     'django.contrib.auth',
