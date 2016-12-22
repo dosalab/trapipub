@@ -19,7 +19,9 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^tracker/', include('tracker_fe.url')),
+    url(r'^tracker/', include('tracker_fe.urls')),
     url(r'^accounts/', include('registration.backends.simple.urls')),
+    url(r'^api/v1/',include('tracker_api.urls')),
+
  
 ]
