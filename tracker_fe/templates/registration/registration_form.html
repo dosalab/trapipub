@@ -1,0 +1,63 @@
+{%extends "tracker_fe/index.html" %}
+{%block title %} Tracker {% endblock %}
+{%block head %} Tracker : Registration {% endblock %}
+
+{%block content %}
+<form action="" class = "form-horizontal" method="POST">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="user" class="col-sm-5">Username : </label>
+    <div class="col-sm-7">
+      {{form.username}}
+    </div>
+    {% if form.username.errors %}
+    <ul class="messages">
+      {% for error in form.username.errors %}
+      {{ form.username.errors }}
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
+
+  <div class="form-group">
+    <label for="email" class="col-sm-5">Email : </label>
+    <div class="col-sm-7">
+      {{form.email}}
+      {% if form.email.errors %}
+      <ul class="messages">
+      {% for error in form.email.errors %}
+      {{ form.email.errors }}
+      {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label for="pwd1" class="col-sm-5">Password : </label>
+    <div class="col-sm-7">
+    {{form.password1}}
+    </div>
+  </div>
+
+  
+  <div class="form-group">
+    <label for="pwd2" class="col-sm-5">Retype password : </label>
+    <div class="col-sm-7">
+      {{form.password2}}
+      {% if form.password2.errors %}
+      <ul class="messages">
+      {% for error in form.password2.errors %}
+      {{ form.password2.errors }}
+      {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input class="col-sm-8" type="submit" value="Submit">	 
+  </div>	  
+</form>
+{%endblock%}

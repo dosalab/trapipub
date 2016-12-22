@@ -1,0 +1,8 @@
+*.pyc
+*~
+\#*
+\.#*
+.xprocess
+*.swp
+.cache/
+db.sqlite3
