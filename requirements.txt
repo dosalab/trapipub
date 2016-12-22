@@ -1,5 +1,4 @@
 Django==1.10.4
-Fabric==1.13.1
 apipkg==1.4
 cffi==1.9.1
 coverage==4.2
