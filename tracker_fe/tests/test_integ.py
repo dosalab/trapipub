@@ -8,7 +8,7 @@ def test_index_page(xprocess):
 
     logfile = xprocess.ensure("tracker-server", preparefunc)
     s = requests.get("http://127.0.0.1:8000/tracker")
-    assert " Hello, world. You are at the tracking system" in s.text
+    assert " Hello, world. You are at the tracking system" in s.text.decode('utf-8')
     
 
     
