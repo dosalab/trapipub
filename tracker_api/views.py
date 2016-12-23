@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
-from .models import Carrier
-from .serializer import  UserSerializer,CarrierSerializer
+from .models import Carrier,Order
+from .serializer import  UserSerializer,CarrierSerializer,OrderSerializer
 
 
 
@@ -18,4 +18,10 @@ class logView(viewsets.ModelViewSet):
 class carrierView(viewsets.ModelViewSet):
     queryset = Carrier.objects.all()
     serializer_class = CarrierSerializer
-    
+
+
+
+class OrderView(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
