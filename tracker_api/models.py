@@ -11,24 +11,21 @@ class Merchant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
 class Customer(models.Model):
-    customerid = models.AutoField(max_length=10, unique=True, primary_key=True)
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=30)
     phone = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
 class Carrier (models.Model):
-    carrierid = models.AutoField(max_length=10, unique=True, primary_key=True)
     name = models.CharField(max_length=50)
-    address = models.CharField(max_length=200)
     phone = models.IntegerField()
-    order = models.ForeignKey('Order', null=True)
+    location = models.CharField(max_length=20)
     merchants = models.ForeignKey('Merchant')
+    deliverise = models.ForeignKey('Delivery', null=True)
 
 
 
 class Order (models.Model):
-    orderid = models.AutoField(max_length=10, unique=True, primary_key=True)
     merchants = models.ForeignKey('Merchant')
     customer = models.ForeignKey('Customer')
     packages = models.ForeignKey('Package', on_delete=models.CASCADE)
@@ -55,7 +52,7 @@ class Package (models.Model):
 
 class Delivery(models.Model):
     packages = models.ForeignKey('Package', on_delete=models.CASCADE)
-    carrier = models.ForeignKey('Carrier') 
+    carriers = models.ForeignKey('Carrier') 
     status = models.ForeignKey('Deliverystage', on_delete=models.CASCADE)
 
 

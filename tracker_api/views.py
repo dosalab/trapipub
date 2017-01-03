@@ -10,31 +10,30 @@ from registration.views import RegistrationView
 from registration.signals import user_registered
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
+from django.db import transaction
+
 
 class MerchantRegistration(RegistrationView):
-    success_url = 'index'
+
     def register(self, form):
         data = form.cleaned_data
         username, email, password = data['username'], data['email'], data['password1']
-        user=User.objects.create_user(username, email, password)
-       # new_user = authenticate(username=username, password=password)
-       # login(request,new_user)
-       # import pdb;pdb.set_trace()
-        m = Merchant(user = user)
-        m.name = data['name']
-        m.address = data['address']
-        m.paymentinfo = data['paymentinfo']
-        user = user
-        m.save()
+        with transaction.atomic():
+            user=User.objects.create_user(username, email, password)
+            m = Merchant(user = user)
+            m.name = data['name']
+            m.address = data['address']
+            m.save()
+
     def get_success_url(self, user):
         return 'index'
 
 
 class logView(viewsets.ModelViewSet):
-    queryset = Merchant.objects.all()
     serializer_class = MerchantSerializer
-    permission_classes = (permissions.IsAuthenticated)
-
+    permission_classes = (permissions.IsAuthenticated,)
+    def get_queryset(self):
+        return Merchant.objects.filter(user_id=self.request.user.id)
     
 class carrierView(viewsets.ModelViewSet):
     queryset = Carrier.objects.all()

@@ -1,22 +1,29 @@
-from django.contrib.auth.models import User
-from .models import Carrier,Order
+#from django.contrib.auth.models import User
+from .models import Carrier,Order,Package,Merchant
 from rest_framework import serializers
 
-class UserSerializer(serializers.ModelSerializer):
+class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('username','password')
+        model = Merchant
+        fields = ('name', 'address', 'paymentinfo')
 
 
 class CarrierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Carrier
-        fields =('id','name','address','phone')
+        fields =('name', 'phone', 'location' )
 
+        #fields =('name', 'phone', 'location', 'merchants', 'deliverise' )
 
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields =('id','item','price','payment','address','phone')
+        fields =('id','date','notes','amount',)
+
+
+class PackageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Package
+        fields =('id','description')
 
