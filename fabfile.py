@@ -13,11 +13,13 @@ def deploy(tree='master'):
         run("git pull")
         run("git archive --prefix={tree}/ --output=../{tree}.tar {tree}".format(tree=tree))
 
-    with cd("/home/ubuntu/deployments/"):
-        run("tar -xvf {tree}.tar".format(tree=tree))
-        run("rm {}.tar".format(tree))
 
     sudo("sudo service supervisor stop")
+
+    with cd("/home/ubuntu/deployments/"):
+        run("rm -Rf {tree}".format(tree=tree))
+        run("tar -xvf {tree}.tar".format(tree=tree))
+        run("rm {}.tar".format(tree))
 
     with cd("/home/ubuntu"):
         run("rm -f current")
