@@ -9,7 +9,7 @@ def test_merchant_count():
 @pytest.mark.django_db
 def test_merchant_registration():
     user=User.objects.create_user("user1","user1address", "aaasssddd")
-    Merchant.objects.create(name = "merchant1", address="merchantaddress1", paymentinfo="cash", user=user)
+    Merchant.objects.create(name = "merchant1", address="merchantaddress1", payment_info="cash", user=user)
     m = Merchant.objects.get(name="merchant1")
     assert m.address == "merchantaddress1"
 

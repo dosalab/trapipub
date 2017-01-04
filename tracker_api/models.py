@@ -10,6 +10,7 @@ class Merchant(models.Model):
     payment_info = models.CharField(max_length=50)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+
 class Carrier (models.Model):
     name = models.CharField(max_length=50)
     phone = models.IntegerField()
@@ -19,23 +20,14 @@ class Carrier (models.Model):
     def __repr__(self):
         return "<Carrier(name={})>".format(repr(self.name))
 
-    
 class Customer(models.Model):
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=30)
     phone = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
-class Carrier (models.Model):
-    name = models.CharField(max_length=50)
-    phone = models.IntegerField()
-    location = models.CharField(max_length=20)
-    merchants = models.ForeignKey('Merchant')
-    deliverise = models.ForeignKey('Delivery', null=True)
 
-
-
-class Order (models.Model):
+class Order(models.Model):
     merchants = models.ForeignKey('Merchant')
     customer = models.ForeignKey('Customer')
     packages = models.ForeignKey('Package', on_delete=models.CASCADE)
@@ -43,11 +35,11 @@ class Order (models.Model):
     date =  models.DateTimeField(default=date.today)
     notes = models.CharField(max_length=50)
     amount =  models.DecimalField(max_digits=10, decimal_places=2)
-    invoicenumber = models.CharField(max_length=20)
-    deliveryaddress = models.CharField(max_length=200)
+    invoice_number = models.CharField(max_length=20)
+    delivery_address = models.CharField(max_length=200)
     
 
-class Orderstatus(models.Model):
+class OrderStatus(models.Model):
     status = models.CharField(max_length=20)
     date =  models.DateTimeField(default=date.today)
     info = models.CharField(max_length=50)
