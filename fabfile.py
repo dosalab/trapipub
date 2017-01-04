@@ -26,3 +26,10 @@ def deploy(tree='master'):
         run("ln -s deployments/{} current".format(tree))
 
     sudo("sudo service supervisor restart")
+
+def db():
+    with cd("/home/ubuntu/current"):
+        run("python manage.py dropdb tracker")
+        run("python manage.py createdb tracker")
+        run ("python manage.py migrate")
+    sudo("sudo service supervisor restart")
