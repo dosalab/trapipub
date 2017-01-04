@@ -5,7 +5,7 @@ from rest_framework import serializers
 class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Merchant
-        fields = ('name', 'address', 'paymentinfo')
+        fields = ('name', 'address', 'payment_info','user')
 
 
 class CarrierSerializer(serializers.ModelSerializer):

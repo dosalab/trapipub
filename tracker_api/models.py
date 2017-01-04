@@ -7,8 +7,18 @@ from django.contrib.auth.models import User
 class Merchant(models.Model):
     name = models.CharField(max_length=50)
     address =  models.CharField(max_length=50)
-    paymentinfo = models.CharField(max_length=50)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    payment_info = models.CharField(max_length=50)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+class Carrier (models.Model):
+    name = models.CharField(max_length=50)
+    phone = models.IntegerField()
+    location = models.CharField(max_length=20)
+    merchant = models.ForeignKey('Merchant')
+
+    def __repr__(self):
+        return "<Carrier(name={})>".format(repr(self.name))
+
     
 class Customer(models.Model):
     name = models.CharField(max_length=50)
