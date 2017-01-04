@@ -42,9 +42,12 @@ class carrierView(viewsets.ModelViewSet):
     def get_queryset(self):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
 
-
     def create(self, request, *args, **kwargs):
-        request.data['user_id'] = request.user.id
+        data = dict(request.data)
+        data['user_id'] = request.user.id
+        obj = self.serializer_class(data=data)
+        if obj.is_valid():
+            obj.save()
         return super(self.__class__, self).create(request, *args, **kwargs)
 
 
