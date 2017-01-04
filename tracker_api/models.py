@@ -66,7 +66,7 @@ class Delivery(models.Model):
     status = models.ForeignKey('Deliverystage', on_delete=models.CASCADE)
 
 
-class Deliverystage(models.Model):
+class DeliveryStage(models.Model):
     order = models.ForeignKey('Order')
     date =  models.DateTimeField(default=date.today)
     info = models.CharField(max_length=50)
