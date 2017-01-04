@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
 from .models import Carrier,Order,Package,Merchant
-from .serializer import  MerchantSerializer,CarrierSerializer,OrderSerializer,PackageSerializer
+from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, PackageSerializer
 from registration.views import RegistrationView
 from registration.signals import user_registered
 from django.contrib.auth import authenticate
@@ -34,11 +34,19 @@ class logView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     def get_queryset(self):
         return Merchant.objects.filter(user_id=self.request.user.id)
-    
+
 class carrierView(viewsets.ModelViewSet):
-    queryset = Carrier.objects.all()
+    lookup_field = 'id'   
     serializer_class = CarrierSerializer
-    
+    permission_classes = (permissions.IsAuthenticated,)
+    def get_queryset(self):
+        return Carrier.objects.filter(merchant=self.request.user.merchant)
+
+
+    def create(self, request, *args, **kwargs):
+        request.data['user_id'] = request.user.id
+        return super(self.__class__, self).create(request, *args, **kwargs)
+
 
 
 

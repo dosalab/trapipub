@@ -13,11 +13,16 @@ def test_merchant_registration():
     m = Merchant.objects.get(name="merchant1")
     assert m.address == "merchantaddress1"
 
-# @pytest.mark.django_db
-# def test_is_registerd():
-#     Carrier.objects.create(name="name",location="locationcarrier",phone="12345")
-#     c = Carrier.objects.get(name="name")
-#     assert c.address == "address"
+@pytest.mark.django_db
+def test_is_carrier_registerd(client):
+    user=User.objects.create_user("user1","user1address", "aaasssddd")
+    Merchant.objects.create(name = "merchant1", address="merchantaddress1", payment_info="cash", user=user)
+    m=User.objects.get(username='user1')
+    mer=m.merchant
+    Carrier.objects.create(name="name",location="locationcarrier",phone="12345",merchant=mer)
+    c = Carrier.objects.get(name="name")
+    c=c.merchant
+    assert c.name == "merchant1"
 
 # @pytest.mark.django_db
 # def test_order_count():
