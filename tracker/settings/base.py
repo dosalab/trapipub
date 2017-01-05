@@ -31,6 +31,7 @@ REST_FRAMEWORK = {
 }
 
 INSTALLED_APPS = [
+    
     'tracker_api.apps.TrackerApiConfig',
     'tracker_fe.apps.TrackerFrontEnd',
     'django.contrib.admin',
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bootstrap3'
+    'bootstrap3',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [

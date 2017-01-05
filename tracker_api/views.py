@@ -11,6 +11,7 @@ from registration.signals import user_registered
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.db import transaction
+from rest_framework import authentication
 
 
 class MerchantRegistration(RegistrationView):
@@ -32,6 +33,7 @@ class MerchantRegistration(RegistrationView):
 class logView(viewsets.ModelViewSet):
     serializer_class = MerchantSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
         return Merchant.objects.filter(user_id=self.request.user.id)
 
@@ -39,6 +41,7 @@ class carrierView(viewsets.ModelViewSet):
     lookup_field = 'id'   
     serializer_class = CarrierSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
 
