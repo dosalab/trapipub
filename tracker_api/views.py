@@ -13,7 +13,6 @@ from django.contrib.auth import login
 from django.db import transaction
 from rest_framework import authentication
 
-
 class MerchantRegistration(RegistrationView):
 
     def register(self, form):
@@ -46,14 +45,17 @@ class carrierView(viewsets.ModelViewSet):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
 
     def create(self, request, *args, **kwargs):
-        data = dict(request.data)
-        data['user_id'] = request.user.id
-        obj = self.serializer_class(data=data)
-        if obj.is_valid():
-            obj.save()
-        return super(self.__class__, self).create(request, *args, **kwargs)
-
-
+        try:
+            merchant = User.objects.get(username = self.request.user).merchant
+            s = CarrierSerializer(data = request.data, context = {'merchant' : merchant})
+            if s.is_valid():
+                c = s.save()
+                return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
+            else:
+                return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+ 
 
 
 class OrderView(viewsets.ModelViewSet):

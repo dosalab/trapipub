@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from .models import Carrier,Order,Package,Merchant
 from rest_framework import serializers
+from django.db import transaction
 
 class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,22 +12,27 @@ class MerchantSerializer(serializers.ModelSerializer):
 class CarrierSerializer(serializers.Serializer):
     name = serializers.CharField(required = True)
     phone = serializers.IntegerField(required = True)
-    location = serializers.CharField(required = False, allow_blank = True)
-    # merchant = serializers.PrimaryKeyRelatedField(required=False,
-    #                                               read_only = True,
-    #                                               default=serializers.CurrentUserDefault().merchant)
+    username = serializers.CharField(required = True)
+    password = serializers.CharField(required = True)
+    email = serializers.EmailField(required = True)
 
     def create(self, validated_data):
-        merchant = User.objects.get(username = self.context['request'].user).merchant
-        name = validated_data['name']
+        merchant = self.context['merchant']
+        name  = validated_data['name']
         phone = validated_data['phone']
-        location = validated_data.get('location', '')
-        m = Carrier(name = name,
-                    phone = phone,
-                    location = location,
-                    merchant = merchant)
-        m.save()
-        return m
+        username = validated_data['username']
+        password = validated_data['password']
+        email = validated_data['email']
+
+        with transaction.atomic():
+            u = User.objects.create_user(username, email, password)
+            c = Carrier(name = name,
+                        phone = phone,
+                        location = '',
+                        merchant = merchant,
+                        user = u)
+            c.save()
+            return c
 
 
 class OrderSerializer(serializers.ModelSerializer):
