@@ -8,6 +8,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token 
 
+from django.core.validators import RegexValidator
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -18,16 +20,22 @@ class Merchant(models.Model):
     name = models.CharField(max_length=50)
     address =  models.CharField(max_length=50)
     payment_info = models.CharField(max_length=50)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE) 
 
 class Carrier (models.Model):
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     name = models.CharField(max_length=50)
-    phone = models.IntegerField()
+    phone = models.CharField(validators=[phone_regex],max_length=15)
     location = models.CharField(max_length=20)
     merchant = models.ForeignKey('Merchant')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    def __repr__(self):
-        return "<Carrier(name={})>".format(repr(self.name))
+    def __str__(self):
+        return "Carrier(id={}, name='{}')".format(self.id, repr(self.name))
+
+    def url(self):
+        return "/carriers/{}".format(self.id)
+
 
 class Customer(models.Model):
     name = models.CharField(max_length=50)
