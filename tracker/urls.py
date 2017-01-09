@@ -10,6 +10,6 @@ urlpatterns = [
     url(r'^accounts/register/$', MerchantRegistration.as_view(form_class = MerchantRegistrationForm), name='registration_register'),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^api/v1/',include('tracker_api.urls')),
-    url(r'^token/', views.obtain_auth_token)
+    url(r'^token/', views.obtain_auth_token,name='obtaine_token')
  
 ]
