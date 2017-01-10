@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
 from .models import Carrier,Order,Package,Merchant
-from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, PackageSerializer
+from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, PackageSerializer, GetCarrierSerializer, CarrierUrlSerializer
 from registration.views import RegistrationView
 from registration.signals import user_registered
 from django.contrib.auth import authenticate
@@ -47,17 +47,35 @@ class carrierView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             merchant = User.objects.get(username = self.request.user).merchant
-            s = CarrierSerializer(data = request.data, context = {'merchant' : merchant})
-            if s.is_valid():
-                c = s.save()
+            serializer = CarrierSerializer(data = request.data, context = {'merchant' : merchant})
+            if serializer.is_valid():
+                c = serializer.save()
                 return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
             else:
                 return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
  
+class GetCarriersView(viewsets.ModelViewSet):
+    serializer_class = CarrierUrlSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    def get_queryset(self):
+        return Carrier.objects.filter(merchant=self.request.user.merchant)
+    def get_serializer_context(self):
+        return {'request':self.request}
 
 
+
+class GetCarrierDetailsView(viewsets.ModelViewSet):
+    lookup_field = 'id'   
+    serializer_class = GetCarrierSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    def get_queryset(self):
+        return Carrier.objects.filter(merchant=self.request.user.merchant)
+
+    
 class OrderView(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
