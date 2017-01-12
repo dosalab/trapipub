@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.db import transaction
 from rest_framework import authentication
+from django.http import HttpResponse
 
 class MerchantRegistration(RegistrationView):
 
@@ -74,8 +75,15 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
     authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        if request.data == {}:
+            return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
+        else:
+            return self.update(request, *args, **kwargs)
+   
 
-    
+
 class OrderView(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
