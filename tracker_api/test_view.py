@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 import json
 from .models import Merchant,Carrier
 @pytest.mark.django_db
-def test_carrier_view_with_no_merchant(client):
+def test_carrier_create_with_no_merchant(client):
     user=User.objects.create_user("user","useraddress", "aaasssddd")
     token = Token.objects.get(user__username='user')
     client = APIClient()
@@ -16,7 +16,7 @@ def test_carrier_view_with_no_merchant(client):
     assert response.status_code == 403
 
 @pytest.mark.django_db
-def test_carrier_view_by_merchant(client):
+def test_carrier_create_by_merchant(client):
     merchant=client.post(reverse('registration_register'),{"username":"newuser","email":"user@gmail.com","password1":"aaasssddd","password2":'aaasssddd',"name":"merchant1",'address':"merchantaddress"})
     merchant=User.objects.get(username="newuser").merchant
     token = Token.objects.get(user__username='newuser')

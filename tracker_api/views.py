@@ -45,7 +45,7 @@ class carrierView(viewsets.ModelViewSet):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
 
     def create(self, request, *args, **kwargs):
-        '''carreir cretion view '''
+        '''carrier creation '''
         try:
             merchant = User.objects.get(username = self.request.user).merchant
             serializer = CarrierSerializer(data = request.data, context = {'merchant' : merchant})

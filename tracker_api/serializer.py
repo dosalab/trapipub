@@ -27,8 +27,8 @@ class CarrierSerializer(serializers.Serializer):
         password = validated_data['password']
         email = validated_data['email']
         location = validated_data['location']
-
         with transaction.atomic():
+            
             u = User.objects.create_user(username, email, password)
             c = Carrier(name = name,
                         phone = phone,
