@@ -50,8 +50,11 @@ class carrierView(viewsets.ModelViewSet):
             merchant = User.objects.get(username = self.request.user).merchant
             serializer = CarrierSerializer(data = request.data, context = {'merchant' : merchant})
             if serializer.is_valid():
-                c = serializer.save()
-                return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
+                try :
+                    c = serializer.save()
+                    return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
+                except:
+                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
                 return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:

@@ -27,6 +27,18 @@ def test_carrier_view_by_merchant(client):
 
 
 @pytest.mark.django_db
+def test_carrier_creation_with_existing_username(client):
+    merchant=client.post(reverse('registration_register'),{"username":"newuser","email":"user@gmail.com","password1":"aaasssddd","password2":'aaasssddd',"name":"merchant1",'address':"merchantaddress"})
+    merchant=User.objects.get(username="newuser").merchant
+    token = Token.objects.get(user__username='newuser')
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    response1 = client.post(reverse('tracker_api:carrier'),{'name':"carrer",'phone':"99798798",'location':"here","username":"carrieruser","password":"aaasssddd","email":"carrier@gmail.com"})
+    response2 = client.post(reverse('tracker_api:carrier'),{'name':"carrer",'phone':"99798798",'location':"here","username":"carrieruser","password":"aaasssddd","email":"carrier@gmail.com"})
+    assert response1.status_code == 201
+    assert response2.status_code == 409
+    
+@pytest.mark.django_db
 def test_all_carriers_of_merchant(client):
     user=User.objects.create_user("user","user@tracker.com", "aaasssddd")
     Merchant.objects.create(name="merchant1",address="merchantaddress",user=user)
