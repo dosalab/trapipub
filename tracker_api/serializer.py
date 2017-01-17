@@ -45,6 +45,8 @@ class GetCarrierSerializer(serializers.ModelSerializer):
        model = Carrier
        fields =("id","name","phone","location")
 
+
+#Get all carriers urls under a merchant
 class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='tracker_api:carrierdetail',

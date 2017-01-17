@@ -14,6 +14,7 @@ from django.db import transaction
 from rest_framework import authentication
 from django.http import HttpResponse
 
+#AS A MERCHANT
 class MerchantRegistration(RegistrationView):
 
     def register(self, form):
@@ -57,7 +58,9 @@ class carrierView(viewsets.ModelViewSet):
 
 
 
+#  /carriers/{id} 
 class GetCarrierDetailsView(viewsets.ModelViewSet):
+    """ View for get the details of a specific carrier """
     lookup_field = 'id'   
     serializer_class = GetCarrierSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -70,8 +73,26 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
         else:
             return self.update(request, *args, **kwargs)
-   
 
+# Create a customer
+class CustomerView(viewsets.ModelViewSet):
+    serializer_class = CustomerSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    def get_queryset(self):
+        return Customer.objects.filter(merchant=self.request.user.merchant)
+
+    def create(self, request, *args, **kwargs):
+        try:
+            merchant = User.objects.get(username = self.request.user).merchant
+            serializer = CustomerSerializer(data = request.data, context = {'merchant' : merchant})
+            if serializer.is_valid():
+                c = serializer.save()
+                return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
+            else:
+                return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
 class OrderView(viewsets.ModelViewSet):
     queryset = Order.objects.all()
