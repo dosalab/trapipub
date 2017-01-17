@@ -179,3 +179,9 @@ class DeliveryDetailsView(viewsets.ModelViewSet):
            
     #     serializer = self.get_serializer(instance)
     #     return Response(serializer.data)
+    
+
+class StatusView(viewsets.ModelViewSet):
+    serializer_class = StatusSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)

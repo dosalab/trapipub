@@ -135,6 +135,11 @@ class DeliverySerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
         
+#status serializer
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = ("__all__")
 
 
 #custom related field for status
