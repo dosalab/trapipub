@@ -90,6 +90,28 @@ def test_all_carriers_of_merchant(client):
     
 
 
+@pytest.mark.django_db
+def test_carriers_of_merchant(client):
+    user=User.objects.create_user("user","user@tracker.com", "aaasssddd")
+    Merchant.objects.create(name="merchant1",address="merchantaddress",user=user)
+    merchant=User.objects.get(username="user").merchant
+    token = Token.objects.get(user__username='user')
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    cu1=User.objects.create_user("carrier1","user@tracker.com", "aaasssddd")
+    Carrier.objects.create(name="carrier1",phone="9656888871",location="kozikkod",merchant=merchant,user=cu1)
+   
+    cu2=User.objects.create_user("carrier2","user@tracker.com", "aaasssddd")
+    Carrier.objects.create(name="carrier2",phone="9656888871",location="kozikkod",merchant=merchant,user=cu2)
+   
+    cu3=User.objects.create_user("carrier3","user@tracker.com", "aaasssddd")
+    Carrier.objects.create(name="carrier3",phone="9656888871",location="kozikkod",merchant=merchant,user=cu3)
+    response = client.get(reverse('tracker_api:carrier'))
+    assert response.data == [{'url':'http://testserver/api/v1/carriers/1'},{'url':'http://testserver/api/v1/carriers/2'},{'url': 'http://testserver/api/v1/carriers/3'}]
+  
+   
+
 
 @pytest.mark.django_db
 def test_details_of_carrier(client):
