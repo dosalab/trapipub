@@ -19,7 +19,6 @@ class CarrierSerializer(serializers.Serializer):
     email = serializers.EmailField(required = True)
     location = serializers.CharField(required = False,default="")
     def create(self, validated_data):
-
         merchant = self.context['merchant']
         name  = validated_data['name']
         phone = validated_data['phone']
@@ -28,7 +27,6 @@ class CarrierSerializer(serializers.Serializer):
         email = validated_data['email']
         location = validated_data['location']
         with transaction.atomic():
-            
             u = User.objects.create_user(username, email, password)
             c = Carrier(name = name,
                         phone = phone,
@@ -40,13 +38,10 @@ class CarrierSerializer(serializers.Serializer):
 
 # Get details of a carrier
 class GetCarrierSerializer(serializers.ModelSerializer):
-    # def list (self):
-    #     request = self.context.get('request', None)
-    #     email = request.user.email
-    #     print(email)
+    email = serializers.EmailField(source='user.email')
     class Meta:
        model = Carrier
-       fields =("id","name","phone","location")
+       fields =("id","name","phone","location", "email")
 
 
 #Get all carriers urls under a merchant

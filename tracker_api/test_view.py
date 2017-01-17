@@ -124,7 +124,7 @@ def test_details_of_carrier(client):
     Carrier.objects.create(name="carrier",phone="9656888871",location="kozikkod",merchant=merchant,user=cu1)
    
     response = client.get(reverse('tracker_api:carrierdetail',args=[1]))
-    op = {"id":1,"location":"kozikkod","name":"carrier","phone":"9656888871"}
+    op = {"id":1,"location":"kozikkod","name":"carrier","phone":"9656888871","email":"user@tracker.com"}
 
     wrong_args = client.get(reverse('tracker_api:carrierdetail',args=[2]))
     assert response.data == op
