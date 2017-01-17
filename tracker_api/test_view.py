@@ -111,8 +111,6 @@ def test_carriers_of_merchant(client):
     assert response.data == [{'url':'http://testserver/api/v1/carriers/1'},{'url':'http://testserver/api/v1/carriers/2'},{'url': 'http://testserver/api/v1/carriers/3'}]
   
    
-
-
 @pytest.mark.django_db
 def test_details_of_carrier(client):
     user=User.objects.create_user("user","user@tracker.com", "aaasssddd")
@@ -127,8 +125,10 @@ def test_details_of_carrier(client):
    
     response = client.get(reverse('tracker_api:carrierdetail',args=[1]))
     op = {"id":1,"location":"kozikkod","name":"carrier","phone":"9656888871"}
-    assert response.data == op
 
+    wrong_args = client.get(reverse('tracker_api:carrierdetail',args=[2]))
+    assert response.data == op
+    assert wrong_args.status_code == 404
 
 @pytest.mark.django_db
 def test_change_details_of_carrier(client):
