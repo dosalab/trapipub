@@ -57,13 +57,6 @@ class Order(models.Model):
     notes = models.CharField(max_length=50)
     amount =  models.DecimalField(max_digits=10, decimal_places=2)
     invoice_number = models.CharField(max_length=20)
-    
-class Package (models.Model):
-    orders = models.ForeignKey('Order', on_delete=models.CASCADE)
-    deliverys = models.ForeignKey('Delivery', on_delete=models.CASCADE)
-    description = models.CharField(max_length=50)
-    date =  models.DateTimeField(default=date.today)
-
 
 class Delivery(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE) 
@@ -77,3 +70,16 @@ class Status(models.Model):
     date =  models.DateTimeField(default=date.today)
     info = models.CharField(max_length=50)
     terminal = models.BooleanField()
+    
+# class Package (models.Model):
+#     orders = models.ForeignKey('Order', on_delete=models.CASCADE)
+#     deliverys = models.ForeignKey('Delivery', on_delete=models.CASCADE)
+#     description = models.CharField(max_length=50)
+#     date =  models.DateTimeField(default=date.today)
+    
+# class DeliveryStage(models.Model):
+#     order = models.ForeignKey('Order')
+#     date =  models.DateTimeField(default=date.today)
+#     info = models.CharField(max_length=50)
+#     terminal = models.BooleanField()
+#     location = models.CharField(max_length=50)

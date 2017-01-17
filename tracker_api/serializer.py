@@ -37,11 +37,12 @@ class CarrierSerializer(serializers.Serializer):
             c.save()
             return c
 
-
-
-
+# Get details of a carrier
 class GetCarrierSerializer(serializers.ModelSerializer):
- #  merchant = MerchantSerializer()
+    # def list (self):
+    #     request = self.context.get('request', None)
+    #     email = request.user.email
+    #     print(email)
     class Meta:
        model = Carrier
        fields =("id","name","phone","location")
@@ -146,6 +147,7 @@ class StatusSerializer(serializers.ModelSerializer):
 class StatusRelatedField(serializers.RelatedField):
      def to_representation(self, value):
           return {"date":value.date,"info":value.info,"terminal":value.terminal}
+        
 # get delivery details
 class DeliveryDetailsSerializer(serializers.ModelSerializer):
     order = orderdetailsSerializer()

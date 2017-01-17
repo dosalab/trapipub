@@ -17,6 +17,7 @@ def test_merchant_registration():
 def test_is_carrier_registerd(client):
     user=User.objects.create_user("user1","user1address", "aaasssddd")
     Merchant.objects.create(name = "merchant1", address="merchantaddress1", payment_info="cash", user=user)
+
     m=User.objects.get(username='user1')
     mer=m.merchant
     Carrier.objects.create(name="name",location="locationcarrier",phone="12345",merchant=mer)
