@@ -37,6 +37,34 @@ def test_carrier_creation_with_existing_username(client):
     response2 = client.post(reverse('tracker_api:carrier'),{'name':"carrer",'phone':"99798798",'location':"here","username":"carrieruser","password":"aaasssddd","email":"carrier@gmail.com"})
     assert response1.status_code == 201
     assert response2.status_code == 409
+
+
+
+@pytest.mark.django_db
+def test_carrier_creation_without_proper_data(client):
+    merchant=client.post(reverse('registration_register'),{"username":"newuser","email":"user@gmail.com","password1":"aaasssddd","password2":'aaasssddd',"name":"merchant1",'address':"merchantaddress"})
+    merchant=User.objects.get(username="newuser").merchant
+    token = Token.objects.get(user__username='newuser')
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    # email
+    email = client.post(reverse('tracker_api:carrier'),{'name':"carrer",'phone':"99798798",'location':"here","username":"carrieruser","password":"aaasssddd"})
+    # name
+    name = client.post(reverse('tracker_api:carrier'),{'phone':"99798798",'location':"here","username":"carrieruser","password":"aaasssddd","email":"carrier@gmail.com"})
+    # phone
+    phone = client.post(reverse('tracker_api:carrier'),{'name':"carrer",'location':"here","username":"carrieruser","password":"aaasssddd","email":"carrier@gmail.com"})
+    # location
+    location = client.post(reverse('tracker_api:carrier'),{'name':"carrer",'phone':"99798798","username":"carrieruser","password":"aaasssddd","email":"carrier@gmail.com"})
+    username = client.post(reverse('tracker_api:carrier'),{'name':"carrer",'phone':"99798798",'location':"here","password":"aaasssddd","email":"carrier@gmail.com"})
+    password = client.post(reverse('tracker_api:carrier'),{'name':"carrer",'phone':"99798798",'location':"here","username":"carrieruser","email":"carrier@gmail.com"})
+    assert email.status_code == 400
+    assert name.status_code == 400
+    assert phone.status_code == 400
+    assert username.status_code == 400
+    assert password.status_code == 400
+    assert location.status_code == 201
+    
+
     
 @pytest.mark.django_db
 def test_all_carriers_of_merchant(client):
