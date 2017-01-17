@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^package/(?P<id>[0-9]+)/$',views.PackageView.as_view({'get':'list'}),name='packagedetail'),
     url(r'^carriers/$',views.carrierView.as_view({'post':'create','get':'list'}),name='carrier'),
     url(r'^carriers/(?P<id>[0-9]+)/?$',views.GetCarrierDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='carrierdetail'),
+    url(r'^customer/$',views.CustomerView.as_view({'post':'create','get':'list'}),name='customer'),
 ]
 

@@ -36,13 +36,19 @@ class Carrier (models.Model):
     def url(self):
         return "/carriers/{}".format(self.id)
 
-
-class Customer(models.Model):
+class Customer (models.Model):
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     name = models.CharField(max_length=50)
-    address = models.CharField(max_length=30)
-    phone = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+    phone = models.CharField(validators=[phone_regex],max_length=15)
+    address = models.CharField(max_length=20)
+    merchant = models.ForeignKey('Merchant')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "Carrier(id={}, name='{}')".format(self.id, repr(self.name))
+
+    def url(self):
+        return "/carriers/{}".format(self.id)
 
 class Order(models.Model):
     merchants = models.ForeignKey('Merchant')
