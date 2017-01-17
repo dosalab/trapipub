@@ -29,13 +29,6 @@ class MerchantRegistration(RegistrationView):
     def get_success_url(self, user):
         return 'index'
 
-
-class logView(viewsets.ModelViewSet):
-    serializer_class = MerchantSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (authentication.TokenAuthentication,)
-    def get_queryset(self):
-        return Merchant.objects.filter(user_id=self.request.user.id)
 #  /carriers/ 
 class carrierView(viewsets.ModelViewSet):
     lookup_field = 'id'
@@ -61,15 +54,6 @@ class carrierView(viewsets.ModelViewSet):
                 return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
- 
-class GetCarriersView(viewsets.ModelViewSet):
-    serializer_class = CarrierUrlSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (authentication.TokenAuthentication,)
-    def get_queryset(self):
-        return Carrier.objects.filter(merchant=self.request.user.merchant)
-    def get_serializer_context(self):
-        return {'request':self.request}
 
 
 
@@ -94,6 +78,3 @@ class OrderView(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
 
-class PackageView(viewsets.ModelViewSet):
-    queryset = Package.objects.all()
-    serializer_class = PackageSerializer

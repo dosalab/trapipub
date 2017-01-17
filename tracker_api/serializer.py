@@ -54,13 +54,12 @@ class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
         model = Carrier
         fields =("url",)
 
-class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields =('id','date','notes','amount',)
 
 
-class PackageSerializer(serializers.ModelSerializer):
+       
     class Meta:
         model = Package
         fields =('id','description')
