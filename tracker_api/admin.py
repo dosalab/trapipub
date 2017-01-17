@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Merchant,Carrier
+from .models import Merchant,Carrier,Customer,Order,Delivery,Status
 
 admin.site.register(Merchant)
 admin.site.register(Carrier)
+admin.site.register(Customer)
+admin.site.register(Order)
+admin.site.register(Delivery)
+admin.site.register(Status)

@@ -4,6 +4,7 @@ from rest_framework import serializers
 from django.db import transaction
 import datetime
 
+#Merchant details view
 class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Merchant
