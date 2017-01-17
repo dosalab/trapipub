@@ -8,7 +8,7 @@ class MerchantSerializer(serializers.ModelSerializer):
         model = Merchant
         fields = ('name', 'address', 'payment_info','user')
 
-      
+#Carrier creation 
 class CarrierSerializer(serializers.Serializer):
     name = serializers.CharField(required = True)
     phone = serializers.IntegerField(required = True)

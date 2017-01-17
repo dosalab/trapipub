@@ -9,12 +9,11 @@ app_name='tracker_api'
 
 urlpatterns = [
     url(r'^log/$',views.logView.as_view({'get':'list'}), name='login'),
-    url(r'^carrier/$',views.carrierView.as_view({'post':'create','get':'list'}),name='carrier'),
-    url(r'^carriers/$',views.GetCarriersView.as_view({'get':'list'}),name='get_carriers'),
-    url(r'^carrier/(?P<id>[0-9]+)/?$',views.GetCarrierDetailsView.as_view({'get':'retrieve'}), name='carrierdetail'),
     url(r'^order/$',views.OrderView.as_view({'post':'create'}),name='order'),
     url(r'^order/(?P<id>[0-9]+)/$',views.OrderView.as_view({'get':'list'}),name='orderdetail'),
     url(r'^package/$',views.PackageView.as_view({'post':'create'}),name='package'),
     url(r'^package/(?P<id>[0-9]+)/$',views.PackageView.as_view({'get':'list'}),name='packagedetail'),
+    url(r'^carriers/$',views.carrierView.as_view({'post':'create','get':'list'}),name='carrier'),
+    url(r'^carriers/(?P<id>[0-9]+)/?$',views.GetCarrierDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='carrierdetail'),
 ]
 

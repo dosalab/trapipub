@@ -36,16 +36,21 @@ class logView(viewsets.ModelViewSet):
     authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
         return Merchant.objects.filter(user_id=self.request.user.id)
-
+#  /carriers/ 
 class carrierView(viewsets.ModelViewSet):
-    lookup_field = 'id'   
-    serializer_class = CarrierSerializer
+    lookup_field = 'id'
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CarrierSerializer
+        if self.action == 'list':
+            return CarrierUrlSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
 
     def create(self, request, *args, **kwargs):
+        '''carreir cretion view '''
         try:
             merchant = User.objects.get(username = self.request.user).merchant
             serializer = CarrierSerializer(data = request.data, context = {'merchant' : merchant})
