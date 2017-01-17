@@ -123,5 +123,15 @@ class OrderView(viewsets.ModelViewSet):
                 return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+ 
 
+# Get details of a order
+class OrderDetails(viewsets.ModelViewSet):
+    lookup_field = 'id'   
+    serializer_class = orderdetailsSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+    def get_queryset(self):
+        return Order.objects.filter(merchant=self.request.user.merchant)
 

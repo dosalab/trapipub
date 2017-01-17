@@ -120,6 +120,12 @@ class OrderUrlSerializer(serializers.ModelSerializer):
         model = Order
         fields =('url',)
 
+#get detaisl of a order
+class orderdetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+       model = Order
+       fields =('__all__')
+
 
        
     class Meta:
