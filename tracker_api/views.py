@@ -5,7 +5,8 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
 from .models import Carrier,Order,Package,Merchant
-from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, PackageSerializer, GetCarrierSerializer, CarrierUrlSerializer
+from .models import Carrier,Order,Merchant,Customer,Status,Delivery
+from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer,CustomerSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetailsSerializer,StatusSerializer
 from registration.views import RegistrationView
 from registration.signals import user_registered
 from django.contrib.auth import authenticate
@@ -13,6 +14,7 @@ from django.contrib.auth import login
 from django.db import transaction
 from rest_framework import authentication
 from django.http import HttpResponse
+import datetime
 
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
@@ -94,8 +96,32 @@ class CustomerView(viewsets.ModelViewSet):
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
+#Create an order 
 class OrderView(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return OrderSerializer
+        if self.action == 'list':
+            return OrderUrlSerializer
+       
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    def get_queryset(self):
+        return Order.objects.filter(merchant=self.request.user.merchant)
+
+    def create(self, request, *args, **kwargs):
+       
+        try:
+            merchant = User.objects.get(username = self.request.user).merchant
+            customerid = request.data['customer']
+            customer = Customer.objects.get(id=customerid)
+            serializer = OrderSerializer(data = request.data, context = {'merchant' : merchant,'customer':customer})
+            if serializer.is_valid():
+                c = serializer.save()
+                return (Response(status=status.HTTP_201_CREATED))
+            else:
+                return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
 

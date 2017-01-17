@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from .models import Carrier,Order,Merchant,Customer,Delivery,Status
 from rest_framework import serializers
 from django.db import transaction
+import datetime
 
 class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,9 +84,41 @@ class CustomerSerializer(serializers.Serializer):
             c.save()
             return c
         
+
+# Create an order
+class OrderSerializer(serializers.Serializer):
+    customer = serializers.IntegerField(required = True)
+    notes = serializers.CharField(required = True)
+    amount = serializers.IntegerField(required = True)
+    invoice_number = serializers.IntegerField(required = True)
+   
+    def create(self, validated_data):
+        merchant = self.context['merchant']
+        customer  = self.context['customer']
+        notes = validated_data['notes']
+        amount = validated_data['amount']
+        invoice_number = validated_data['invoice_number']
+        date = datetime.datetime.now()
+        with transaction.atomic():
+            order = Order(merchant = merchant,
+                          customer=customer ,
+                          notes=notes,
+                          invoice_number=invoice_number,
+                          amount=amount,
+                          date=date
+            )
+            order.save()
+            return order
+        
+# Get all orders under a carrier
+class OrderUrlSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='tracker_api:orderdetail',
+        lookup_field='id'
+    )
     class Meta:
         model = Order
-        fields =('id','date','notes','amount',)
+        fields =('url',)
 
 
        

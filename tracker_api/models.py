@@ -51,22 +51,12 @@ class Customer (models.Model):
         return "/carriers/{}".format(self.id)
 
 class Order(models.Model):
-    merchants = models.ForeignKey('Merchant')
+    merchant = models.ForeignKey('Merchant')
     customer = models.ForeignKey('Customer')
-    packages = models.ForeignKey('Package', on_delete=models.CASCADE)
-    status = models.ForeignKey('Orderstatus', on_delete=models.CASCADE)
     date =  models.DateTimeField(default=date.today)
     notes = models.CharField(max_length=50)
     amount =  models.DecimalField(max_digits=10, decimal_places=2)
     invoice_number = models.CharField(max_length=20)
-    delivery_address = models.CharField(max_length=200)
-    
-
-class OrderStatus(models.Model):
-    status = models.CharField(max_length=20)
-    date =  models.DateTimeField(default=date.today)
-    info = models.CharField(max_length=50)
-    terminal = models.BooleanField()
     
 class Package (models.Model):
     orders = models.ForeignKey('Order', on_delete=models.CASCADE)
