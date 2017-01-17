@@ -128,7 +128,9 @@ class orderdetailsSerializer(serializers.ModelSerializer):
 
 
        
+#create a delivery
+class DeliverySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Package
-        fields =('id','description')
+        model = Delivery
+        fields = ('__all__')
 

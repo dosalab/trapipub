@@ -66,13 +66,11 @@ class Package (models.Model):
 
 
 class Delivery(models.Model):
-    packages = models.ForeignKey('Package', on_delete=models.CASCADE)
-    carriers = models.ForeignKey('Carrier') 
-    status = models.ForeignKey('Deliverystage', on_delete=models.CASCADE)
-
-
-class DeliveryStage(models.Model):
-    order = models.ForeignKey('Order')
+    order = models.OneToOneField(Order, on_delete=models.CASCADE) 
+    carrier = models.ForeignKey('Carrier')
+    def get_status(self):
+        status = Status.objects.filter(delivery=self)
+        return status
     date =  models.DateTimeField(default=date.today)
     info = models.CharField(max_length=50)
     terminal = models.BooleanField()

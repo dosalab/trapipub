@@ -135,3 +135,32 @@ class OrderDetails(viewsets.ModelViewSet):
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 
+    
+class DeliveryView(viewsets.ModelViewSet):
+    """
+    View to handle all /delivery APIs
+    """
+    lookup_field = 'id'
+    serializer_class = DeliverySerializer
+    queryset = Delivery.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    
+    def create(self, request, *args, **kwargs):
+        """
+        Creates a delivery with the given params
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        newid = serializer.data['id']
+        delivery = Delivery.objects.get(id=newid)
+        date = datetime.datetime.now() 
+        st = Status(delivery=delivery,
+                       date =  date,
+                       info = "Get ready",
+                       terminal = False
+                   )
+        st.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
