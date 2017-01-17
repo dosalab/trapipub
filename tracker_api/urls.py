@@ -16,5 +16,6 @@ urlpatterns = [
     url(r'^orders/$',views.OrderView.as_view({'post':'create','get' : 'list'}),name='orders'),
     url(r'^order/(?P<id>[0-9]+)/$',views.OrderDetails.as_view({'get':'retrieve','patch':'partial_update'}),name='orderdetail'),
     url(r'^deliveries/$',views.DeliveryView.as_view({'post':'create'}),name='delivery'),
+    url(r'^deliveries/(?P<id>[0-9]+)/?$',views.DeliveryDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='delivery_details'),
 ]
 

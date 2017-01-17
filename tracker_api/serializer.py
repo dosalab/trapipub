@@ -134,3 +134,23 @@ class DeliverySerializer(serializers.ModelSerializer):
         model = Delivery
         fields = ('__all__')
 
+        
+
+
+#custom related field for status
+class StatusRelatedField(serializers.RelatedField):
+     def to_representation(self, value):
+          return {"date":value.date,"info":value.info,"terminal":value.terminal}
+# get delivery details
+class DeliveryDetailsSerializer(serializers.ModelSerializer):
+    order = orderdetailsSerializer()
+    carrier = GetCarrierSerializer()
+    status = StatusRelatedField(many=True,read_only=True)
+    # StatusSerializer(
+    #     source='get_status',
+    #     read_only=True
+    # )
+   # status = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    class Meta:
+        model = Delivery
+        fields = ('id','carrier','order','status')

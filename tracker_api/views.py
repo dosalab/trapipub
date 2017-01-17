@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
-from .models import Carrier,Order,Package,Merchant
 from .models import Carrier,Order,Merchant,Customer,Status,Delivery
 from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer,CustomerSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetailsSerializer,StatusSerializer
 from registration.views import RegistrationView
@@ -164,3 +163,19 @@ class DeliveryView(viewsets.ModelViewSet):
         st.save()
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+class DeliveryDetailsView(viewsets.ModelViewSet):
+    lookup_field = 'id'
+    serializer_class = DeliveryDetailsSerializer
+    queryset = Delivery.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    # def retrieve(self, request, *args, **kwargs):
+    #     # current_delivery=Delivery.objects.get( id=kwargs['id'])
+    #     # stat=current_delivery.status_set
+    #     instance = self.get_object()
+    #   #  serializer = DeliveryDetailsSerializer(data = request.data, context = {'status' :stat })
+    #    #  if serializer.is_valid():
+           
+    #     serializer = self.get_serializer(instance)
+    #     return Response(serializer.data)

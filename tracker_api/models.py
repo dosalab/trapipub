@@ -71,7 +71,9 @@ class Delivery(models.Model):
     def get_status(self):
         status = Status.objects.filter(delivery=self)
         return status
+
+class Status(models.Model):
+    delivery = models.ForeignKey('Delivery', related_name='status')
     date =  models.DateTimeField(default=date.today)
     info = models.CharField(max_length=50)
     terminal = models.BooleanField()
-    location = models.CharField(max_length=50)
