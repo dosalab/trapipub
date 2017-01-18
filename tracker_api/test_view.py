@@ -157,3 +157,14 @@ def test_change_details_of_carrier(client):
     assert phone.data ==  {"id":1,"location":"kozikkod","name":"new name","phone":"+9123456789","email":"user@tracker.com"}
     assert location.data ==  {"id":1,"location":"palakkad","name":"new name","phone":"+9123456789","email":"user@tracker.com"}
     assert response2.status_code == 400
+
+    
+# /customer
+@pytest.mark.django_db
+def test_cutomer_create_with_no_merchant(client):
+    user=User.objects.create_user("user","useraddress", "aaasssddd")
+    token = Token.objects.get(user__username='user')
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    response = client.post(reverse('tracker_api:customer'),{'name':"customer",'phone':"+919656888713",'address':"kozikkod",'user':user,'merchant':"null"})
+    assert response.status_code == 403
