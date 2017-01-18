@@ -6,3 +6,5 @@
 *.swp
 .cache/
 db.sqlite3
+.coverage
+htmlcov
