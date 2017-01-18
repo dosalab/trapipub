@@ -71,6 +71,7 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
     authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
+
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         if request.data == {}:
@@ -91,8 +92,11 @@ class CustomerView(viewsets.ModelViewSet):
             merchant = User.objects.get(username = self.request.user).merchant
             serializer = CustomerSerializer(data = request.data, context = {'merchant' : merchant})
             if serializer.is_valid():
-                c = serializer.save()
-                return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
+                try:
+                    c = serializer.save()
+                    return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
+                except:
+                    return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
                 return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:

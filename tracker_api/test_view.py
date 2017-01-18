@@ -180,3 +180,15 @@ def test_customer_create_by_merchant(client):
     response = client.post(reverse('tracker_api:customer'),{'name':"customer1",'phone':"+91239798798",'address':"india","username":"customeruser","password":"aaasssddd","email":"customer1@gmail.com"})
     assert response.status_code == 201
 
+
+@pytest.mark.django_db
+def test_customer_creation_with_existing_username(client):
+    merchant=client.post(reverse('registration_register'),{"username":"newuser","email":"user@gmail.com","password1":"aaasssddd","password2":'aaasssddd',"name":"merchant1",'address':"merchantaddress"})
+    merchant=User.objects.get(username="newuser").merchant
+    token = Token.objects.get(user__username='newuser')
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    response1 = client.post(reverse('tracker_api:customer'),{'name':"customer1",'phone':"+91239798798",'address':"india","username":"customeruser","password":"aaasssddd","email":"customer1@gmail.com"})
+    response2 = client.post(reverse('tracker_api:customer'),{'name':"customer2",'phone':"+9199999999",'address':"usa","username":"customeruser","password":"aaasssddd","email":"customer2@gmail.com"})
+    assert response1.status_code == 201
+    assert response2.status_code == 409
