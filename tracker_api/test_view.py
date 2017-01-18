@@ -163,10 +163,15 @@ def test_change_details_of_carrier(client):
 @pytest.mark.django_db
 def test_cutomer_create_with_no_merchant(client):
     user=User.objects.create_user("user","useraddress", "aaasssddd")
+
+#/ orders /
+@pytest.mark.django_db
+def test_order_create_with_no_merchant(client,order_data):
+    user = User.objects.create_user("user", "useraddress", "aaasssddd")
     token = Token.objects.get(user__username='user')
     client = APIClient()
     client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-    response = client.post(reverse('tracker_api:customer'),{'name':"customer",'phone':"+919656888713",'address':"kozikkod",'user':user,'merchant':"null"})
+    response = client.post(reverse('tracker_api:customer'), order_data)
     assert response.status_code == 403
 
 
