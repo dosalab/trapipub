@@ -142,11 +142,18 @@ def test_change_details_of_carrier(client):
     cu1=User.objects.create_user("carrier1","user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier",phone="9656888871",location="kozikkod",merchant=merchant,user=cu1)
 
-    response = client.get(reverse('tracker_api:carrierdetail',args=[1]))
-    assert response.data ==  {"id":1,"location":"kozikkod","name":"carrier","phone":"9656888871"}
-
     client.patch(reverse('tracker_api:carrierdetail',args=[1]),{"name":"new name"})
-    response = client.get(reverse('tracker_api:carrierdetail',args=[1]))
-    assert response.data ==  {"id":1,"location":"kozikkod","name":"new name","phone":"9656888871"}
+    name = client.get(reverse('tracker_api:carrierdetail',args=[1]))
 
-   
+    client.patch(reverse('tracker_api:carrierdetail',args=[1]),{"phone":"+9123456789"})
+    phone = client.get(reverse('tracker_api:carrierdetail',args=[1]))
+    
+    client.patch(reverse('tracker_api:carrierdetail',args=[1]),{"location":"palakkad"})
+    location = client.get(reverse('tracker_api:carrierdetail',args=[1]))
+
+
+    response2=client.patch(reverse('tracker_api:carrierdetail',args=[1]))
+    assert name.data ==  {"id":1,"location":"kozikkod","name":"new name","phone":"9656888871","email":"user@tracker.com"}
+    assert phone.data ==  {"id":1,"location":"kozikkod","name":"new name","phone":"+9123456789","email":"user@tracker.com"}
+    assert location.data ==  {"id":1,"location":"palakkad","name":"new name","phone":"+9123456789","email":"user@tracker.com"}
+    assert response2.status_code == 400
