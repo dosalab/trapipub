@@ -168,3 +168,15 @@ def test_cutomer_create_with_no_merchant(client):
     client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     response = client.post(reverse('tracker_api:customer'),{'name':"customer",'phone':"+919656888713",'address':"kozikkod",'user':user,'merchant':"null"})
     assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_customer_create_by_merchant(client):
+    merchant=client.post(reverse('registration_register'),{"username":"newuser","email":"user@gmail.com","password1":"aaasssddd","password2":'aaasssddd',"name":"merchant1",'address':"merchantaddress"})
+    merchant=User.objects.get(username="newuser").merchant
+    token = Token.objects.get(user__username='newuser')
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    response = client.post(reverse('tracker_api:customer'),{'name':"customer1",'phone':"+91239798798",'address':"india","username":"customeruser","password":"aaasssddd","email":"customer1@gmail.com"})
+    assert response.status_code == 201
+
