@@ -98,7 +98,7 @@ class CustomerView(viewsets.ModelViewSet):
                 except:
                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
-                return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
+                return (Response("Give proper Data", status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
