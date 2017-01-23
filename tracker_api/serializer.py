@@ -43,7 +43,7 @@ class GetCarrierSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
     class Meta:
        model = Carrier
-       fields =("name","phone","location", "email","slug")
+       fields =("name","phone","location", "email")
 
 #Get all carriers urls under a merchant
 class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
