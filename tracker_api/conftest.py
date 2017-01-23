@@ -44,7 +44,7 @@ def customer_data(request):
 def order_data(request,merchant_client,customer_data):
     merchant_client.post(reverse('tracker_api:customer'),
                          customer_data)
-    return{'customer':"1",
+    return{'customer':"customerusermerchant1",
            'notes':"include item1,2",
            'amount':"100",
-           "invoice_number":"123"}
+           "invoice_number":"1010"}
