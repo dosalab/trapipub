@@ -165,7 +165,6 @@ class DeliverySerializer(serializers.Serializer):
             st.save()
         return delivery
 
-        
 #status serializer
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
@@ -183,11 +182,7 @@ class DeliveryDetailsSerializer(serializers.ModelSerializer):
     order = orderdetailsSerializer()
     carrier = GetCarrierSerializer()
     status = StatusRelatedField(many=True,read_only=True)
-    # StatusSerializer(
-    #     source='get_status',
-    #     read_only=True
-    # )
-   # status = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    
     class Meta:
         model = Delivery
         fields = ('id','carrier','order','status')

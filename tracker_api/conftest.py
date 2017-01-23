@@ -48,3 +48,13 @@ def order_data(request,merchant_client,customer_data):
            'notes':"include item1,2",
            'amount':"100",
            "invoice_number":"1010"}
+
+
+@pytest.fixture
+def delivery_data(request,merchant_client,carrier_data,order_data):
+    merchant_client.post(reverse('tracker_api:carrier'),
+                         carrier_data)
+    merchant_client.post(reverse('tracker_api:orders'),
+                         order_data)
+    return {'order':"1010",
+            'carrier':"carrierusermerchant1"}

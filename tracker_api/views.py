@@ -190,16 +190,16 @@ class DeliveryView(viewsets.ModelViewSet):
         except KeyError:
             return (Response("Give proper data", status=status.HTTP_400_BAD_REQUEST))
 
-class DeliveryDetailsView(viewsets.ModelViewSet):
-    lookup_field = 'slug'
-    serializer_class = DeliveryDetailsSerializer
-    import pdb; pdb.set_trace()
-    queryset = Delivery.objects.get()
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (authentication.TokenAuthentication,)
+# class DeliveryDetailsView(viewsets.ModelViewSet):
+#     lookup_field = 'slug'
+#     serializer_class = DeliveryDetailsSerializer
+#     import pdb; pdb.set_trace()
+#     queryset = Delivery.objects.get()
+#     permission_classes = (permissions.IsAuthenticated,)
+#     authentication_classes = (authentication.TokenAuthentication,)
     
 
-class StatusView(viewsets.ModelViewSet):
-    serializer_class = StatusSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (authentication.TokenAuthentication,)
+# class StatusView(viewsets.ModelViewSet):
+#     serializer_class = StatusSerializer
+#     permission_classes = (permissions.IsAuthenticated,)
+#     authentication_classes = (authentication.TokenAuthentication,)
