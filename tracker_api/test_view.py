@@ -253,4 +253,11 @@ def test_order_creat_bad_amount(merchant_client, order_data):
     response = merchant_client.post(reverse('tracker_api:orders'),
                                     order_data)
     assert response.status_code == 400
+
+@pytest.mark.django_db
+def test_order_creat_bad_invoice(merchant_client, order_data):
+    del order_data["invoice_number"]
+    response = merchant_client.post(reverse('tracker_api:orders'),
+                                    order_data)
+    assert response.status_code == 400
     assert response.status_code == 201
