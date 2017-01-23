@@ -324,3 +324,19 @@ def test_deliveries_create_by_merchant(merchant_client, delivery_data):
     response = merchant_client.post(reverse('tracker_api:delivery'),
                                     delivery_data)
     assert response.status_code == 201
+
+@pytest.mark.django_db
+def test_deliveries_bad_order(merchant_client, delivery_data):
+    # Same order
+    merchant_client.post(reverse('tracker_api:delivery'),
+                         delivery_data)
+    response = merchant_client.post(reverse('tracker_api:delivery'),
+                                    delivery_data)
+    assert response.status_code == 400
+
+    # Without Order
+    del delivery_data["order"]
+    response = merchant_client.post(reverse('tracker_api:delivery'),
+                                    delivery_data)
+    assert response.status_code == 400
+
