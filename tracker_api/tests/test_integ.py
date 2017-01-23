@@ -50,6 +50,9 @@ def test_merchant(server):
 #     csrftoken = client.cookies['csrftoken']
 #     login_data = dict(username="newuser1234",email="newuser@tracker.com",password1="aaasssddd",password2="aaasssddd",name="newmerchant",address="merchantaddress", csrfmiddlewaretoken=csrftoken)
 #     r = client.post(URL, data=login_data, headers=dict(Referer=URL))
+    #get a particular customer details
+    customer=client.get('http://127.0.0.1:8000/api/v1/customers/newcustomerusernewmerchant',headers={'Authorization':'Token '+token1})
+    assert customer.text == '{"slug":"newcustomerusernewmerchant","name":"newcustomer","phone":"99999","address":"here","merchant":2,"user":36}'
     
 #     tok = client.post('http://127.0.0.1:8000/token/',{'username':"newuser1234",'password':"aaasssddd"})
 #     token = Token.objects.get(user__username='newuser')
