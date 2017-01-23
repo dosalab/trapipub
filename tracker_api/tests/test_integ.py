@@ -66,3 +66,6 @@ def test_merchant(server):
     del op["date"]
     assert op =={"invoice_number":"1010","amount":"100.00","customer":"newcustomerusernewmerchant","notes":"include item1,2"}
     
+    # creat a delivery
+    delivery=client.post('http://127.0.0.1:8000/api/v1/deliveries/',{"order":"1010","carrier":"carriernewusernewmerchant"}, headers={'Authorization':'Token '+token1})
+    assert Delivery.objects.get(slug="1010newcarrier").order.notes == 'include item1,2'
