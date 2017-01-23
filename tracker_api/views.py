@@ -106,6 +106,16 @@ class CustomerView(viewsets.ModelViewSet):
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
+#  /customers/{id} 
+class CustomerDetails(viewsets.ModelViewSet):
+    """ View for get the details of a specific carrier """
+    lookup_field = 'slug'   
+    serializer_class = CustomerDetailsSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    def get_queryset(self):
+        return Customer.objects.filter(merchant=self.request.user.merchant)
+
 #Create an order 
 class OrderView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
