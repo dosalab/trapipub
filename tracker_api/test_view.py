@@ -317,4 +317,10 @@ def test_deliveries_create_with_no_merchant(client,delivery_data):
     client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     response = client.post(reverse('tracker_api:delivery'), delivery_data)
     assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_deliveries_create_by_merchant(merchant_client, delivery_data):
+    response = merchant_client.post(reverse('tracker_api:delivery'),
+                                    delivery_data)
     assert response.status_code == 201
