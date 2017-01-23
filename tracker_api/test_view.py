@@ -229,4 +229,6 @@ def test_order_create_with_no_merchant(client,order_data):
 def test_order_create_by_merchant(merchant_client,order_data):
     response = merchant_client.post(reverse('tracker_api:orders'),
                                     order_data)
+
+    assert response.status_code == 201
     assert response.status_code == 201
