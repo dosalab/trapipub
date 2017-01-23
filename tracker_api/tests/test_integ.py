@@ -3,7 +3,7 @@ import requests
 import sys
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-
+from tracker_api.models import Carrier,Customer,Order,Delivery
 @pytest.mark.django_db
 def test_merchant(server):
     URL = "http://127.0.0.1:8000/accounts/register/"
@@ -21,9 +21,19 @@ def test_merchant(server):
     token1=token1.json()['token']
 
     assert token1 == token2
+
+    # carrier creation
+    client.post('http://127.0.0.1:8000/api/v1/carriers/',{'name':"newcarrier",'phone':"99999",'location':"here",'username':"carriernewuser",'password':"aaasssddd",'email':"carrier@trcker.com"},headers={'Authorization':'Token '+token1})
+    assert Carrier.objects.get(slug='carriernewusernewmerchant').name=="newcarrier"
+
+    #get a particular carrier details
+    carrier=client.get('http://127.0.0.1:8000/api/v1/carriers/carriernewusernewmerchant',headers={'Authorization':'Token '+token1})
+    assert carrier.text == '{"name":"newcarrier","phone":"99999","location":"here","email":"carrier@trcker.com","slug":"carriernewusernewmerchant"}'
+
+    #get all carriers
+    carrier=client.get('http://127.0.0.1:8000/api/v1/carriers', headers={'Authorization':'Token '+token1})
+    assert carrier.text == '[{"url":"http://127.0.0.1:8000/api/v1/carriers/carriernewusernewmerchant"}]'
     
-    carrier=client.post('http://127.0.0.1:8000/api/v1/carrier/',{'name':"newcarrier",'phone':"99999",'location':"here",'username':"carriernewuser",'password':"aaasssddd",'email':"carrier@trcker.com"},headers={'Authorization':'Token '+token1})
-    import pdb;pdb.set_trace()
  
     
     
