@@ -127,14 +127,14 @@ def test_change_name_of_carrier (merchant_client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
-                           location="kozikkod", merchant=merchant, user=cu1)
+                           location="kozikkod", merchant=merchant, user=cu1,slug="carrier1merchant1")
 
     merchant_client.patch(reverse('tracker_api:carrierdetail',
-                                  args=[1]), {"name":"new name"})
+                                  args=["carrier1merchant1"]), {"name":"new name"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
-                                           args=[1]))
-    assert response.data == {"id":1, "location":"kozikkod", "name":"new name",
-                             "phone":"9656888871", "email":"user@tracker.com"}
+                                           args=["carrier1merchant1"]))
+    assert response.data == {"location":"kozikkod", "name":"new name",
+                             "phone":"9656888871", "email":"user@tracker.com","slug":"carrier1merchant1"}
     
 
 @pytest.mark.django_db
@@ -142,13 +142,13 @@ def test_change_phone_of_carrier(merchant_client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
-                           location="kozikkod", merchant=merchant, user=cu1)
+                           location="kozikkod", merchant=merchant, user=cu1, slug="carrier1merchant1")
     merchant_client.patch(reverse('tracker_api:carrierdetail',
-                                  args=[1]), {"phone":"+9999999999"})
+                                  args=["carrier1merchant1"]), {"phone":"+9999999999"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
-                                           args=[1]))
-    assert response.data == {"id":1, "location":"kozikkod", "name":"carrier",
-                             "phone":"+9999999999", "email":"user@tracker.com"}
+                                           args=["carrier1merchant1"]))
+    assert response.data == {"location":"kozikkod", "name":"carrier",
+                             "phone":"+9999999999", "email":"user@tracker.com","slug":"carrier1merchant1"}
      
 
 @pytest.mark.django_db
