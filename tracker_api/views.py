@@ -99,7 +99,7 @@ class CustomerView(viewsets.ModelViewSet):
                 try:
                     c = serializer.save()
                     return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
-                except:
+                except IntegrityError :
                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
                 return (Response("Give proper Data", status=status.HTTP_400_BAD_REQUEST))
