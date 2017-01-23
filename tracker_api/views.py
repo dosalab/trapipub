@@ -81,7 +81,11 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
 
 # Create a customer
 class CustomerView(viewsets.ModelViewSet):
-    serializer_class = CustomerSerializer
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CustomerSerializer
+        if self.action == 'list':
+            return CustomerUrlSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
