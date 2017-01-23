@@ -18,6 +18,6 @@ def server(xprocess):
         print ("Working directory is {}".format(n))
         path = cwd.join("../../manage.py").strpath
         print(path)
-        return (r".*Quit the server with CONTROL-C.*", ["python", path, "runserver", "8000"])
+        return (r".*Quit.*", ["python", path, "runserver", "8000"])
     
     logfile = xprocess.ensure("tracker-server", preparefunc)
