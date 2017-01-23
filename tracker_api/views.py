@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
 from .models import Carrier,Order,Merchant,Customer,Status,Delivery
-from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer,CustomerSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetailsSerializer,StatusSerializer
+from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer,CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetailsSerializer,StatusSerializer
 from registration.views import RegistrationView
 from registration.signals import user_registered
 from django.contrib.auth import authenticate
@@ -13,8 +13,8 @@ from django.contrib.auth import login
 from django.db import transaction
 from rest_framework import authentication
 from django.http import HttpResponse
+from django.db.utils import IntegrityError
 import datetime
-
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
 
@@ -33,7 +33,7 @@ class MerchantRegistration(RegistrationView):
 
 #  /carriers/ 
 class carrierView(viewsets.ModelViewSet):
-    lookup_field = 'id'
+    lookup_field = 'slug'
     def get_serializer_class(self):
         if self.action == 'create':
             return CarrierSerializer
@@ -65,7 +65,7 @@ class carrierView(viewsets.ModelViewSet):
 #  /carriers/{id} 
 class GetCarrierDetailsView(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
-    lookup_field = 'id'   
+    lookup_field = 'slug'   
     serializer_class = GetCarrierSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)

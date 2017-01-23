@@ -92,19 +92,20 @@ def test_all_carriers_of_merchant(merchant_client):
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier1", phone="98766767",
                            location="india",
-                           merchant=merchant, user=cu1)
+                           merchant=merchant, user=cu1, slug="carrier1merchant1")
     cu2 = User.objects.create_user("carrier2", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrer2", phone="99999999",
-                           location="palakkad", merchant=merchant, user=cu2)
+                           location="palakkad", merchant=merchant, user=cu2, slug="carrier2merchant1")
     cu3 = User.objects.create_user("carrier3", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrer3",
                            phone="99999999",
-                           location="kerala", merchant=merchant, user=cu3)
+                           location="kerala", merchant=merchant, user=cu3, slug="carrier3merchant1")
     response = merchant_client.get(reverse('tracker_api:carrier'))
-    assert  json.loads(response.content.decode('utf-8')) == [
-        {"url": "http://testserver/api/v1/carriers/1"},
-        {"url": "http://testserver/api/v1/carriers/2"},
-        {"url": "http://testserver/api/v1/carriers/3"}]
+    actual = json.loads(response.content.decode('utf-8'))
+    expected = [{"url": "http://testserver/api/v1/carriers/carrier3merchant1"},
+                {"url": "http://testserver/api/v1/carriers/carrier2merchant1"},
+                {"url": "http://testserver/api/v1/carriers/carrier1merchant1"}]
+    assert actual == expected
    
 @pytest.mark.django_db
 def test_details_of_carrier(merchant_client):
