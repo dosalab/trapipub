@@ -164,12 +164,6 @@ class DeliverySerializer(serializers.Serializer):
                     )
             st.save()
         return delivery
-       
-#create a delivery
-class DeliverySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Delivery
-        fields = ('__all__')
 
         
 #status serializer
