@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from .models import Carrier,Order,Merchant,Customer,Delivery,Status
 from rest_framework import serializers
 from django.db import transaction
+from django.utils.text import slugify
 import datetime
 
 #Merchant details view
@@ -125,6 +126,27 @@ class orderdetailsSerializer(serializers.ModelSerializer):
        fields =('__all__')
 
 
+# Create a delivery
+class DeliverySerializer(serializers.Serializer):
+    order = serializers.CharField(required = True)
+    carrier = serializers.CharField(required = True)
+    def create(self, validated_data):
+        order = self.context['order']
+        carrier  = self.context['carrier']
+        delivery = Delivery(order = order,
+                            carrier=carrier )
+        delivery.slug = slugify(order.slug+carrier.name)
+        with transaction.atomic():
+            delivery.save()
+            delivery = Delivery.objects.get(slug=delivery.slug)
+            date = datetime.datetime.now() 
+            st = Status(delivery=delivery,
+                        date =  date,
+                        info = "Get ready",
+                        terminal = False
+                    )
+            st.save()
+        return delivery
        
 #create a delivery
 class DeliverySerializer(serializers.ModelSerializer):

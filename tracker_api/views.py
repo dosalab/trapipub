@@ -120,11 +120,13 @@ class CustomerDetails(viewsets.ModelViewSet):
 class OrderView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
     def get_serializer_class(self):
         if self.action == 'create':
             return OrderSerializer
         if self.action == 'list':
             return OrderUrlSerializer
+
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 
@@ -146,6 +148,7 @@ class OrderView(viewsets.ModelViewSet):
         except KeyError:
              return (Response("Give Customer", status=status.HTTP_400_BAD_REQUEST))
 
+
 # Get details of a order
 class OrderDetails(viewsets.ModelViewSet):
     lookup_field = 'slug'   
@@ -160,46 +163,40 @@ class DeliveryView(viewsets.ModelViewSet):
     """
     View to handle all /delivery APIs
     """
-    lookup_field = 'id'
+    lookup_field = 'slug'
     serializer_class = DeliverySerializer
     queryset = Delivery.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-    
     def create(self, request, *args, **kwargs):
         """
         Creates a delivery with the given params
         """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        newid = serializer.data['id']
-        delivery = Delivery.objects.get(id=newid)
-        date = datetime.datetime.now() 
-        st = Status(delivery=delivery,
-                       date =  date,
-                       info = "Get ready",
-                       terminal = False
-                   )
-        st.save()
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        try:
+            merchant = User.objects.get(username = self.request.user).merchant
+            order = request.data['order']
+            order = Order.objects.get(slug=order)
+            carrier = request.data['carrier']
+            carrier = Carrier.objects.get(slug=carrier)
+            serializer = DeliverySerializer(data = request.data, context = {'order' : order,'carrier':carrier})
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+        except IntegrityError:
+            return (Response("Order already deliverd", status=status.HTTP_400_BAD_REQUEST))
+        except KeyError:
+            return (Response("Give proper data", status=status.HTTP_400_BAD_REQUEST))
 
 class DeliveryDetailsView(viewsets.ModelViewSet):
-    lookup_field = 'id'
+    lookup_field = 'slug'
     serializer_class = DeliveryDetailsSerializer
-    queryset = Delivery.objects.all()
+    import pdb; pdb.set_trace()
+    queryset = Delivery.objects.get()
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-    # def retrieve(self, request, *args, **kwargs):
-    #     # current_delivery=Delivery.objects.get( id=kwargs['id'])
-    #     # stat=current_delivery.status_set
-    #     instance = self.get_object()
-    #   #  serializer = DeliveryDetailsSerializer(data = request.data, context = {'status' :stat })
-    #    #  if serializer.is_valid():
-           
-    #     serializer = self.get_serializer(instance)
-    #     return Response(serializer.data)
     
 
 class StatusView(viewsets.ModelViewSet):
