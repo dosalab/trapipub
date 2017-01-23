@@ -340,3 +340,13 @@ def test_deliveries_bad_order(merchant_client, delivery_data):
                                     delivery_data)
     assert response.status_code == 400
 
+@pytest.mark.django_db
+def test_deliveries_bad_carrier(merchant_client, delivery_data):
+    # Without carrier
+    del delivery_data["carrier"]
+    response = merchant_client.post(reverse('tracker_api:delivery'),
+                                    delivery_data)
+    assert response.status_code == 400
+
+
+
