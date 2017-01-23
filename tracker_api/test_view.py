@@ -260,4 +260,31 @@ def test_order_creat_bad_invoice(merchant_client, order_data):
     response = merchant_client.post(reverse('tracker_api:orders'),
                                     order_data)
     assert response.status_code == 400
+    
+@pytest.mark.django_db
+def test_all_orders_of_merchant(merchant_client):
+    merchant = User.objects.get(username="newuser").merchant
+    ur = User.objects.create(username = "customeruser",
+                               password = "aaasssddd",
+                               email = "customer@tracker.com")
+    customer = Customer.objects.create(name="cusomer",
+                                       address="customeraddress" ,
+                                       phone = "+9999999999",
+                                       user = ur,
+                                       merchant=merchant)
+    Order.objects.create(merchant=merchant, customer=customer,slug="1010",
+                         notes = "items1", amount=100, invoice_number="1010")
+    
+    Order.objects.create(merchant=merchant, customer=customer,slug="1011",
+                         notes = "items2", amount=1000, invoice_number="1011")
+    
+    Order.objects.create(merchant=merchant, customer=customer,
+                         notes = "items4", amount=0.5, invoice_number="1012")
+    response = merchant_client.get(reverse('tracker_api:orders'))
+    
+    expected = [{'url': 'http://testserver/api/v1/orders/slug'},
+                {'url': 'http://testserver/api/v1/orders/1011'},
+                {'url': 'http://testserver/api/v1/orders/1010'}]
+    actual = json.loads(response.content.decode('utf-8'))
+    assert expected == actual
     assert response.status_code == 201
