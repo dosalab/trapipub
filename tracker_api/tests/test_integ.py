@@ -1,9 +1,11 @@
 import pytest
 import requests
 import sys
+import json
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from tracker_api.models import Carrier,Customer,Order,Delivery
+import datetime
 @pytest.mark.django_db
 def test_merchant(server):
     URL = "http://127.0.0.1:8000/accounts/register/"
@@ -16,6 +18,8 @@ def test_merchant(server):
     client.post(URL, data=login_data, headers=dict(Referer=URL))
     assert  User.objects.get(username="newuser1234").merchant.name == "newmerchant"
     
+
+    # token
     token1 = client.post('http://127.0.0.1:8000/token/',{'username':"newuser1234",'password':"aaasssddd"})
     token2 = Token.objects.get(user__username='newuser1234').key
     token1=token1.json()['token']
@@ -42,14 +46,6 @@ def test_merchant(server):
     customer=client.get('http://127.0.0.1:8000/api/v1/customers', headers={'Authorization':'Token '+token1})
     assert customer.text == '[{"url":"http://127.0.0.1:8000/api/v1/customers/newcustomerusernewmerchant"}]'
     
-# @pytest.mark.django_db
-# def test_carrier_creation(server):
-#     URL = "http://127.0.0.1:8000/accounts/register/"
-#     client = requests.session()
-#     client.get(URL)
-#     csrftoken = client.cookies['csrftoken']
-#     login_data = dict(username="newuser1234",email="newuser@tracker.com",password1="aaasssddd",password2="aaasssddd",name="newmerchant",address="merchantaddress", csrfmiddlewaretoken=csrftoken)
-#     r = client.post(URL, data=login_data, headers=dict(Referer=URL))
     #get a particular customer details
     customer=client.get('http://127.0.0.1:8000/api/v1/customers/newcustomerusernewmerchant',headers={'Authorization':'Token '+token1})
     assert customer.text == '{"slug":"newcustomerusernewmerchant","name":"newcustomer","phone":"99999","address":"here","merchant":2,"user":36}'
@@ -59,12 +55,6 @@ def test_merchant(server):
     assert Order.objects.get(customer='newcustomerusernewmerchant').slug== "1010"
 
     
-#     tok = client.post('http://127.0.0.1:8000/token/',{'username':"newuser1234",'password':"aaasssddd"})
-#     token = Token.objects.get(user__username='newuser')
-#     client = APIClient()
-#     client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-#     carrier=client.post('http://127.0.0.1:8000/api/v1/carrier/',{'name':"newcarrier",'phone':"99999",'location':"here",'username':"carriernewuser",'password':"aaasssddd",'email':"carrier@trcker.com"})
-#     import pdb;pdb.set_trace()
     #get all orders of a merchant
     order=client.get('http://127.0.0.1:8000/api/v1/orders', headers={'Authorization':'Token '+token1})
     assert order.text == '[{"url":"http://127.0.0.1:8000/api/v1/orders/1010"}]'
