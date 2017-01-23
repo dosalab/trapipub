@@ -24,7 +24,7 @@ def merchant_client(request, client):
 @pytest.fixture
 def carrier_data(request):
     "Creates a valid dict of carrier data"
-    return {'name':"carrer",
+    return {'name':"carrier",
             'phone':"99798798",
             'location':"here",
             "email" : "test@example.com",
