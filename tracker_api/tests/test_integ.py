@@ -10,9 +10,10 @@ def test_merchant(server):
     client = requests.session()
     client.get(URL)
     csrftoken = client.cookies['csrftoken']
+
+    # merchant creation 
     login_data = dict(username="newuser1234",email="newuser@tracker.com",password1="aaasssddd",password2="aaasssddd",name="newmerchant",address="merchantaddress", csrfmiddlewaretoken=csrftoken)
-    r = client.post(URL, data=login_data, headers=dict(Referer=URL))
-    
+    client.post(URL, data=login_data, headers=dict(Referer=URL))
     assert  User.objects.get(username="newuser1234").merchant.name == "newmerchant"
     
     token1 = client.post('http://127.0.0.1:8000/token/',{'username':"newuser1234",'password':"aaasssddd"})
