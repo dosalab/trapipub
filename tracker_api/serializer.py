@@ -83,6 +83,16 @@ class CustomerSerializer(serializers.Serializer):
             cus.save()
             return cus
         
+      
+# Get all orders under a carrier
+class CustomerUrlSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='tracker_api:customerdetails',
+        lookup_field='slug'
+    )
+    class Meta:
+        model = Customer
+        fields =('url',)
 
 # Create an order
 class OrderSerializer(serializers.Serializer):
