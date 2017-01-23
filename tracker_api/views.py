@@ -108,32 +108,33 @@ class CustomerView(viewsets.ModelViewSet):
 
 #Create an order 
 class OrderView(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
     def get_serializer_class(self):
         if self.action == 'create':
             return OrderSerializer
         if self.action == 'list':
             return OrderUrlSerializer
-       
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 
-    def create(self, request, *args, **kwargs):
-       
+    def create(self, request, *args, **kwargs):            
         try:
             merchant = User.objects.get(username = self.request.user).merchant
             customerid = request.data['customer']
-            customer = Customer.objects.get(id=customerid)
+            customer = Customer.objects.get(slug=customerid)
             serializer = OrderSerializer(data = request.data, context = {'merchant' : merchant,'customer':customer})
             if serializer.is_valid():
-                c = serializer.save()
-                return (Response(status=status.HTTP_201_CREATED))
+                order = serializer.save()
+                return(Response({"url":order.url()}, status=status.HTTP_201_CREATED))
             else:
-                return (Response(s.errors, status=status.HTTP_400_BAD_REQUEST))
+                return (Response("Give proper data", status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
- 
+        except Customer.DoesNotExist:
+            return (Response("Wrong customer", status=status.HTTP_400_BAD_REQUEST))
+        except KeyError:
+             return (Response("Give Customer", status=status.HTTP_400_BAD_REQUEST))
 
 # Get details of a order
 class OrderDetails(viewsets.ModelViewSet):

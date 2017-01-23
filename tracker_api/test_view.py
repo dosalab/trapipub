@@ -231,4 +231,19 @@ def test_order_create_by_merchant(merchant_client,order_data):
                                     order_data)
 
     assert response.status_code == 201
+
+@pytest.mark.django_db
+def test_order_creat_bad_customer(merchant_client, order_data):
+    #Wrong customer id
+    order_data['customer'] = "2"
+    response = merchant_client.post(reverse('tracker_api:orders'),
+                                    order_data)
+    assert response.status_code == 400
+
+    # without customer
+    del order_data["customer"]
+    response = merchant_client.post(reverse('tracker_api:orders'),
+                                    order_data)
+
+    assert response.status_code == 400
     assert response.status_code == 201
