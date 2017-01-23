@@ -307,4 +307,14 @@ def test_details_order(merchant_client):
     del response.data["date"]
     expected = {"invoice_number":"1010","amount":"100.00","customer":"slug","notes":"items1"}
     assert response.data == expected
+
+#/ deliveries /
+@pytest.mark.django_db
+def test_deliveries_create_with_no_merchant(client,delivery_data):
+    user = User.objects.create_user("user", "useraddress", "aaasssddd")
+    token = Token.objects.get(user__username='user')
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    response = client.post(reverse('tracker_api:delivery'), delivery_data)
+    assert response.status_code == 403
     assert response.status_code == 201
