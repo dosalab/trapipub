@@ -102,10 +102,10 @@ class CustomerDetailsSerializer(serializers.ModelSerializer):
 
 # Create an order
 class OrderSerializer(serializers.Serializer):
-    customer = serializers.IntegerField(required = True)
+    customer = serializers.CharField(required = True)
     notes = serializers.CharField(required = True)
     amount = serializers.IntegerField(required = True)
-    invoice_number = serializers.IntegerField(required = True)
+    invoice_number = serializers.CharField(required = True)
    
     def create(self, validated_data):
         merchant = self.context['merchant']
@@ -121,7 +121,8 @@ class OrderSerializer(serializers.Serializer):
                           invoice_number=invoice_number,
                           amount=amount,
                           date=date
-            )
+                      )
+            order.slug = slugify(invoice_number)
             order.save()
             return order
         
@@ -129,7 +130,7 @@ class OrderSerializer(serializers.Serializer):
 class OrderUrlSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='tracker_api:orderdetail',
-        lookup_field='id'
+        lookup_field='slug'
     )
     class Meta:
         model = Order
@@ -139,7 +140,7 @@ class OrderUrlSerializer(serializers.ModelSerializer):
 class orderdetailsSerializer(serializers.ModelSerializer):
     class Meta:
        model = Order
-       fields =('__all__')
+       fields =('invoice_number','date','amount','customer','notes')
 
 
 # Create a delivery
