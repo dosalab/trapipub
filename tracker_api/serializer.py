@@ -94,6 +94,12 @@ class CustomerUrlSerializer(serializers.ModelSerializer):
         model = Customer
         fields =('url',)
 
+# Get details of a customer
+class CustomerDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+       model = Customer
+       fields =('__all__')
+
 # Create an order
 class OrderSerializer(serializers.Serializer):
     customer = serializers.IntegerField(required = True)
