@@ -287,4 +287,24 @@ def test_all_orders_of_merchant(merchant_client):
                 {'url': 'http://testserver/api/v1/orders/1010'}]
     actual = json.loads(response.content.decode('utf-8'))
     assert expected == actual
+
+
+@pytest.mark.django_db
+def test_details_order(merchant_client):
+    merchant = User.objects.get(username="newuser").merchant
+    usr = User.objects.create(username = "customeruser",
+                               password = "aaasssddd",
+                               email = "customer@tracker.com")
+    customer = Customer.objects.create(name="cusomer",
+                                       address="customeraddress" ,
+                                       phone = "+9999999999",
+                                       user = usr,
+                                       merchant=merchant)
+    Order.objects.create(merchant=merchant, customer=customer,slug="1010",
+                         notes = "items1", amount=100, invoice_number="1010")
+    response = merchant_client.get(reverse('tracker_api:orderdetail',
+                                   args=['1010']))
+    del response.data["date"]
+    expected = {"invoice_number":"1010","amount":"100.00","customer":"slug","notes":"items1"}
+    assert response.data == expected
     assert response.status_code == 201
