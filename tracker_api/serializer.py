@@ -98,7 +98,7 @@ class CustomerUrlSerializer(serializers.ModelSerializer):
 class CustomerDetailsSerializer(serializers.ModelSerializer):
     class Meta:
        model = Customer
-       fields =('__all__')
+       fields =('name','phone','address')
 
 # Create an order
 class OrderSerializer(serializers.Serializer):
