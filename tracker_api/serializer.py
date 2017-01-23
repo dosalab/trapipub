@@ -33,6 +33,7 @@ class CarrierSerializer(serializers.Serializer):
                         location = location,
                         merchant = merchant,
                         user = u)
+            c.slug = slugify(u.username+merchant.name)
             c.save()
             return c
 
@@ -41,14 +42,13 @@ class GetCarrierSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
     class Meta:
        model = Carrier
-       fields =("id","name","phone","location", "email")
-
+       fields =("name","phone","location", "email","slug")
 
 #Get all carriers urls under a merchant
 class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='tracker_api:carrierdetail',
-        lookup_field='id'
+        lookup_field='slug'
     )
     class Meta:
         model = Carrier
@@ -73,13 +73,14 @@ class CustomerSerializer(serializers.Serializer):
         address = validated_data['address']
         with transaction.atomic():
             usr = User.objects.create_user(username, email, password)
-            c = Customer(name = name,
+            cus = Customer(name = name,
                         phone = phone,
                         address = address,
                         merchant = merchant,
                          user = usr)
-            c.save()
-            return c
+            cus.slug = slugify(usr.username+merchant.name)
+            cus.save()
+            return cus
         
 
 # Create an order
