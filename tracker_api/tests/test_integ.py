@@ -34,8 +34,13 @@ def test_merchant(server):
     carrier=client.get('http://127.0.0.1:8000/api/v1/carriers', headers={'Authorization':'Token '+token1})
     assert carrier.text == '[{"url":"http://127.0.0.1:8000/api/v1/carriers/carriernewusernewmerchant"}]'
     
- 
-    
+    # customer creation
+    response=client.post('http://127.0.0.1:8000/api/v1/customers/',{'name':"newcustomer",'phone':"99999",'address':"here",'username':"newcustomeruser",'password':"aaasssddd",'email':"customer@trcker.com"},headers={'Authorization':'Token '+token1})
+    assert Customer.objects.get(name='newcustomer').slug=="newcustomerusernewmerchant"
+
+    #get all customers of a merchant
+    customer=client.get('http://127.0.0.1:8000/api/v1/customers', headers={'Authorization':'Token '+token1})
+    assert customer.text == '[{"url":"http://127.0.0.1:8000/api/v1/customers/newcustomerusernewmerchant"}]'
     
 # @pytest.mark.django_db
 # def test_carrier_creation(server):
