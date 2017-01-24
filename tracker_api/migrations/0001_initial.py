@@ -82,9 +82,9 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Orderstatus'),
         ),
         migrations.AddField(
-            model_name='deliverystage',
+            model_name='delivery',
             name='order',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Order'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Order'),
         ),
         migrations.AddField(
             model_name='delivery',
