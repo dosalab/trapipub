@@ -21,13 +21,11 @@ def test_merchant(server):
     login_data = dict(username="newuser1234",email="newuser@tracker.com",password1="aaasssddd",password2="aaasssddd",name="newmerchant",address="merchantaddress", csrfmiddlewaretoken=csrftoken)
     client.post(URL, data=login_data, headers=dict(Referer=URL))
     assert  User.objects.get(username="newuser1234").merchant.name == "newmerchant"
-    
 
     # token
     token1 = client.post('http://127.0.0.1:8000/token/',{'username':"newuser1234",'password':"aaasssddd"})
     token2 = Token.objects.get(user__username='newuser1234').key
     token1=token1.json()['token']
-
     assert token1 == token2
 
     # carrier creation
