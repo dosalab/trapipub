@@ -6,9 +6,13 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from tracker_api.models import Carrier,Customer,Order,Delivery
 import datetime
+
+
+host = "http://127.0.0.1:8000"
+
 @pytest.mark.django_db
 def test_merchant(server):
-    URL = "http://127.0.0.1:8000/accounts/register/"
+    URL = "{}/accounts/register/".format(host)
     client = requests.session()
     client.get(URL)
     csrftoken = client.cookies['csrftoken']
