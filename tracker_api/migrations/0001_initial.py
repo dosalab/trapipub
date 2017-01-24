@@ -77,19 +77,14 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AddField(
-            model_name='order',
-            name='status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Orderstatus'),
-        ),
-        migrations.AddField(
             model_name='delivery',
             name='order',
             field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Order'),
         ),
         migrations.AddField(
-            model_name='delivery',
-            name='packages',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Package'),
+            model_name='customer',
+            name='merchant',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Merchant'),
         ),
         migrations.AddField(
             model_name='delivery',
