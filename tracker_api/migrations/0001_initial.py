@@ -67,13 +67,13 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Orderstatus',
+            name='Status',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(max_length=20)),
                 ('date', models.DateTimeField(default=datetime.date.today)),
                 ('info', models.CharField(max_length=50)),
                 ('terminal', models.BooleanField()),
+                ('delivery', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='status', to='tracker_api.Delivery')),
             ],
         ),
         migrations.CreateModel(
