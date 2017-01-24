@@ -34,6 +34,7 @@ class MerchantRegistration(RegistrationView):
 #  /carriers/ 
 class carrierView(viewsets.ModelViewSet):
     lookup_field = 'slug'
+    
     def get_serializer_class(self):
         if self.action == 'create':
             return CarrierSerializer
@@ -41,6 +42,7 @@ class carrierView(viewsets.ModelViewSet):
             return CarrierUrlSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
     def get_queryset(self):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
 
@@ -69,6 +71,7 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
     serializer_class = GetCarrierSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
     def get_queryset(self):
         return Carrier.objects.filter(merchant=self.request.user.merchant)
 
@@ -81,6 +84,7 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
 
 # Create a customer
 class CustomerView(viewsets.ModelViewSet):
+
     def get_serializer_class(self):
         if self.action == 'create':
             return CustomerSerializer
@@ -88,6 +92,7 @@ class CustomerView(viewsets.ModelViewSet):
             return CustomerUrlSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
     def get_queryset(self):
         return Customer.objects.filter(merchant=self.request.user.merchant)
 
@@ -98,6 +103,7 @@ class CustomerView(viewsets.ModelViewSet):
             if serializer.is_valid():
                 try:
                     c = serializer.save()
+                    
                     return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
                 except IntegrityError :
                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
@@ -113,6 +119,7 @@ class CustomerDetails(viewsets.ModelViewSet):
     serializer_class = CustomerDetailsSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
     def get_queryset(self):
         return Customer.objects.filter(merchant=self.request.user.merchant)
 
@@ -155,6 +162,7 @@ class OrderDetails(viewsets.ModelViewSet):
     serializer_class = orderdetailsSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 
@@ -168,6 +176,7 @@ class DeliveryView(viewsets.ModelViewSet):
     queryset = Delivery.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
     def create(self, request, *args, **kwargs):
         """
         Creates a delivery with the given params
