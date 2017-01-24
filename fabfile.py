@@ -24,17 +24,4 @@ def deploy(tree='master'):
     with cd("/home/ubuntu"):
         run("rm -f current")
         run("ln -s deployments/{} current".format(tree))
-
-    # with cd("/home/ubuntu/current"):
-    #     run("python manage.py collectstatic --noinput")
-            
-    
-
     sudo("sudo service supervisor restart")
-
-# def db():
-#     with cd("/home/ubuntu/current"):
-#         run("python manage.py dropdb tracker")
-#         run("python manage.py createdb tracker")
-#         run ("python manage.py migrate")
-#     sudo("sudo service supervisor restart")
