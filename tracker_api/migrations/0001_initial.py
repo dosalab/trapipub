@@ -93,8 +93,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='carrier',
-            name='deliverise',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Delivery'),
+            name='merchant',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Merchant'),
         ),
         migrations.AddField(
             model_name='carrier',
