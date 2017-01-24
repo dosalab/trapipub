@@ -60,11 +60,10 @@ class Migration(migrations.Migration):
                 ('date', models.DateTimeField(default=datetime.date.today)),
                 ('notes', models.CharField(max_length=50)),
                 ('amount', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('invoicenumber', models.CharField(max_length=20)),
-                ('deliveryaddress', models.CharField(max_length=200)),
+                ('invoice_number', models.CharField(max_length=20)),
                 ('slug', models.SlugField(default='slug', primary_key=True, serialize=False)),
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Customer')),
-                ('merchants', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Merchant')),
+                ('merchant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Merchant')),
             ],
         ),
         migrations.CreateModel(
