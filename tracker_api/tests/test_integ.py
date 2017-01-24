@@ -36,7 +36,7 @@ def test_merchant(server):
 
     #get a particular carrier details
     carrier=client.get('http://127.0.0.1:8000/api/v1/carriers/carriernewusernewmerchant',headers={'Authorization':'Token '+token1})
-    assert carrier.text == '{"name":"newcarrier","phone":"99999","location":"here","email":"carrier@trcker.com","slug":"carriernewusernewmerchant"}'
+    assert carrier.text == '{"name":"newcarrier","phone":"99999","location":"here","email":"carrier@trcker.com"}'
 
     #get all carriers
     carrier=client.get('http://127.0.0.1:8000/api/v1/carriers', headers={'Authorization':'Token '+token1})
