@@ -4,7 +4,8 @@ from rest_framework import serializers
 from django.db import transaction
 from django.utils.text import slugify
 import datetime
-
+from django.urls import reverse
+from django.contrib.sites.shortcuts import get_current_site
 #Merchant details view
 class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,9 +46,16 @@ class GetCarrierSerializer(serializers.ModelSerializer):
        model = Carrier
        fields =("name","phone","location", "email")
 
+class CustomHyperlink(serializers.HyperlinkedIdentityField):
+    def get_url(self, obj, view_name, request, format):
+        url_kwargs = {
+            'slug': obj.slug,
+        }
+        return 'http://{}{}'.format(get_current_site(request),reverse(view_name, kwargs=url_kwargs))
+
 #Get all carriers urls under a merchant
 class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
+    url = CustomHyperlink(
         view_name='tracker_api:carrierdetail',
         lookup_field='slug'
     )
@@ -186,3 +194,4 @@ class DeliveryDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Delivery
         fields = ('id','carrier','order','status')
+        

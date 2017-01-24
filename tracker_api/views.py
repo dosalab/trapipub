@@ -15,6 +15,7 @@ from rest_framework import authentication
 from django.http import HttpResponse
 from django.db.utils import IntegrityError
 import datetime
+from django.contrib.sites.shortcuts import get_current_site
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
 
@@ -54,8 +55,9 @@ class carrierView(viewsets.ModelViewSet):
             if serializer.is_valid():
                 try :
                     c = serializer.save()
-                    return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
-                except:
+                    sitename = get_current_site(request).domain
+                    return (Response({"url" :'http://{}{}'.format(sitename,c.url())}, status=status.HTTP_201_CREATED))
+                except IntegrityError:
                      return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
                  return (Response("Give Proper Data ", status=status.HTTP_400_BAD_REQUEST))

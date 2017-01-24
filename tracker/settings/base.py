@@ -31,7 +31,7 @@ REST_FRAMEWORK = {
 }
 
 INSTALLED_APPS = [
-    
+    'django.contrib.sites',
     'tracker_api.apps.TrackerApiConfig',
     'tracker_fe.apps.TrackerFrontEnd',
     'django.contrib.admin',
