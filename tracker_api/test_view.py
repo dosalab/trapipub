@@ -113,7 +113,7 @@ def test_details_of_carrier(merchant_client):
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=['carrier1merchant1']))
     assert response.data == {"location":"kozikkod", "name":"carrier",
-                             "phone":"9656888871", "email":"user@tracker.com",'slug': 'carrier1merchant1'}
+                             "phone":"9656888871", "email":"user@tracker.com"}
     # Wrong args
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=[2]))
@@ -131,7 +131,7 @@ def test_change_name_of_carrier (merchant_client):
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
     assert response.data == {"location":"kozikkod", "name":"new name",
-                             "phone":"9656888871", "email":"user@tracker.com","slug":"carrier1merchant1"}
+                             "phone":"9656888871", "email":"user@tracker.com"}
     
 
 @pytest.mark.django_db
@@ -145,7 +145,7 @@ def test_change_phone_of_carrier(merchant_client):
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
     assert response.data == {"location":"kozikkod", "name":"carrier",
-                             "phone":"+9999999999", "email":"user@tracker.com","slug":"carrier1merchant1"}
+                             "phone":"+9999999999", "email":"user@tracker.com"}
      
 
 @pytest.mark.django_db
@@ -160,7 +160,7 @@ def test_change_location_of_carrier(merchant_client):
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
     assert response.data == {"location":"kerala", "name":"carrier",
-                             "phone":"9656888871", "email":"user@tracker.com","slug":"carrier1merchant1"}
+                             "phone":"9656888871", "email":"user@tracker.com"}
 
 # /customer
 @pytest.mark.django_db
