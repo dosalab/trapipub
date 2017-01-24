@@ -52,7 +52,7 @@ def test_merchant(server):
     
     #get a particular customer details
     customer=client.get('http://127.0.0.1:8000/api/v1/customers/newcustomerusernewmerchant',headers={'Authorization':'Token '+token1})
-    assert customer.text == '{"slug":"newcustomerusernewmerchant","name":"newcustomer","phone":"99999","address":"here","merchant":2,"user":36}'
+    assert json.loads(customer.text) == {"name":"newcustomer","phone":"99999","address":"here"}
 
     # creat an order
     order=client.post('http://127.0.0.1:8000/api/v1/orders/',{"customer":"newcustomerusernewmerchant","notes":"include item1,2","amount":"100","invoice_number":"1010"}, headers={'Authorization':'Token '+token1})
