@@ -76,21 +76,6 @@ class Migration(migrations.Migration):
                 ('delivery', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='status', to='tracker_api.Delivery')),
             ],
         ),
-        migrations.CreateModel(
-            name='Package',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.CharField(max_length=50)),
-                ('date', models.DateTimeField(default=datetime.date.today)),
-                ('deliverys', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Delivery')),
-                ('orders', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Order')),
-            ],
-        ),
-        migrations.AddField(
-            model_name='order',
-            name='packages',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tracker_api.Package'),
-        ),
         migrations.AddField(
             model_name='order',
             name='status',
