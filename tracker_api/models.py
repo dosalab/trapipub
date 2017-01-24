@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token 
-
+from django.contrib.sites.models import Site
 from django.core.validators import RegexValidator
 
 
@@ -79,6 +79,11 @@ class Status(models.Model):
     date =  models.DateTimeField(default=date.today)
     info = models.CharField(max_length=50)
     terminal = models.BooleanField()
+
+class TrackerSite(models.Model):
+    title =  models.CharField(max_length=50)
+    sites =  models.ManyToManyField(Site)
+
     
 # class Package (models.Model):
 #     orders = models.ForeignKey('Order', on_delete=models.CASCADE)

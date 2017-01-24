@@ -12,6 +12,7 @@ def django_db_setup():
 
 @pytest.fixture
 def server(xprocess):
+
     def preparefunc(cwd):
         print (str(cwd))
         n = cwd.new(basename="").new(basename="").dirpath().chdir()

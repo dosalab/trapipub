@@ -1,15 +1,12 @@
+import json
+import datetime
 import pytest
 import requests
 import sys
-import json
-from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
-from tracker_api.models import Carrier,Customer,Order,Delivery
-import datetime
+#from rest_framework.authtoken.models import Token
 
-
-host = "http://127.0.0.1:8000"
-
+#host = "http://127.0.0.1:8000"
+host = "http://ec2-54-64-56-135.ap-northeast-1.compute.amazonaws.com"
 @pytest.mark.django_db
 def test_merchant(server):
     URL = "{}/accounts/register/".format(host)
@@ -18,57 +15,91 @@ def test_merchant(server):
     csrftoken = client.cookies['csrftoken']
 
     # merchant creation 
-    login_data = dict(username="newuser1234",email="newuser@tracker.com",password1="aaasssddd",password2="aaasssddd",name="newmerchant",address="merchantaddress", csrfmiddlewaretoken=csrftoken)
+    login_data = dict(username="newuser1234",
+                      email="newuser@tracker.com",
+                      password1="aaasssddd", password2="aaasssddd",
+                      name="newmerchant", address="merchantaddress",
+                      csrfmiddlewaretoken=csrftoken)
     client.post(URL, data=login_data, headers=dict(Referer=URL))
-    assert  User.objects.get(username="newuser1234").merchant.name == "newmerchant"
 
     # token
-    token1 = client.post("{}/token/".format(host),{'username':"newuser1234",'password':"aaasssddd"})
-    token2 = Token.objects.get(user__username='newuser1234').key
-    token1=token1.json()['token']
-    assert token1 == token2
+    token1 = client.post("{}/token/".format(host),
+                         {'username':"newuser1234", 'password':"aaasssddd"})
+    token1 = token1.json()['token']
 
     # carrier creation
-    client.post('{}/api/v1/carriers/'.format(host),{'name':"newcarrier",'phone':"99999",'location':"here",'username':"carriernewuser",'password':"aaasssddd",'email':"carrier@trcker.com"},headers={'Authorization':'Token '+token1})
-    assert Carrier.objects.get(slug='carriernewusernewmerchant').name=="newcarrier"
-
+    data = {'name'     :"newcarrier",
+            'phone'    :"99999",
+            'location' :"here",
+            'username' :"carriernewuser",
+            'password' :"aaasssddd",
+            'email'    :"carrier@trcker.com"}
+    headers = {'Authorization': 'Token '+token1}
+    client.post("{}/api/v1/carriers/".format(host),
+                data=data,
+                headers=headers)
     #get a particular carrier details
-    carrier=client.get('{}/api/v1/carriers/carriernewusernewmerchant'.format(host),headers={'Authorization':'Token '+token1})
-    assert carrier.text == '{"name":"newcarrier","phone":"99999","location":"here","email":"carrier@trcker.com"}'
+    carrier = client.get('{}/api/v1/carriers/carriernewusernewmerchant'.format(host),
+                        headers={'Authorization':'Token '+token1})
+    assert json.loads(carrier.text) == {"name":"newcarrier",
+                                        "phone":"99999",
+                                        "location":"here",
+                                        "email":"carrier@trcker.com"}
 
     #get all carriers
-    carrier=client.get('{}/api/v1/carriers'.format(host), headers={'Authorization':'Token '+token1})
+    carrier = client.get('{}/api/v1/carriers'.format(host),
+                        headers={'Authorization':'Token '+token1})
+    import pdb;pdb.set_trace()
     assert json.loads(carrier.text) == [{"url":"{}/api/v1/carriers/carriernewusernewmerchant".format(host)}]
     
     # customer creation
-    response=client.post('{}/api/v1/customers/'.format(host),{'name':"newcustomer",'phone':"99999",'address':"here",'username':"newcustomeruser",'password':"aaasssddd",'email':"customer@trcker.com"},headers={'Authorization':'Token '+token1})
-    assert Customer.objects.get(name='newcustomer').slug=="newcustomerusernewmerchant"
+    client.post('{}/api/v1/customers/'.format(host),
+                {'name':"newcustomer",
+                 'phone':"99999",
+                 'address':"here",
+                 'username':"newcustomeruser",
+                 'password':"aaasssddd",
+                 'email':"customer@trcker.com"},
+                headers={'Authorization':'Token '+token1})
 
     #get all customers of a merchant
-    customer=client.get('{}/api/v1/customers'.format(host), headers={'Authorization':'Token '+token1})
+    customer = client.get('{}/api/v1/customers'.format(host),
+                          headers={'Authorization':'Token '+token1})
     assert json.loads(customer.text) == [{"url":"{}/api/v1/customers/newcustomerusernewmerchant".format(host)}]
     
     #get a particular customer details
-    customer=client.get('{}/api/v1/customers/newcustomerusernewmerchant'.format(host),headers={'Authorization':'Token '+token1})
-    assert json.loads(customer.text) == {"name":"newcustomer","phone":"99999","address":"here"}
+    customer=client.get('{}/api/v1/customers/newcustomerusernewmerchant'.format(host),
+                        headers={'Authorization':'Token '+token1})
+    assert json.loads(customer.text) == {"name":"newcustomer",
+                                         "phone":"99999",
+                                         "address":"here"}
 
     # creat an order
-    order=client.post('{}/api/v1/orders/'.format(host),{"customer":"newcustomerusernewmerchant","notes":"include item1,2","amount":"100","invoice_number":"1010"}, headers={'Authorization':'Token '+token1})
-    assert Order.objects.get(customer='newcustomerusernewmerchant').slug== "1010"
-
+    order=client.post('{}/api/v1/orders/'.format(host),
+                      {"customer":"newcustomerusernewmerchant",
+                       "notes":"include item1,2",
+                       "amount":"100",
+                       "invoice_number":"1010"},
+                     headers={'Authorization':'Token '+token1})
     
     #get all orders of a merchant
-    order=client.get('{}/api/v1/orders'.format(host), headers={'Authorization':'Token '+token1})
+    order = client.get('{}/api/v1/orders'.format(host),
+                       headers={'Authorization':'Token '+token1})
     assert json.loads(order.text) == [{"url":"{}/api/v1/orders/1010".format(host)}]
 
     #get a particular order details
     order=client.get('{}/api/v1/orders/1010'.format(host),headers={'Authorization':'Token '+token1})
-    date = datetime.datetime.now()
     op=json.loads(order.text)
     del op["date"]
-    assert op =={"invoice_number":"1010","amount":"100.00","customer":"newcustomerusernewmerchant","notes":"include item1,2"}
+    assert op =={"invoice_number":"1010",
+                 "amount":"100.00",
+                 "customer":"newcustomerusernewmerchant",
+                 "notes":"include item1,2"}
     
     # creat a delivery
-    delivery=client.post('{}/api/v1/deliveries/'.format(host),{"order":"1010","carrier":"carriernewusernewmerchant"}, headers={'Authorization':'Token '+token1})
-    assert Delivery.objects.get(slug="1010newcarrier").order.notes == 'include item1,2'
+    client.post('{}/api/v1/deliveries/'.format(host),
+                {"order":"1010",
+                 "carrier":"carriernewusernewmerchant"},
+                headers={'Authorization':'Token '+token1})
+ 
 
