@@ -36,7 +36,7 @@ class CarrierSerializer(serializers.Serializer):
                         user = u)
             c.slug = slugify(u.username+merchant.name)
             c.save()
-            return c.url
+            return (Response({"url" : c.url}, status=status.HTTP_201_CREATED))
 
 # Get details of a carrier
 class GetCarrierSerializer(serializers.ModelSerializer):

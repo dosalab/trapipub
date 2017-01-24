@@ -52,7 +52,7 @@ class carrierView(viewsets.ModelViewSet):
             if serializer.is_valid():
                 try :
                     c = serializer.save()
-                    return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
+#                    return (Response({"url" : c}, status=status.HTTP_201_CREATED))
                 except:
                      return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
