@@ -44,13 +44,11 @@ class carrierView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 
-    def get_queryset(self):
-        return Carrier.objects.filter(merchant=self.request.user.merchant)
-
     def create(self, request, *args, **kwargs):
         '''carrier creation '''
         try:
             merchant = User.objects.get(username = self.request.user).merchant
+            queryset =  Carrier.objects.filter(merchant=self.request.user.merchant)
             serializer = CarrierSerializer(data = request.data, context = {'merchant' : merchant})
             if serializer.is_valid():
                 try :
@@ -64,6 +62,19 @@ class carrierView(viewsets.ModelViewSet):
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset =  Carrier.objects.filter(merchant=self.request.user.merchant)
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+ 
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
 
 #  /carriers/{id} 
