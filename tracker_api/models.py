@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token 
 from django.contrib.sites.models import Site
 from django.core.validators import RegexValidator
-
+from django.contrib.sites.models import Site
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -34,7 +34,7 @@ class Carrier (models.Model):
         return "Carrier(id={}, name='{}')".format(self.slug, repr(self.name))
 
     def url(self):
-        
+        #current_site = Site.objects.get_current()
         return "/carriers/{}".format(self.slug)
 
 class Customer (models.Model):

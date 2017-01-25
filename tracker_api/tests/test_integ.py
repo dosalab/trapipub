@@ -3,7 +3,6 @@ import datetime
 import pytest
 import requests
 import sys
-#from rest_framework.authtoken.models import Token
 
 #host = "http://127.0.0.1:8000"
 host = "http://ec2-54-64-56-135.ap-northeast-1.compute.amazonaws.com"
@@ -13,7 +12,7 @@ def test_merchant(server):
     client = requests.session()
     client.get(URL)
     csrftoken = client.cookies['csrftoken']
-
+    
     # merchant creation 
     login_data = dict(username="newuser1234",
                       email="newuser@tracker.com",
@@ -38,6 +37,7 @@ def test_merchant(server):
     client.post("{}/api/v1/carriers/".format(host),
                 data=data,
                 headers=headers)
+
     #get a particular carrier details
     carrier = client.get('{}/api/v1/carriers/carriernewusernewmerchant'.format(host),
                         headers={'Authorization':'Token '+token1})
