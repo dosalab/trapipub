@@ -5,7 +5,7 @@ SECRET_KEY = '9x_*ed6&v=gnaask$y6r@!z4af%!#*--*z%y-0uki2&uau83uy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-SITE_ID = 2
+SITE_ID = 1
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {

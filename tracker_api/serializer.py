@@ -55,10 +55,10 @@ class CustomHyperlink(serializers.HyperlinkedIdentityField):
 
 #Get all carriers urls under a merchant
 class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
-    url = CustomHyperlink(
-        view_name='tracker_api:carrierdetail',
-        lookup_field='slug'
-    )
+    # url = CustomHyperlink(
+    #     view_name='tracker_api:carrierdetail',
+    #     lookup_field='slug'
+    # )
     class Meta:
         model = Carrier
         fields =("url",)
