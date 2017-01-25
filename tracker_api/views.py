@@ -121,10 +121,6 @@ class CustomerView(viewsets.ModelViewSet):
             return CustomerUrlSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-
-    # def get_queryset(self):
-    #     return Customer.objects.filter(merchant=self.request.user.merchant)
-
     def create(self, request, *args, **kwargs):
         try:
             merchant = User.objects.get(username = self.request.user).merchant
@@ -178,6 +174,16 @@ class CustomerDetails(viewsets.ModelViewSet):
         except:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
+    def partial_update(self, request, *args, **kwargs):
+        try:
+            merchant = User.objects.get(username = self.request.user).merchant
+            kwargs['partial'] = True
+            if request.data == {}:
+                return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
+            else:
+                return self.update(request, *args, **kwargs)
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 #Create an order 
 class OrderView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
