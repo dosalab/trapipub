@@ -109,11 +109,11 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
                 return self.update(request, *args, **kwargs)
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
-
+        except ValueError:
+            return (Response("Not a valied field", status=status.HTTP_403_FORBIDDEN))
 
 # Create a customer
 class CustomerView(viewsets.ModelViewSet):
-
     def get_serializer_class(self):
         if self.action == 'create':
             return CustomerSerializer
