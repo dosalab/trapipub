@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token 
 from django.contrib.sites.models import Site
 from django.core.validators import RegexValidator
-from django.contrib.sites.models import Site
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -34,8 +34,8 @@ class Carrier (models.Model):
         return "Carrier(id={}, name='{}')".format(self.slug, repr(self.name))
 
     def url(self):
-        current_site = Site.objects.get_current()
-        return "{}api/v1/carriers/{}".format(current_site, self.slug)
+        
+        return "/carriers/{}".format(self.slug)
 
 class Customer (models.Model):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
@@ -81,9 +81,9 @@ class Status(models.Model):
     info = models.CharField(max_length=50)
     terminal = models.BooleanField()
 
-# class TrackerSite(models.Model):
-#     title =  models.CharField(max_length=50)
-#     sites =  models.ManyToManyField(Site)
+class TrackerSite(models.Model):
+    title =  models.CharField(max_length=50)
+    sites =  models.ManyToManyField(Site)
 
     
 # class Package (models.Model):
