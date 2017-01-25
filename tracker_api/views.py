@@ -163,9 +163,20 @@ class CustomerDetails(viewsets.ModelViewSet):
     serializer_class = CustomerDetailsSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-
     def get_queryset(self):
-        return Customer.objects.filter(merchant=self.request.user.merchant)
+        try:
+            Customer.objects.filter(merchant=self.request.user.merchant)
+            return Customer.objects.filter(merchant=self.request.user.merchant)        
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
 #Create an order 
 class OrderView(viewsets.ModelViewSet):
