@@ -122,12 +122,13 @@ class CustomerView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 
-    def get_queryset(self):
-        return Customer.objects.filter(merchant=self.request.user.merchant)
+    # def get_queryset(self):
+    #     return Customer.objects.filter(merchant=self.request.user.merchant)
 
     def create(self, request, *args, **kwargs):
         try:
             merchant = User.objects.get(username = self.request.user).merchant
+            queryset = Customer.objects.filter(merchant=self.request.user.merchant)
             serializer = CustomerSerializer(data = request.data, context = {'merchant' : merchant})
             if serializer.is_valid():
                 try:
@@ -138,6 +139,20 @@ class CustomerView(viewsets.ModelViewSet):
                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
                 return (Response("Give proper Data", status=status.HTTP_400_BAD_REQUEST))
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset =  Customer.objects.filter(merchant=self.request.user.merchant)
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+ 
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
