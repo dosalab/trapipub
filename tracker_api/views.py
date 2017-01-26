@@ -15,6 +15,7 @@ from rest_framework import authentication
 from django.http import HttpResponse
 from django.db.utils import IntegrityError
 import datetime
+from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
@@ -23,8 +24,8 @@ class MerchantRegistration(RegistrationView):
         data = form.cleaned_data
         username, email, password = data['username'], data['email'], data['password1']
         with transaction.atomic():
-            user=User.objects.create_user(username, email, password)
-            m = Merchant(user = user)
+            user = User.objects.create_user(username, email, password)
+            m = Merchant(user=user)
             m.name = data['name']
             m.address = data['address']
             m.save()
@@ -47,34 +48,38 @@ class carrierView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         '''carrier creation '''
         try:
-            merchant = User.objects.get(username = self.request.user).merchant
-            queryset =  Carrier.objects.filter(merchant=self.request.user.merchant)
-            serializer = CarrierSerializer(data = request.data, context = {'merchant' : merchant})
+            merchant = User.objects.get(username=self.request.user).merchant
+            queryset = Carrier.objects.filter(merchant=self.request.user.merchant)
+            serializer = CarrierSerializer(data=request.data, context={'merchant' : merchant})
             if serializer.is_valid():
-                try :
+                try:
                     c = serializer.save()
                     sitename = get_current_site(request).domain
-                    return (Response({"url" :'http://{}{}'.format(sitename,c.url())}, status=status.HTTP_201_CREATED))
+                    #sitename = Site.objects.get_current()
+                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename, c.url())},
+                                     status=status.HTTP_201_CREATED))
                 except IntegrityError:
-                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
+                    return((Response("Username already exist",
+                                     status=status.HTTP_409_CONFLICT)))
             else:
-                 return (Response("Give Proper Data ", status=status.HTTP_400_BAD_REQUEST))
+                return (Response("Give Proper Data ",
+                                 status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 
     def list(self, request, *args, **kwargs):
         try:
-            queryset =  Carrier.objects.filter(merchant=self.request.user.merchant)
+            queryset = Carrier.objects.filter(merchant=self.request.user.merchant)
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
- 
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
-        
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 
 
 #  /carriers/{id} 
@@ -93,9 +98,10 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
     def get_queryset(self):
         try:
             Carrier.objects.filter(merchant=self.request.user.merchant)
-            return Carrier.objects.filter(merchant=self.request.user.merchant)        
+            return Carrier.objects.filter(merchant=self.request.user.merchant)
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 
     def retrieve(self, request, *args, **kwargs):
         try:
@@ -103,11 +109,12 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         except:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 
     def partial_update(self, request, *args, **kwargs):
         try:
-            merchant = User.objects.get(username = self.request.user).merchant
+            merchant = User.objects.get(username=self.request.user).merchant
             kwargs['partial'] = True
             if request.data == {}:
                 return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
@@ -115,9 +122,7 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
                 return self.update(request, *args, **kwargs)
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
-        except ValueError:
-            return (Response("Not a valied field", status=status.HTTP_403_FORBIDDEN))
-
+       
 # Create a customer
 class CustomerView(viewsets.ModelViewSet):
     def get_serializer_class(self):
