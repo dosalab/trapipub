@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
-from .models import Carrier,Order,Merchant,Customer,Status,Delivery
-from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer,CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetailsSerializer,StatusSerializer
+from .models import Carrier, Order, Merchant, Customer, Status, Delivery
+from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetailsSerializer,StatusSerializer
 from registration.views import RegistrationView
 from registration.signals import user_registered
 from django.contrib.auth import authenticate
@@ -80,8 +80,14 @@ class carrierView(viewsets.ModelViewSet):
 #  /carriers/{id} 
 class GetCarrierDetailsView(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
-    lookup_field = 'slug'   
-    serializer_class = GetCarrierSerializer
+    lookup_field = 'slug'
+    #serializer_class = GetCarrierSerializer
+    
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return GetCarrierSerializer
+        if self.action == 'partial_update':
+            return PatchCarrier
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
     def get_queryset(self):
