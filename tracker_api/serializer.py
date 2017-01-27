@@ -192,12 +192,10 @@ class StatusRelatedField(serializers.RelatedField):
                 "terminal":value.terminal}
         
 # get delivery details
-class DeliveryDetailsSerializer(serializers.ModelSerializer):
-    order = orderdetailsSerializer()
-    carrier = GetCarrierSerializer()
-    status = StatusRelatedField(many=True,read_only=True)
-    
+class DeliveryDetails(serializers.ModelSerializer):
+    # order = orderdetailsSerializer()
+    # carrier = GetCarrierSerializer()
+    status = StatusRelatedField(many=True, read_only=True)
     class Meta:
         model = Delivery
-        fields = ('id','carrier','order','status')
-        
+        fields = ('id', 'carrier', 'order', 'status')
