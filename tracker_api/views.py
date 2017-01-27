@@ -53,10 +53,9 @@ class carrierView(viewsets.ModelViewSet):
             serializer = CarrierSerializer(data=request.data, context={'merchant' : merchant})
             if serializer.is_valid():
                 try:
-                    c = serializer.save()
+                    carrier = serializer.save()
                     sitename = get_current_site(request).domain
-                    #sitename = Site.objects.get_current()
-                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename, c.url())},
+                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename, carrier.url())},
                                      status=status.HTTP_201_CREATED))
                 except IntegrityError:
                     return((Response("Username already exist",
@@ -139,9 +138,9 @@ class CustomerView(viewsets.ModelViewSet):
             serializer = CustomerSerializer(data = request.data, context = {'merchant' : merchant})
             if serializer.is_valid():
                 try:
-                    c = serializer.save()
+                    customer = serializer.save()
                     sitename = get_current_site(request).domain
-                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename, c.url())},
+                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename, customer.url())},
                                      status=status.HTTP_201_CREATED))
                 except IntegrityError :
                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
@@ -219,7 +218,7 @@ class OrderView(viewsets.ModelViewSet):
             if serializer.is_valid():
                 order = serializer.save()
                 sitename = get_current_site(request).domain
-                return (Response({"url" :'http://{}/api/v1{}'.format(sitename, c.url())},
+                return (Response({"url" :'http://{}/api/v1{}'.format(sitename, order.url())},
                                  status=status.HTTP_201_CREATED))
             else:
                 return (Response("Give proper data", status=status.HTTP_400_BAD_REQUEST))
