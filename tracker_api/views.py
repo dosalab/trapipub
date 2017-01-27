@@ -276,8 +276,10 @@ class DeliveryView(viewsets.ModelViewSet):
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
         except IntegrityError:
             return (Response("Order already deliverd", status=status.HTTP_400_BAD_REQUEST))
-        except KeyError:
-            return (Response("Give proper data", status=status.HTTP_400_BAD_REQUEST))
+        except Carrier.DoesNotExist:
+            return (Response("Give proper Carrier", status=status.HTTP_400_BAD_REQUEST))
+        except Order.DoesNotExist:
+            return (Response("Give proper Order", status=status.HTTP_400_BAD_REQUEST))
 
 # class DeliveryDetailsView(viewsets.ModelViewSet):
 #     lookup_field = 'slug'
