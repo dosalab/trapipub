@@ -140,8 +140,9 @@ class CustomerView(viewsets.ModelViewSet):
             if serializer.is_valid():
                 try:
                     c = serializer.save()
-                    
-                    return (Response({"url" : c.url()}, status=status.HTTP_201_CREATED))
+                    sitename = get_current_site(request).domain
+                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename, c.url())},
+                                     status=status.HTTP_201_CREATED))
                 except IntegrityError :
                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
@@ -217,7 +218,9 @@ class OrderView(viewsets.ModelViewSet):
             serializer = OrderSerializer(data = request.data, context = {'merchant' : merchant,'customer':customer})
             if serializer.is_valid():
                 order = serializer.save()
-                return(Response({"url":order.url()}, status=status.HTTP_201_CREATED))
+                sitename = get_current_site(request).domain
+                return (Response({"url" :'http://{}/api/v1{}'.format(sitename, c.url())},
+                                 status=status.HTTP_201_CREATED))
             else:
                 return (Response("Give proper data", status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
