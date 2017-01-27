@@ -61,7 +61,7 @@ class carrierView(viewsets.ModelViewSet):
                     return((Response("Username already exist",
                                      status=status.HTTP_409_CONFLICT)))
             else:
-                return (Response("Give Proper Data ",
+                return (Response(serializer.errors,
                                  status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
@@ -146,7 +146,7 @@ class CustomerView(viewsets.ModelViewSet):
                 except IntegrityError :
                     return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
             else:
-                return (Response("Give proper Data", status=status.HTTP_400_BAD_REQUEST))
+                return (Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
@@ -222,7 +222,7 @@ class OrderView(viewsets.ModelViewSet):
                 return (Response({"url" :'http://{}/api/v1{}'.format(sitename, order.url())},
                                  status=status.HTTP_201_CREATED))
             else:
-                return (Response("Give proper data", status=status.HTTP_400_BAD_REQUEST))
+                return (Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
         except Customer.DoesNotExist:
@@ -266,7 +266,12 @@ class DeliveryView(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            if serializer.is_valid(raise_exception=True):
+                self.perform_create(serializer)
+                headers = self.get_success_headers(serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            else:
+                return (Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
         except IntegrityError:
