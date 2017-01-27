@@ -20,6 +20,7 @@ class CarrierSerializer(serializers.Serializer):
     password = serializers.CharField(required = True)
     email = serializers.EmailField(required = True)
     location = serializers.CharField(required = False,default="")
+            
     def create(self, validated_data):
         merchant = self.context['merchant']
         name  = validated_data['name']
