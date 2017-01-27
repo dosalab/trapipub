@@ -263,15 +263,11 @@ class DeliveryView(viewsets.ModelViewSet):
             carrier = request.data['carrier']
             carrier = Carrier.objects.get(slug=carrier)
             serializer = DeliverySerializer(data = request.data, context = {'order' : order,'carrier':carrier})
-            serializer.is_valid(raise_exception=True)
+            serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            if serializer.is_valid(raise_exception=True):
-                self.perform_create(serializer)
-                headers = self.get_success_headers(serializer.data)
-                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-            else:
-                return (Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
         except IntegrityError:
