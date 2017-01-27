@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-from .models import Carrier,Order,Customer
+from tracker_api.models import Carrier,Order,Customer
 
 @pytest.mark.django_db
 def test_carrier_create_with_no_merchant(client, carrier_data):
