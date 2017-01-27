@@ -5,7 +5,7 @@ SECRET_KEY = '9x_*ed6&v=gnaask$y6r@!z4af%!#*--*z%y-0uki2&uau83uy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-#SITE_ID = 1
+
 USE_X_FORWARDED_HOST = True
 
 # Database
