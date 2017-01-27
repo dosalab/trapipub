@@ -43,9 +43,10 @@ class CarrierSerializer(serializers.Serializer):
 # Get details of a carrier
 class GetCarrierSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
+    delivery = serializers.CharField(source='delivery_set.all')
     class Meta:
-       model = Carrier
-       fields =("name","phone","location", "email")
+        model = Carrier
+        fields = ("name", "phone", "location", "email", "delivery")
 
 # Update details of a carrier
 class PatchCarrier(serializers.ModelSerializer):
