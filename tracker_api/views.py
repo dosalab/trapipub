@@ -228,7 +228,7 @@ class OrderView(viewsets.ModelViewSet):
             if serializer.is_valid():
                 order = serializer.save()
                 sitename = get_current_site(request).domain
-                return (Response({"url" :'http://{}/api/v1{}'.format(sitename, c.url())},
+                return (Response({"url" :'http://{}/api/v1{}'.format(sitename, order.url())},
                                  status=status.HTTP_201_CREATED))
             else:
                 return (Response(serializer.errors,
