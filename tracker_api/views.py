@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
 from .models import Carrier, Order, Merchant, Customer, Status, Delivery
-from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetailsSerializer,StatusSerializer
+from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetails,StatusSerializer
 from registration.views import RegistrationView
 from registration.signals import user_registered
 from django.contrib.auth import authenticate
@@ -85,7 +85,6 @@ class carrierView(viewsets.ModelViewSet):
 class GetCarrierDetailsView(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
     lookup_field = 'slug'
-    #serializer_class = GetCarrierSerializer
     
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -121,7 +120,8 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             else:
                 return self.update(request, *args, **kwargs)
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
        
 # Create a customer
 class CustomerView(viewsets.ModelViewSet):
@@ -134,49 +134,53 @@ class CustomerView(viewsets.ModelViewSet):
     authentication_classes = (authentication.TokenAuthentication,)
     def create(self, request, *args, **kwargs):
         try:
-            merchant = User.objects.get(username = self.request.user).merchant
+            merchant = User.objects.get(username=self.request.user).merchant
             queryset = Customer.objects.filter(merchant=self.request.user.merchant)
-            serializer = CustomerSerializer(data = request.data, context = {'merchant' : merchant})
+            serializer = CustomerSerializer(data=request.data,
+                                            context={'merchant' : merchant})
             if serializer.is_valid():
                 try:
                     customer = serializer.save()
                     sitename = get_current_site(request).domain
                     return (Response({"url" :'http://{}/api/v1{}'.format(sitename, customer.url())},
                                      status=status.HTTP_201_CREATED))
-                except IntegrityError :
-                    return((Response("Username already exist", status=status.HTTP_409_CONFLICT)))
+                except IntegrityError:
+                    return((Response("Username already exist",
+                                     status=status.HTTP_409_CONFLICT)))
             else:
-                return (Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+                return (Response(serializer.errors,
+                                 status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
 
     def list(self, request, *args, **kwargs):
         try:
-            queryset =  Customer.objects.filter(merchant=self.request.user.merchant)
+            queryset = Customer.objects.filter(merchant=self.request.user.merchant)
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
- 
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
-        
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 
 #  /customers/{id} 
 class CustomerDetails(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
-    lookup_field = 'slug'   
+    lookup_field = 'slug'
     serializer_class = CustomerDetailsSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
     def get_queryset(self):
         try:
             Customer.objects.filter(merchant=self.request.user.merchant)
-            return Customer.objects.filter(merchant=self.request.user.merchant)        
+            return Customer.objects.filter(merchant=self.request.user.merchant)
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 
     def retrieve(self, request, *args, **kwargs):
         try:
@@ -184,18 +188,21 @@ class CustomerDetails(viewsets.ModelViewSet):
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         except:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 
     def partial_update(self, request, *args, **kwargs):
         try:
-            merchant = User.objects.get(username = self.request.user).merchant
+            merchant = User.objects.get(username=self.request.user).merchant
             kwargs['partial'] = True
             if request.data == {}:
-                return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
+                return (Response("Changes not given",
+                                 status=status.HTTP_400_BAD_REQUEST))
             else:
                 return self.update(request, *args, **kwargs)
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 #Create an order 
 class OrderView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
@@ -212,23 +219,29 @@ class OrderView(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):            
         try:
-            merchant = User.objects.get(username = self.request.user).merchant
+            merchant = User.objects.get(username=self.request.user).merchant
             customerid = request.data['customer']
             customer = Customer.objects.get(slug=customerid)
-            serializer = OrderSerializer(data = request.data, context = {'merchant' : merchant,'customer':customer})
+            serializer = OrderSerializer(data=request.data,
+                                         context={'merchant' : merchant,
+                                                  'customer':customer})
             if serializer.is_valid():
                 order = serializer.save()
                 sitename = get_current_site(request).domain
-                return (Response({"url" :'http://{}/api/v1{}'.format(sitename, order.url())},
+                return (Response({"url" :'http://{}/api/v1{}'.format(sitename, c.url())},
                                  status=status.HTTP_201_CREATED))
             else:
-                return (Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
+                return (Response(serializer.errors,
+                                 status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
         except Customer.DoesNotExist:
-            return (Response("Wrong customer", status=status.HTTP_400_BAD_REQUEST))
+            return (Response("Wrong customer",
+                             status=status.HTTP_400_BAD_REQUEST))
         except KeyError:
-             return (Response("Give Customer", status=status.HTTP_400_BAD_REQUEST))
+             return (Response("Give Customer",
+                              status=status.HTTP_400_BAD_REQUEST))
 
 
 # Get details of a order
@@ -247,36 +260,58 @@ class DeliveryView(viewsets.ModelViewSet):
     View to handle all /delivery APIs
     """
     lookup_field = 'slug'
-    serializer_class = DeliverySerializer
-    queryset = Delivery.objects.all()
+#    queryset = Delivery.objects.filter(order_merchant=self.request.user.merchant)
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return DeliverySerializer
+        if self.action == 'list':
+            return DeliveryDetails
+
 
     def create(self, request, *args, **kwargs):
         """
         Creates a delivery with the given params
         """
         try:
-            merchant = User.objects.get(username = self.request.user).merchant
+            merchant = User.objects.get(username=self.request.user).merchant
             order = request.data['order']
             order = Order.objects.get(slug=order)
             carrier = request.data['carrier']
             carrier = Carrier.objects.get(slug=carrier)
-            serializer = DeliverySerializer(data = request.data, context = {'order' : order,'carrier':carrier})
-            serializer.is_valid(raise_exception=True):
+            serializer = DeliverySerializer(data=request.data,
+                                            context = {'order' : order, 'carrier':carrier})
+            serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED, headers=headers)
 
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
         except IntegrityError:
-            return (Response("Order already deliverd", status=status.HTTP_400_BAD_REQUEST))
+            return (Response("Order already deliverd",
+                             status=status.HTTP_400_BAD_REQUEST))
         except Carrier.DoesNotExist:
-            return (Response("Give proper Carrier", status=status.HTTP_400_BAD_REQUEST))
+            return (Response("Give proper Carrier",
+                             status=status.HTTP_400_BAD_REQUEST))
         except Order.DoesNotExist:
-            return (Response("Give proper Order", status=status.HTTP_400_BAD_REQUEST))
+            return (Response("Give proper Order",
+                             status=status.HTTP_400_BAD_REQUEST))
+    def list(self, request, *args, **kwargs):
+        queryset = Delivery.objects.filter(order__merchant=self.request.user.merchant)
+       # queryset = self.filter_queryset(self.get_queryset())
 
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 # class DeliveryDetailsView(viewsets.ModelViewSet):
 #     lookup_field = 'slug'
 #     serializer_class = DeliveryDetailsSerializer
