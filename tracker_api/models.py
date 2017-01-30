@@ -74,6 +74,11 @@ class Delivery(models.Model):
     def get_status(self):
         status = Status.objects.filter(delivery=self)
         return status
+    def __str__(self):
+        return "Delivery(id={})".format(self.slug)
+    
+    def url(self):
+        return "/deliveries/{}".format(self.slug)
 
 class Status(models.Model):
     delivery = models.ForeignKey('Delivery', related_name='status')
