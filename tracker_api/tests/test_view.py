@@ -15,15 +15,15 @@ def test_carrier_create_with_no_merchant(client, carrier_data):
     response = client.post(reverse('tracker_api:carrier'), carrier_data)
     assert response.status_code == 403
 
-@pytest.mark.django_db
-def test_carrier_create_by_merchant(merchant_client, carrier_data):
+@pytest.mark.django_db(transaction=True)
+def test_carrier_create_by_merchant(merchant_client, carrier_data,load_site):
     response = merchant_client.post(reverse('tracker_api:carrier'),
                                     carrier_data)
     assert response.status_code == 201
 
 
-@pytest.mark.django_db
-def test_carrier_creation_with_existing_username(merchant_client, carrier_data):
+@pytest.mark.django_db(transaction=True)
+def test_carrier_creation_with_existing_username(merchant_client, carrier_data,load_site):
     response1 = merchant_client.post(reverse('tracker_api:carrier'),
                                      carrier_data)
     response2 = merchant_client.post(reverse('tracker_api:carrier'),
@@ -31,8 +31,8 @@ def test_carrier_creation_with_existing_username(merchant_client, carrier_data):
     assert response1.status_code == 201
     assert response2.status_code == 409
 
-@pytest.mark.django_db
-def test_carrier_create_bad_email(merchant_client, carrier_data):
+@pytest.mark.django_db(transaction=True)
+def test_carrier_create_bad_email(merchant_client, carrier_data,load_site):
     # Use bad email
     carrier_data['email'] = "bad_email_address"
     response = merchant_client.post(reverse('tracker_api:carrier'),
@@ -45,16 +45,16 @@ def test_carrier_create_bad_email(merchant_client, carrier_data):
                                     carrier_data)
     assert response.status_code == 400, "Didn't fail when email was not present"
    
-@pytest.mark.django_db
-def test_carrier_create_bad_name(merchant_client, carrier_data):
+@pytest.mark.django_db(transaction=True)
+def test_carrier_create_bad_name(merchant_client, carrier_data,load_site):
     # without name
     del carrier_data['name']
     response = merchant_client.post(reverse('tracker_api:carrier'),
                                     carrier_data)
     assert response.status_code == 400
    
-@pytest.mark.django_db
-def test_carrier_create_bad_phone(merchant_client, carrier_data):
+@pytest.mark.django_db(transaction=True)
+def test_carrier_create_bad_phone(merchant_client, carrier_data,load_site):
     # without phone
     del carrier_data['phone']
     response = merchant_client.post(reverse('tracker_api:carrier'),
@@ -67,15 +67,15 @@ def test_carrier_create_bad_phone(merchant_client, carrier_data):
     #                                 carrier_data)
     # assert response.status_code == 400
 
-@pytest.mark.django_db
-def test_carrier_create_bad_location(merchant_client, carrier_data):
+@pytest.mark.django_db(transaction=True)
+def test_carrier_create_bad_location(merchant_client, carrier_data,load_site):
     # without location
     del carrier_data['location']
     response = merchant_client.post(reverse('tracker_api:carrier'),
                                     carrier_data)
     assert response.status_code == 201
     
-@pytest.mark.django_db
+@pytest.mark.django_db(transaction=True)
 def test_carrier_creation_bad_username(merchant_client, carrier_data):
     #without user name
     del carrier_data['username']
@@ -83,8 +83,8 @@ def test_carrier_creation_bad_username(merchant_client, carrier_data):
                                     carrier_data)
     assert response.status_code == 400
     
-@pytest.mark.django_db
-def test_all_carriers_of_merchant(merchant_client):
+@pytest.mark.django_db(transaction=True)
+def test_all_carriers_of_merchant(merchant_client,load_site):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier1", phone="98766767",
@@ -104,8 +104,8 @@ def test_all_carriers_of_merchant(merchant_client):
                 {"url": "http://testserver/api/v1/carriers/carrier1merchant1"}]
     assert actual == expected
    
-@pytest.mark.django_db
-def test_details_of_carrier(merchant_client):
+@pytest.mark.django_db(transaction=True)
+def test_details_of_carrier(merchant_client,load_site):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
@@ -119,8 +119,8 @@ def test_details_of_carrier(merchant_client):
                                            args=[2]))
     assert response.status_code == 404
 
-@pytest.mark.django_db
-def test_change_name_of_carrier (merchant_client):
+@pytest.mark.django_db(transaction=True)
+def test_change_name_of_carrier (merchant_client,load_site):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
@@ -134,8 +134,8 @@ def test_change_name_of_carrier (merchant_client):
                              "phone":"9656888871", "email":"user@tracker.com"}
     
 
-@pytest.mark.django_db
-def test_change_phone_of_carrier(merchant_client):
+@pytest.mark.django_db(transaction=True)
+def test_change_phone_of_carrier(merchant_client, load_site):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
@@ -148,8 +148,8 @@ def test_change_phone_of_carrier(merchant_client):
                              "phone":"+9999999999", "email":"user@tracker.com"}
      
 
-@pytest.mark.django_db
-def test_change_location_of_carrier(merchant_client):
+@pytest.mark.django_db(transaction=True)
+def test_change_location_of_carrier(merchant_client,load_site):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
@@ -163,7 +163,7 @@ def test_change_location_of_carrier(merchant_client):
                              "phone":"9656888871", "email":"user@tracker.com"}
 
 # /customer
-@pytest.mark.django_db
+@pytest.mark.django_db(transaction=True)
 def test_cutomer_create_with_no_merchant(client,customer_data):
     user = User.objects.create_user("user", "useraddress", "aaasssddd")
     token = Token.objects.get(user__username='user')
@@ -173,14 +173,14 @@ def test_cutomer_create_with_no_merchant(client,customer_data):
     assert response.status_code == 403
 
 
-@pytest.mark.django_db
-def test_customer_create_by_merchant(merchant_client, customer_data):
+@pytest.mark.django_db(transaction=True)
+def test_customer_create_by_merchant(merchant_client, customer_data,load_site):
     response = merchant_client.post(reverse('tracker_api:customer'),
                                     customer_data)
     assert response.status_code == 201
 
-@pytest.mark.django_db
-def test_customer_creation_bad_username(merchant_client, customer_data):
+@pytest.mark.django_db(transaction=True)
+def test_customer_creation_bad_username(merchant_client, customer_data,load_site):
     #already used username
     response1 = merchant_client.post(reverse('tracker_api:customer'),
                                      customer_data)
@@ -195,14 +195,14 @@ def test_customer_creation_bad_username(merchant_client, customer_data):
                                      customer_data)
     assert response1.status_code == 400
 
-@pytest.mark.django_db
+@pytest.mark.django_db(transaction=True)
 def test_customer_creation_bad_name(merchant_client, customer_data):
     del customer_data['name']
     response = merchant_client.post(reverse('tracker_api:customer'),
                                     customer_data)
     assert response.status_code == 400
 
-@pytest.mark.django_db
+@pytest.mark.django_db(transaction=True)
 def test_customer_creation_bad_phone(merchant_client, customer_data):
     # customer_data['phone'] == "00000"
     # response = merchant_client.post(reverse('tracker_api:customer'),
@@ -216,8 +216,8 @@ def test_customer_creation_bad_phone(merchant_client, customer_data):
     assert response.status_code == 400
 
 #/ orders /
-@pytest.mark.django_db
-def test_order_create_with_no_merchant(client,order_data):
+@pytest.mark.django_db(transaction=True)
+def test_order_create_with_no_merchant(load_site,client,order_data):
     user = User.objects.create_user("user", "useraddress", "aaasssddd")
     token = Token.objects.get(user__username='user')
     client = APIClient()
@@ -225,15 +225,15 @@ def test_order_create_with_no_merchant(client,order_data):
     response = client.post(reverse('tracker_api:customer'), order_data)
     assert response.status_code == 403
 
-@pytest.mark.django_db
-def test_order_create_by_merchant(merchant_client,order_data):
+@pytest.mark.django_db(transaction=True)
+def test_order_create_by_merchant(load_site,merchant_client,order_data):
     response = merchant_client.post(reverse('tracker_api:orders'),
                                     order_data)
 
     assert response.status_code == 201
 
-@pytest.mark.django_db
-def test_order_creat_bad_customer(merchant_client, order_data):
+@pytest.mark.django_db(transaction=True)
+def test_order_creat_bad_customer(load_site, merchant_client, order_data):
     #Wrong customer id
     order_data['customer'] = "2"
     response = merchant_client.post(reverse('tracker_api:orders'),
@@ -247,22 +247,22 @@ def test_order_creat_bad_customer(merchant_client, order_data):
 
     assert response.status_code == 400
 
-@pytest.mark.django_db
-def test_order_creat_bad_amount(merchant_client, order_data):
+@pytest.mark.django_db(transaction=True)
+def test_order_creat_bad_amount(load_site, merchant_client, order_data):
     del order_data["amount"]
     response = merchant_client.post(reverse('tracker_api:orders'),
                                     order_data)
     assert response.status_code == 400
 
-@pytest.mark.django_db
-def test_order_creat_bad_invoice(merchant_client, order_data):
+@pytest.mark.django_db(transaction=True)
+def test_order_creat_bad_invoice(load_site, merchant_client, order_data):
     del order_data["invoice_number"]
     response = merchant_client.post(reverse('tracker_api:orders'),
                                     order_data)
     assert response.status_code == 400
     
-@pytest.mark.django_db
-def test_all_orders_of_merchant(merchant_client):
+@pytest.mark.django_db(transaction=True)
+def test_all_orders_of_merchant(merchant_client,load_site):
     merchant = User.objects.get(username="newuser").merchant
     ur = User.objects.create(username = "customeruser",
                                password = "aaasssddd",
@@ -289,8 +289,8 @@ def test_all_orders_of_merchant(merchant_client):
     assert expected == actual
 
 
-@pytest.mark.django_db
-def test_details_order(merchant_client):
+@pytest.mark.django_db(transaction=True)
+def test_details_order(merchant_client,load_site):
     merchant = User.objects.get(username="newuser").merchant
     usr = User.objects.create(username = "customeruser",
                                password = "aaasssddd",
@@ -307,10 +307,9 @@ def test_details_order(merchant_client):
     del response.data["date"]
     expected = {"invoice_number":"1010","amount":"100.00","customer":"slug","notes":"items1"}
     assert response.data == expected
-
 #/ deliveries /
-@pytest.mark.django_db
-def test_deliveries_create_with_no_merchant(client,delivery_data):
+@pytest.mark.django_db(transaction=True)
+def test_deliveries_create_with_no_merchant(load_site,client,delivery_data):
     user = User.objects.create_user("user", "useraddress", "aaasssddd")
     token = Token.objects.get(user__username='user')
     client = APIClient()
@@ -319,14 +318,14 @@ def test_deliveries_create_with_no_merchant(client,delivery_data):
     assert response.status_code == 403
 
 
-@pytest.mark.django_db
-def test_deliveries_create_by_merchant(merchant_client, delivery_data):
+@pytest.mark.django_db(transaction=True)
+def test_deliveries_create_by_merchant(load_site, merchant_client, delivery_data):
     response = merchant_client.post(reverse('tracker_api:delivery'),
                                     delivery_data)
     assert response.status_code == 201
 
-@pytest.mark.django_db
-def test_deliveries_bad_order(merchant_client, delivery_data):
+@pytest.mark.django_db(transaction=True)
+def test_deliveries_bad_order(load_site, merchant_client, delivery_data):
     # Same order
     merchant_client.post(reverse('tracker_api:delivery'),
                          delivery_data)
@@ -340,8 +339,8 @@ def test_deliveries_bad_order(merchant_client, delivery_data):
                                     delivery_data)
     assert response.status_code == 400
 
-@pytest.mark.django_db
-def test_deliveries_bad_carrier(merchant_client, delivery_data):
+@pytest.mark.django_db(transaction=True)
+def test_deliveries_bad_carrier(load_site,merchant_client, delivery_data):
     # Without carrier
     del delivery_data["carrier"]
     response = merchant_client.post(reverse('tracker_api:delivery'),
@@ -350,3 +349,4 @@ def test_deliveries_bad_carrier(merchant_client, delivery_data):
 
 
 
+    
