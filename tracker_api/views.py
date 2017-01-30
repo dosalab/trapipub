@@ -277,10 +277,8 @@ class DeliveryView(viewsets.ModelViewSet):
         """
         try:
             merchant = User.objects.get(username=self.request.user).merchant
-            order = request.data['order']
-            order = Order.objects.get(slug=order)
-            carrier = request.data['carrier']
-            carrier = Carrier.objects.get(slug=carrier)
+            order = Order.objects.get(slug=request.data['order'])
+            carrier = Carrier.objects.get(slug=request.data['carrier'])
             serializer = DeliverySerializer(data=request.data,
                                             context = {'order' : order, 'carrier':carrier})
             serializer.is_valid(raise_exception=True)
@@ -301,6 +299,10 @@ class DeliveryView(viewsets.ModelViewSet):
         except Order.DoesNotExist:
             return (Response("Give proper Order",
                              status=status.HTTP_400_BAD_REQUEST))
+        except KeyError:
+            return (Response("Give proper data",
+                             status=status.HTTP_400_BAD_REQUEST))
+        
     def list(self, request, *args, **kwargs):
         queryset = Delivery.objects.filter(order__merchant=self.request.user.merchant)
        # queryset = self.filter_queryset(self.get_queryset())
