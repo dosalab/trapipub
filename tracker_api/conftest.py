@@ -1,9 +1,15 @@
 from django.urls import reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-
+from django.core.management import call_command
 import pytest
 
+
+
+@pytest.fixture
+def load_site(request):
+    call_command('loaddata', '/home/abu/projects/tracker/fixture.json')
+    
 
 @pytest.fixture
 def merchant_client(request, client):
