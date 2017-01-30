@@ -260,7 +260,6 @@ class DeliveryView(viewsets.ModelViewSet):
     View to handle all /delivery APIs
     """
     lookup_field = 'slug'
-#    queryset = Delivery.objects.filter(order_merchant=self.request.user.merchant)
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
     
@@ -281,13 +280,15 @@ class DeliveryView(viewsets.ModelViewSet):
             carrier = Carrier.objects.get(slug=request.data['carrier'])
             serializer = DeliverySerializer(data=request.data,
                                             context = {'order' : order, 'carrier':carrier})
-            serializer.is_valid(raise_exception=True)
-            delivery = serializer.save()
-            sitename = get_current_site(request).domain
-            return (Response({"url" :'http://{}/api/v1{}'.format(sitename,delivery.url())},
-                             status=status.HTTP_201_CREATED))
-              
-
+            if serializer.is_valid():
+                delivery = serializer.save()
+                sitename = get_current_site(request).domain
+                return (Response({"url" :'http://{}/api/v1{}'.format(sitename,delivery.url())},
+                                 status=status.HTTP_201_CREATED))
+            else: 
+                return (Response(serializer.errors,
+                                 status=status.HTTP_400_BAD_REQUEST))
+                
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
@@ -306,7 +307,6 @@ class DeliveryView(viewsets.ModelViewSet):
         
     def list(self, request, *args, **kwargs):
         queryset = Delivery.objects.filter(order__merchant=self.request.user.merchant)
-       # queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:
