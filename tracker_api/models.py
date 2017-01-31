@@ -19,7 +19,10 @@ class Merchant(models.Model):
     name = models.CharField(max_length=50)
     address =  models.CharField(max_length=50)
     payment_info = models.CharField(max_length=50)
-    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "<Merchant (name='{}', id={})>".format(self.name, self.id )
 
 class Carrier (models.Model):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
@@ -48,7 +51,7 @@ class Customer (models.Model):
 
 
     def __str__(self):
-        return "Carrier(id={}, name='{}')".format(self.slug, repr(self.name))
+        return "Customer(id={}, name='{}')".format(self.slug, repr(self.name))
 
     def url(self):
         return "/carriers/{}".format(self.slug)
@@ -85,6 +88,9 @@ class Status(models.Model):
     date =  models.DateTimeField(default=date.today)
     info = models.CharField(max_length=50)
     terminal = models.BooleanField()
+
+    def __str__(self):
+        return "<Status(delivery='{}')>".format(self.delivery)
 
 class TrackerSite(models.Model):
     title =  models.CharField(max_length=50)
