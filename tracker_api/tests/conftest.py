@@ -1,24 +1,79 @@
-import pytest
 from django.conf import settings
-
-@pytest.fixture(scope='session')
-def django_db_setup():
-    settings.DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'testdb',
-        'USER': 'abu',
-        'PASSWORD': 'trackerpwd',
-        }
+from django.core.management import call_command
+from django.urls import reverse
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient
+import pytest
 
 @pytest.fixture
 def server(xprocess):
-
     def preparefunc(cwd):
         print (str(cwd))
         n = cwd.new(basename="").new(basename="").dirpath().chdir()
         print ("Working directory is {}".format(n))
-        path = cwd.join("../../manage.py").strpath
+        path = cwd.join("../../../manage.py").strpath
         print(path)
         return (r".*Quit.*", ["python", path, "runserver", "8000"])
     
     logfile = xprocess.ensure("tracker-server", preparefunc)
+
+
+@pytest.fixture(scope="session")
+def django_db_setup(django_db_setup, django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command("migrate")
+        call_command('loaddata', '/home/abu/projects/tracker/fixture.json')
+    
+
+
+@pytest.fixture
+def merchant_client(request, client):
+    client.post(reverse('registration_register'),
+                {"username"  :"newuser",
+                 "email"     :"user@gmail.com",
+                 "password1" :"test_password",
+                 "password2" :'test_password',
+                 "name"      :"merchant1",
+                 'address'   :"merchantaddress"})
+    token = Token.objects.get(user__username='newuser')
+    api_client = APIClient()
+    api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    return api_client
+
+@pytest.fixture
+def carrier_data(request):
+    "Creates a valid dict of carrier data"
+    return {'name':"carrier",
+            'phone':"99798798",
+            'location':"here",
+            "email" : "test@example.com",
+            "username":"carrieruser",
+            "password":"aaasssddd"}
+
+@pytest.fixture
+def customer_data(request):
+    return{'name':"customer1",
+           'phone':"+91239798798",
+           'address':"india",
+           "username":"customeruser",
+           "password":"aaasssddd",
+           "email":"customer1@gmail.com"}
+
+@pytest.fixture
+def order_data(request,merchant_client,customer_data):
+    merchant_client.post(reverse('tracker_api:customer'),
+                         customer_data)
+    return{'customer':"customerusermerchant1",
+           'notes':"include item1,2",
+           'amount':"100",
+           "invoice_number":"1010"}
+
+
+@pytest.fixture
+def delivery_data(request,merchant_client,carrier_data,order_data):
+    merchant_client.post(reverse('tracker_api:carrier'),
+                         carrier_data)
+    merchant_client.post(reverse('tracker_api:orders'),
+                         order_data)
+    return {'order':"1010",
+            'carrier':"carrierusermerchant1"}
