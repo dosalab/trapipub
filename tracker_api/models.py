@@ -37,7 +37,6 @@ class Carrier (models.Model):
         return "Carrier(id={}, name='{}')".format(self.slug, repr(self.name))
 
     def url(self):
-        #current_site = Site.objects.get_current()
         return "/carriers/{}".format(self.slug)
 
 class Customer (models.Model):
