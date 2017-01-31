@@ -54,7 +54,7 @@ class Customer (models.Model):
         return "Customer(id={}, name='{}')".format(self.slug, repr(self.name))
 
     def url(self):
-        return "/carriers/{}".format(self.slug)
+        return "/customer/{}".format(self.slug)
 
 class Order(models.Model):
     merchant = models.ForeignKey('Merchant')
