@@ -4,8 +4,8 @@ import pytest
 import requests
 import sys
 
-#host = "http://127.0.0.1:8000"
-host = "http://ec2-54-64-56-135.ap-northeast-1.compute.amazonaws.com"
+host = "http://127.0.0.1:8000"
+#host = "http://ec2-54-64-56-135.ap-northeast-1.compute.amazonaws.com"
 @pytest.mark.django_db
 def test_merchant(server):
     URL = "{}/accounts/register/".format(host)
@@ -34,10 +34,9 @@ def test_merchant(server):
             'password' :"aaasssddd",
             'email'    :"carrier@trcker.com"}
     headers = {'Authorization': 'Token '+token1}
-    client.post("{}/api/v1/carriers/".format(host),
+    carrier=client.post("{}/api/v1/carriers/".format(host),
                 data=data,
                 headers=headers)
-
     #get a particular carrier details
     carrier = client.get('{}/api/v1/carriers/carriernewusernewmerchant'.format(host),
                         headers={'Authorization':'Token '+token1})
@@ -47,9 +46,9 @@ def test_merchant(server):
                                         "email":"carrier@trcker.com"}
 
     #get all carriers
-    carrier = client.get('{}/api/v1/carriers'.format(host),
+    client.get('{}/api/v1/carriers'.format(host),
                         headers={'Authorization':'Token '+token1})
-    import pdb;pdb.set_trace()
+            
     assert json.loads(carrier.text) == [{"url":"{}/api/v1/carriers/carriernewusernewmerchant".format(host)}]
     
     # customer creation
