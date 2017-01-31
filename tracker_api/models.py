@@ -58,7 +58,7 @@ class Customer (models.Model):
 class Order(models.Model):
     merchant = models.ForeignKey('Merchant')
     customer = models.ForeignKey('Customer')
-    date =  models.DateTimeField(default=date.today)
+    date =  models.DateTimeField()
     notes = models.CharField(max_length=50)
     amount =  models.DecimalField(max_digits=10, decimal_places=2)
     invoice_number = models.CharField(max_length=20)
@@ -84,7 +84,7 @@ class Delivery(models.Model):
 
 class Status(models.Model):
     delivery = models.ForeignKey('Delivery', related_name='status')
-    date =  models.DateTimeField(default=date.today)
+    date =  models.DateTimeField()
     info = models.CharField(max_length=50)
     terminal = models.BooleanField()
 
