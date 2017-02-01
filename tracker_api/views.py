@@ -266,8 +266,8 @@ class DeliveryView(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'create':
             return DeliverySerializer
-        if self.action == 'list':
-            return DeliveryDetails
+        # if self.action == 'list':
+        #     return DeliveryDetails
 
 
     def create(self, request, *args, **kwargs):
@@ -306,16 +306,16 @@ class DeliveryView(viewsets.ModelViewSet):
             return (Response("Give proper data",
                              status=status.HTTP_400_BAD_REQUEST))
         
-    def list(self, request, *args, **kwargs):
-        queryset = Delivery.objects.filter(order__merchant=self.request.user.merchant)
+    # def list(self, request, *args, **kwargs):
+    #     queryset = Delivery.objects.filter(order__merchant=self.request.user.merchant)
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data)
 # class DeliveryDetailsView(viewsets.ModelViewSet):
 #     lookup_field = 'slug'
 #     serializer_class = DeliveryDetailsSerializer
