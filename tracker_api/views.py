@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
-from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,DeliveryDetails,StatusSerializer
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
+from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer
 from registration.views import RegistrationView
 from registration.signals import user_registered
 from django.contrib.auth import authenticate
@@ -280,7 +280,7 @@ class DeliveryView(viewsets.ModelViewSet):
             carrier = Carrier.objects.get(slug=request.data['carrier'])
             stat = DeliveryStatus.objects.get(name="Assigned")
             serializer = DeliverySerializer(data=request.data,
-                                            context = {'order' : order, 'carrier':carrier})
+                                            context = {'order' : order, 'carrier':carrier, 'stat':stat})
             if serializer.is_valid():
                 delivery = serializer.save()
                 sitename = get_current_site(request).domain
