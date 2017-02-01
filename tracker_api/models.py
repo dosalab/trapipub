@@ -1,5 +1,6 @@
 from datetime import date
 from django.db import models
+from django.db.models import Q
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -33,6 +34,15 @@ class Carrier (models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=50, default='slug', primary_key=True)
 
+    @property
+    def delivery(self):
+        c = Q(status__name = "Assigned") | Q(status__name = "On route")
+        ret = self.delivery_set.filter(c)
+        if ret:
+            return [x.url() for x in ret]
+        else:
+            return ''
+        
     def __str__(self):
         return "Carrier(id={}, name='{}')".format(self.slug, repr(self.name))
 
@@ -69,24 +79,32 @@ class Order(models.Model):
     def url(self):
         return "/orders/{}".format(self.slug)
 
+class DeliveryStatus(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+    
 class Delivery(models.Model):
     order = models.OneToOneField('Order') 
     carrier = models.ForeignKey('Carrier')
     slug = models.SlugField(max_length=50, default='slug')
-    def get_status(self):
-        status = Status.objects.filter(delivery=self)
-        return status
+    status = models.ForeignKey('DeliveryStatus')
+    
+    # def get_status(self):
+    #     status = Status.objects.filter(delivery=self)
+    #     return status
+
     def __str__(self):
         return "Delivery(id={})".format(self.slug)
     
     def url(self):
         return "/deliveries/{}".format(self.slug)
 
-class Status(models.Model):
-    delivery = models.ForeignKey('Delivery', related_name='status')
-    date =  models.DateTimeField()
-    info = models.CharField(max_length=50)
-    terminal = models.BooleanField()
+class DeliveryLog(models.Model):
+    delivery = models.ForeignKey('Delivery')
+    date =  models.DateTimeField(default=date.today)
+    details = models.CharField(max_length=50)
 
     def __str__(self):
         return "<Status(delivery='{}')>".format(self.delivery)

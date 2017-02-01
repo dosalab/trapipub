@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-from tracker_api.models import Carrier,Order,Customer
+from tracker_api.models import Carrier,Order,Customer,DeliveryStatus
 
 @pytest.mark.django_db
 def test_carrier_create_with_no_merchant(client, carrier_data):
@@ -105,7 +105,7 @@ def test_all_carriers_of_merchant(merchant_client):
     assert actual == expected
    
 @pytest.mark.django_db
-def test_details_of_carrier(merchant_client):
+def test_details_of_new_carrier(merchant_client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
@@ -113,7 +113,7 @@ def test_details_of_carrier(merchant_client):
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=['carrier1merchant1']))
     assert response.data == {"location":"kozikkod", "name":"carrier",
-                             "phone":"9656888871", "email":"user@tracker.com"}
+                             "phone":"9656888871", "email":"user@tracker.com","delivery":""}
     # Wrong args
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=[2]))
@@ -131,7 +131,7 @@ def test_change_name_of_carrier (merchant_client):
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
     assert response.data == {"location":"kozikkod", "name":"new name",
-                             "phone":"9656888871", "email":"user@tracker.com"}
+                             "phone":"9656888871", "email":"user@tracker.com","delivery":""}
     
 
 @pytest.mark.django_db
@@ -145,7 +145,7 @@ def test_change_phone_of_carrier(merchant_client):
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
     assert response.data == {"location":"kozikkod", "name":"carrier",
-                             "phone":"+9999999999", "email":"user@tracker.com"}
+                             "phone":"+9999999999", "email":"user@tracker.com","delivery":""}
      
 
 @pytest.mark.django_db
@@ -160,7 +160,8 @@ def test_change_location_of_carrier(merchant_client):
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
     assert response.data == {"location":"kerala", "name":"carrier",
-                             "phone":"9656888871", "email":"user@tracker.com"}
+                             "phone":"9656888871", "email":"user@tracker.com","delivery":""}
+
 
 # /customer
 @pytest.mark.django_db
@@ -323,6 +324,16 @@ def test_deliveries_create_by_merchant(merchant_client, delivery_data):
     response = merchant_client.post(reverse('tracker_api:delivery'),
                                     delivery_data)
     assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_carrier_ongoing_deliveries(merchant_client, delivery_data):
+     merchant_client.post(reverse('tracker_api:delivery'),
+                                    delivery_data)
+     response = merchant_client.get(reverse('tracker_api:carrierdetail',
+                                           args=["carrierusermerchant1"]))
+     assert response.data == {"location":"here", "name":"carrier",
+                              "phone":"99798798", "email":"test@example.com","delivery":['/deliveries/1010carrier']}
 
 @pytest.mark.django_db
 def test_deliveries_bad_order(merchant_client, delivery_data):

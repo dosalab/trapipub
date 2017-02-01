@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 import pytest
+from tracker_api.models import DeliveryStatus
 
 @pytest.fixture
 def server(xprocess):

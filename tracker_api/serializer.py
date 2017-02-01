@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from .models import Carrier, Order, Merchant, Customer, Delivery, Status
+from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
 from rest_framework import serializers
 from django.db import transaction
 from django.utils.text import slugify
@@ -43,7 +43,6 @@ class CarrierSerializer(serializers.Serializer):
 # Get details of a carrier
 class GetCarrierSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
-    delivery = serializers.CharField(source='delivery_set.all')
     class Meta:
         model = Carrier
         fields = ("name", "phone", "location", "email", "delivery")
