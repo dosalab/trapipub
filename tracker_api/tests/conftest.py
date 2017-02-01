@@ -12,7 +12,7 @@ def server(xprocess):
         print (str(cwd))
         n = cwd.new(basename="").new(basename="").dirpath().chdir()
         print ("Working directory is {}".format(n))
-        path = cwd.join("../../../manage.py").strpath
+        path = cwd.join("../../manage.py").strpath
         print(path)
         return (r".*Quit.*", ["python", path, "runserver", "8000"])
     
