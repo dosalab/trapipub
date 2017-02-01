@@ -39,7 +39,7 @@ class CarrierSerializer(serializers.Serializer):
             c.slug = slugify(u.username+merchant.name)
             c.save()
             return c
-
+    
 # Get details of a carrier
 class GetCarrierSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
@@ -179,24 +179,25 @@ class DeliverySerializer(serializers.Serializer):
         return delivery
 
 #status serializer
-class StatusSerializer(serializers.ModelSerializer):
+class DeliveryStatus(serializers.ModelSerializer):
     class Meta:
-        model = Status
+        model = DeliveryStatus
         fields = ("__all__")
 
 
-#custom related field for status
-class StatusRelatedField(serializers.RelatedField):
-    def to_representation(self, value):
-        return {"date":value.date,
-                "info":value.info,
-                "terminal":value.terminal}
+# #custom related field for status
+# class StatusRelatedField(serializers.RelatedField):
+#     def to_representation(self, value):
+#         return {"date":value.date,
+#                 "info":value.info,
+#                 "terminal":value.terminal}
         
-# get delivery details
-class DeliveryDetails(serializers.ModelSerializer):
-    # order = orderdetailsSerializer()
-    # carrier = GetCarrierSerializer()
-    status = StatusRelatedField(many=True, read_only=True)
-    class Meta:
-        model = Delivery
-        fields = ('id', 'carrier', 'order', 'status')
+# # get delivery details
+# class DeliveryDetails(serializers.ModelSerializer):
+#     # order = orderdetailsSerializer()
+#     # carrier = GetCarrierSerializer()
+#     status = StatusRelatedField(many=True, read_only=True)
+#     class Meta:
+#         model = Delivery
+#         fields = ('id', 'carrier', 'order', 'status')
+    
