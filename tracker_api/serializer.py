@@ -163,18 +163,19 @@ class DeliverySerializer(serializers.Serializer):
     def create(self, validated_data):
         order = self.context['order']
         carrier = self.context['carrier']
+        stat= self.context['stat']
         delivery = Delivery(order=order,
-                            carrier=carrier)
+                            carrier=carrier,
+                            status = stat)
         delivery.slug = slugify(order.slug+carrier.name)
         with transaction.atomic():
             delivery.save()
             delivery = Delivery.objects.get(slug=delivery.slug)
             date = datetime.datetime.now()
-            st = Status(delivery=delivery,
+            dlog = DeliveryLog(delivery=delivery,
                         date=date,
-                        info="Get ready",
-                        terminal=False)
-            st.save()
+                        details="Get ready")
+            dlog.save()
         return delivery
 
 #status serializer
