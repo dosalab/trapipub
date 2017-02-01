@@ -43,7 +43,8 @@ def test_merchant(server):
     assert json.loads(carrier.text) == {"name":"newcarrier",
                                         "phone":"99999",
                                         "location":"here",
-                                        "email":"carrier@trcker.com"}
+                                        "email":"carrier@trcker.com",
+                                         "delivery":""}
 
     #get all carriers
     client.get('{}/api/v1/carriers'.format(host),
