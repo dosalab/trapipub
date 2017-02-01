@@ -76,5 +76,8 @@ def delivery_data(request,merchant_client,carrier_data,order_data):
                          carrier_data)
     merchant_client.post(reverse('tracker_api:orders'),
                          order_data)
+    DeliveryStatus.objects.create(name="Assigned")
+    deliv=DeliveryStatus.objects.get(name="Assigned")
     return {'order':"1010",
-            'carrier':"carrierusermerchant1"}
+            'carrier':"carrierusermerchant1",
+            'status':deliv}
