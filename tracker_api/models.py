@@ -68,7 +68,7 @@ class Customer (models.Model):
 class Order(models.Model):
     merchant = models.ForeignKey('Merchant')
     customer = models.ForeignKey('Customer')
-    date =  models.DateTimeField()
+    date =  models.DateTimeField(default=date.today)
     notes = models.CharField(max_length=50)
     amount =  models.DecimalField(max_digits=10, decimal_places=2)
     invoice_number = models.CharField(max_length=20)
