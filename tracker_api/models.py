@@ -55,7 +55,7 @@ class Customer (models.Model):
     phone = models.CharField(validators=[phone_regex],max_length=15)
     address = models.CharField(max_length=20)
     merchant = models.ForeignKey('Merchant')
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     slug = models.SlugField(max_length=50, default='slug', primary_key=True )
 
 
