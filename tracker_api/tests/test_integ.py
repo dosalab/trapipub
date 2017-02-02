@@ -4,10 +4,12 @@ import pytest
 import requests
 import sys
 
-host = "http://127.0.0.1:8000"
+#host = "http://127.0.0.1:8000"
 #host = "http://ec2-54-64-56-135.ap-northeast-1.compute.amazonaws.com"
+
 @pytest.mark.django_db
-def test_merchant(server):
+def test_merchant(live_server):
+    host = live_server.url
     URL = "{}/accounts/register/".format(host)
     client = requests.session()
     client.get(URL)
