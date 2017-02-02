@@ -81,7 +81,7 @@ class CustomerSerializer(serializers.Serializer):
     address = serializers.CharField(required=True)
    
     def create(self, validated_data):
-        merchant = self.context['merchant']
+        #merchant = self.context['merchant']
         name = validated_data['name']
         phone = validated_data['phone']
         username = validated_data['username']
@@ -93,9 +93,9 @@ class CustomerSerializer(serializers.Serializer):
             cus = Customer(name=name,
                            phone=phone,
                            address=address,
-                           merchant=merchant,
+                          # merchant=merchant,
                            user=usr)
-            cus.slug = slugify(usr.username+merchant.name)
+            cus.slug = slugify(cus.phone)
             cus.save()
             return cus
         
