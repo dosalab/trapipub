@@ -227,7 +227,7 @@ def test_order_create_with_no_merchant(client,order_data):
     assert response.status_code == 403
 
 @pytest.mark.django_db
-def test_order_create_by_merchant(merchant_client,order_data):
+def test_order_creat_by_merchant(merchant_client,order_data):
     response = merchant_client.post(reverse('tracker_api:orders'),
                                     order_data)
 
@@ -247,6 +247,7 @@ def test_order_creat_bad_customer(merchant_client, order_data):
                                     order_data)
 
     assert response.status_code == 400
+
 
 @pytest.mark.django_db
 def test_order_creat_bad_amount(merchant_client, order_data):
@@ -349,6 +350,7 @@ def test_deliveries_bad_order(merchant_client, delivery_data):
     response = merchant_client.post(reverse('tracker_api:delivery'),
                                     delivery_data)
     assert response.status_code == 400
+
 
 @pytest.mark.django_db
 def test_deliveries_bad_carrier(merchant_client, delivery_data):
