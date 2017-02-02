@@ -154,7 +154,7 @@ class CustomerView(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            queryset = Customer.objects.filter(merchant=self.request.user.merchant)
+            queryset = Customer.objects.filter(order__merchant=self.request.user.merchant).distinct()
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
