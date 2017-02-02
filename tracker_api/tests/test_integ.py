@@ -36,9 +36,10 @@ def test_merchant(live_server):
             'password' :"aaasssddd",
             'email'    :"carrier@trcker.com"}
     headers = {'Authorization': 'Token '+token1}
-    carrier=client.post("{}/api/v1/carriers/".format(host),
-                data=data,
-                headers=headers)
+    carrier = client.post("{}/api/v1/carriers/".format(host),
+                          data=data,
+                          headers=headers)
+
     #get a particular carrier details
     carrier = client.get('{}/api/v1/carriers/carriernewusernewmerchant'.format(host),
                         headers={'Authorization':'Token '+token1})
@@ -82,7 +83,7 @@ def test_merchant(live_server):
                        "notes":"include item1,2",
                        "amount":"100",
                        "invoice_number":"1010"},
-                     headers={'Authorization':'Token '+token1})
+                      headers={'Authorization':'Token '+token1})
     
     #get all orders of a merchant
     order = client.get('{}/api/v1/orders'.format(host),
