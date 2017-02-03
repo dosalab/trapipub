@@ -185,6 +185,13 @@ def test_customer_create_by_merchant(merchant_client, customer_data):
     assert response.status_code == 201
 
 @pytest.mark.django_db
+def test_details_of_customer(merchant_client, customer_data):
+    merchant_client.post(reverse('tracker_api:customer'),
+                                    customer_data)
+    response=merchant_client.get(reverse('tracker_api:customerdetails',args=["91239798798"]))
+    assert response.data== {'address': 'india', 'phone': '91239798798', 'name': 'customer1'}
+
+@pytest.mark.django_db
 def test_customer_creation_bad_name(merchant_client, customer_data):
     del customer_data['name']
     response = merchant_client.post(reverse('tracker_api:customer'),

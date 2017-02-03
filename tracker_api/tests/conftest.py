@@ -43,10 +43,7 @@ def carrier_data(request):
 def customer_data(request):
     return{'name':"customer1",
            'phone':"+91239798798",
-           'address':"india",
-           "username":"customeruser",
-           "password":"aaasssddd",
-           "email":"customer1@gmail.com"}
+           'address':"india"}
 
 @pytest.fixture
 def order_data(request,merchant_client,customer_data):

@@ -170,7 +170,10 @@ class CustomerDetails(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
     queryset = Customer.objects.all()
- 
+    
+    def get_serializer_class(self):
+        if self.action == 'partial_update':
+            return CustomerDetailsSerializer
     def retrieve(self, request, *args, **kwargs):
         try:
             merchant = User.objects.get(username=self.request.user).merchant
