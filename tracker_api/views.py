@@ -167,22 +167,14 @@ class CustomerView(viewsets.ModelViewSet):
 class CustomerDetails(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
     lookup_field = 'slug'
-    serializer_class = CustomerDetailsSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-
-    def get_queryset(self):
-        try:
-            Customer.objects.filter(merchant=self.request.user.merchant)
-            return Customer.objects.filter(merchant=self.request.user.merchant)
-        except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant",
-                             status=status.HTTP_403_FORBIDDEN))
-
+    queryset = Customer.objects.all()
+ 
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
-            serializer = self.get_serializer(instance)
+            serializer = CustomerDetailsSerializer(instance)
             return Response(serializer.data)
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",

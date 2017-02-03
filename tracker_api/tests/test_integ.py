@@ -69,12 +69,12 @@ def test_merchant(live_server):
                           headers={'Authorization':'Token '+token1})
     assert json.loads(customer.text) == []
 
-    # #get a particular customer details
-    # customer=client.get('{}/api/v1/customers/99999'.format(host),
-    #                     headers={'Authorization':'Token '+token1})
-    # assert json.loads(customer.text) == {"name":"newcustomer",
-    #                                      "phone":"99999",
-    #                                      "address":"here"}
+    #get a particular customer details
+    customer=client.get('{}/api/v1/customers/99999'.format(host),
+                        headers={'Authorization':'Token '+token1})
+    assert json.loads(customer.text) == {"name":"newcustomer",
+                                         "phone":"99999",
+                                         "address":"here"}
 
     # creat an order
     order=client.post('{}/api/v1/orders/'.format(host),
