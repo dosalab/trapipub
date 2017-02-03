@@ -9,7 +9,8 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 USE_X_FORWARDED_HOST = True
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'tracker',
         'USER': 'abu',
         'PASSWORD': 'trackerpwd',
