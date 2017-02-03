@@ -1,7 +1,7 @@
 from datetime import date
 from django.db import models
 from django.db.models import Q
-from django.contrib.gis.db import models
+from django.contrib.gis.db import models as gmodels
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -29,7 +29,7 @@ class Carrier (models.Model):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     name = models.CharField(max_length=50)
     phone = models.CharField(validators=[phone_regex],max_length=15)
-    location = models.CharField(max_length=20)
+    location = gmodels.PointField()
     merchant = models.ForeignKey('Merchant')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=50, default='slug', primary_key=True)
