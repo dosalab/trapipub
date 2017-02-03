@@ -6,6 +6,7 @@ from django.utils.text import slugify
 import datetime
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
+from rest_framework_gis.fields import GeometryField
 #Merchant details view
 class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,7 +20,7 @@ class CarrierSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    location = serializers.CharField(required=False, default="")
+    location = GeometryField(required=False, default="")
             
     def create(self, validated_data):
         merchant = self.context['merchant']

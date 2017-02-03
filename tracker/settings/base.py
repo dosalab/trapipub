@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap3',
     'rest_framework.authtoken',
-    'django.contrib.gis'
+    'django.contrib.gis',
+    'rest_framework_gis'
 ]
 
 MIDDLEWARE = [
