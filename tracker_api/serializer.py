@@ -75,26 +75,26 @@ class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
 class CustomerSerializer(serializers.Serializer):
     name = serializers.CharField(required=True)
     phone = serializers.IntegerField(required=True)
-    username = serializers.CharField(required=True)
-    password = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
+    #username = serializers.CharField(required=True)
+    #password = serializers.CharField(required=True)
+    #email = serializers.EmailField(required=True)
     address = serializers.CharField(required=True)
    
     def create(self, validated_data):
         #merchant = self.context['merchant']
         name = validated_data['name']
         phone = validated_data['phone']
-        username = validated_data['username']
-        password = validated_data['password']
-        email = validated_data['email']
+        #username = validated_data['username']
+        #password = validated_data['password']
+        #email = validated_data['email']
         address = validated_data['address']
         with transaction.atomic():
-            usr = User.objects.create_user(username, email, password)
+           # usr = User.objects.create_user(username, email, password)
             cus = Customer(name=name,
                            phone=phone,
-                           address=address,
+                           address=address)
                           # merchant=merchant,
-                           user=usr)
+                           #user=usr)
             cus.slug = slugify(cus.phone)
             cus.save()
             return cus

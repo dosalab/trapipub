@@ -185,24 +185,15 @@ def test_customer_create_by_merchant(merchant_client, customer_data):
     assert response.status_code == 201
 
 @pytest.mark.django_db
-def test_customer_creation_bad_username(merchant_client, customer_data):
-    #already used username
-    response1 = merchant_client.post(reverse('tracker_api:customer'),
-                                     customer_data)
-    response2 = merchant_client.post(reverse('tracker_api:customer'),
-                                     customer_data)
-    assert response1.status_code == 201
-    assert response2.status_code == 409
-
-   #without user name
-    del customer_data['username']
-    response1 = merchant_client.post(reverse('tracker_api:customer'),
-                                     customer_data)
-    assert response1.status_code == 400
-
-@pytest.mark.django_db
 def test_customer_creation_bad_name(merchant_client, customer_data):
     del customer_data['name']
+    response = merchant_client.post(reverse('tracker_api:customer'),
+                                    customer_data)
+    assert response.status_code == 400
+
+@pytest.mark.django_db
+def test_customer_creation_bad_address(merchant_client, customer_data):
+    del customer_data['address']
     response = merchant_client.post(reverse('tracker_api:customer'),
                                     customer_data)
     assert response.status_code == 400
