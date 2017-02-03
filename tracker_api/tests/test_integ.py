@@ -67,8 +67,7 @@ def test_merchant(live_server):
     #get all customers of a merchant
     customer = client.get('{}/api/v1/customers'.format(host),
                           headers={'Authorization':'Token '+token1})
-    assert json.loads(customer.text) == [{"url":"{}/api/v1/customers/newcustomerusernewmerchant".format(host)}]
-    
+    assert json.loads(customer.text) == []
 
     # #get a particular customer details
     # customer=client.get('{}/api/v1/customers/99999'.format(host),
