@@ -11,7 +11,7 @@ from tracker_api.models import DeliveryStatus
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         call_command("migrate")
-        call_command('loaddata', '/home/abu/projects/tracker/fixture.json')
+        call_command('loaddata', 'tracker_api/tests/fixture.json')
     
 
 
