@@ -173,6 +173,7 @@ class CustomerDetails(viewsets.ModelViewSet):
  
     def retrieve(self, request, *args, **kwargs):
         try:
+            merchant = User.objects.get(username=self.request.user).merchant
             instance = self.get_object()
             serializer = CustomerDetailsSerializer(instance)
             return Response(serializer.data)
