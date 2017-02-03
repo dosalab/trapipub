@@ -103,7 +103,6 @@ def test_all_carriers_of_merchant(merchant_client,client):
                 {"url": "http://testserver/api/v1/carriers/carrier2merchant1"},
                 {"url": "http://testserver/api/v1/carriers/carrier1merchant1"}]
     assert actual == expected
-   
 
     # non user try to get carriers
     response = client.post(reverse('tracker_api:carrier'))
@@ -277,8 +276,7 @@ def test_all_orders_of_merchant(merchant_client):
     customer = Customer.objects.create(name="cusomer",
                                        address="customeraddress" ,
                                        phone = "+9999999999",
-                                       user = ur,
-                                       merchant=merchant)
+                                       user = ur)
     Order.objects.create(merchant=merchant, customer=customer,slug="1010",
                          notes = "items1", amount=100, invoice_number="1010")
     
@@ -305,8 +303,7 @@ def test_details_order(merchant_client):
     customer = Customer.objects.create(name="cusomer",
                                        address="customeraddress" ,
                                        phone = "+9999999999",
-                                       user = usr,
-                                       merchant=merchant)
+                                       user = usr)
     Order.objects.create(merchant=merchant, customer=customer,slug="1010",
                          notes = "items1", amount=100, invoice_number="1010")
     response = merchant_client.get(reverse('tracker_api:orderdetail',

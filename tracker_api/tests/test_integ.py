@@ -78,12 +78,12 @@ def test_merchant(live_server):
 
     # creat an order
     order=client.post('{}/api/v1/orders/'.format(host),
-                      {"customer":"newcustomerusernewmerchant",
+                      {"customer":"99999",
                        "notes":"include item1,2",
                        "amount":"100",
                        "invoice_number":"1010"},
                       headers={'Authorization':'Token '+token1})
-    
+        
     #get all orders of a merchant
     order = client.get('{}/api/v1/orders'.format(host),
                        headers={'Authorization':'Token '+token1})
@@ -95,7 +95,7 @@ def test_merchant(live_server):
     del op["date"]
     assert op =={"invoice_number":"1010",
                  "amount":"100.00",
-                 "customer":"newcustomerusernewmerchant",
+                 "customer":"99999",
                  "notes":"include item1,2"}
     
     # creat a delivery
