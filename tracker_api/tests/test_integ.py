@@ -53,6 +53,7 @@ def test_merchant(live_server):
     # allcarriers= client.get('{}/api/v1/carriers'.format(host),headers = {'Authorization':'Token '+token1})
     # import pdb;pdb.set_trace()
     # assert json.loads(allcarriers.text) == [{"url":"{}/api/v1/carriers/carriernewusernewmerchant".format(host)}]
+   
     # customer creation
     client.post('{}/api/v1/customers/'.format(host),
                 {'name':"newcustomer",
