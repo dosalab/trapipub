@@ -336,6 +336,17 @@ def test_carrier_ongoing_deliveries(merchant_client, delivery_data):
      assert response.data == {"location":"here", "name":"carrier",
                               "phone":"99798798", "email":"test@example.com","delivery":['/deliveries/1010carrier']}
 
+
+# @pytest.mark.django_db
+# def test_carrier_free(merchant_client, delivery_data):
+#      merchant_client.post(reverse('tracker_api:delivery'),
+#                                     delivery_data)
+#      response = merchant_client.get(reverse('tracker_api:carrierdetail',
+#                                            args=["carrierusermerchant1"]))
+#      assert response.data == {"location":"here", "name":"carrier",
+#                               "phone":"99798798", "email":"test@example.com","delivery":""}
+
+    
 @pytest.mark.django_db
 def test_deliveries_bad_order(merchant_client, delivery_data):
     # Same order
