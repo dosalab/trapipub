@@ -38,8 +38,6 @@ class carrierView(viewsets.ModelViewSet):
     lookup_field = 'slug'
     
     def get_serializer_class(self):
-        if self.action == 'create':
-            return CarrierSerializer
         if self.action == 'list':
             return CarrierUrlSerializer
     permission_classes = (permissions.IsAuthenticated,)
