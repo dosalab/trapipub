@@ -1,0 +1,16 @@
+[run]
+omit =
+    */html/*
+    *__init__*
+    *apps.py
+    *model.py
+    */tests/*
+    */migrations/*
+    */forms.py
+    */admin.py
+    */wsgi.py
+    */settings/*
+     /usr/*
+     fabfile.py		
+     manage.py  		       
+    tracker/urls.py
