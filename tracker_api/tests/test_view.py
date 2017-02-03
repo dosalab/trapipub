@@ -84,7 +84,7 @@ def test_carrier_creation_bad_username(merchant_client, carrier_data):
     assert response.status_code == 400
     
 @pytest.mark.django_db
-def test_all_carriers_of_merchant(merchant_client):
+def test_all_carriers_of_merchant(merchant_client,client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier1", phone="98766767",
@@ -104,6 +104,11 @@ def test_all_carriers_of_merchant(merchant_client):
                 {"url": "http://testserver/api/v1/carriers/carrier1merchant1"}]
     assert actual == expected
    
+
+    # non user try to get carriers
+    response = client.post(reverse('tracker_api:carrier'))
+    assert response.status_code == 401
+
 @pytest.mark.django_db
 def test_details_of_new_carrier(merchant_client):
     merchant = User.objects.get(username="newuser").merchant
