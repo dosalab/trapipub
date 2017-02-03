@@ -134,7 +134,7 @@ class CustomerView(viewsets.ModelViewSet):
     authentication_classes = (authentication.TokenAuthentication,)
     def create(self, request, *args, **kwargs):
         try:
-            #merchant = User.objects.get(username=self.request.user).merchant
+            merchant = User.objects.get(username=self.request.user).merchant
             queryset = Customer.objects.all()
             serializer = CustomerSerializer(data=request.data)
             if serializer.is_valid():
