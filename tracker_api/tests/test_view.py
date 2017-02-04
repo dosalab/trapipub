@@ -67,13 +67,13 @@ def test_carrier_create_bad_phone(merchant_client, carrier_data):
     #                                 carrier_data)
     # assert response.status_code == 400
 
-@pytest.mark.django_db
-def test_carrier_create_bad_location(merchant_client, carrier_data):
-    # without location
-    del carrier_data['location']
-    response = merchant_client.post(reverse('tracker_api:carrier'),
-                                    carrier_data)
-    assert response.status_code == 201
+# @pytest.mark.django_db
+# def test_carrier_create_bad_location(merchant_client, carrier_data):
+#     # without location
+#     del carrier_data['location']
+#     response = merchant_client.post(reverse('tracker_api:carrier'),
+#                                     carrier_data)
+#     assert response.status_code == 201
     
 @pytest.mark.django_db
 def test_carrier_creation_bad_username(merchant_client, carrier_data):
@@ -88,15 +88,13 @@ def test_all_carriers_of_merchant(merchant_client,client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier1", phone="98766767",
-                           location="india",
                            merchant=merchant, user=cu1, slug="carrier1merchant1")
     cu2 = User.objects.create_user("carrier2", "user@tracker.com", "aaasssddd")
-    Carrier.objects.create(name="carrer2", phone="99999999",
-                           location="palakkad", merchant=merchant, user=cu2, slug="carrier2merchant1")
+    Carrier.objects.create(name="carrer2", phone="99999999",merchant=merchant, user=cu2, slug="carrier2merchant1")
     cu3 = User.objects.create_user("carrier3", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrer3",
                            phone="99999999",
-                           location="kerala", merchant=merchant, user=cu3, slug="carrier3merchant1")
+                           merchant=merchant, user=cu3, slug="carrier3merchant1")
     response = merchant_client.get(reverse('tracker_api:carrier'))
     actual = json.loads(response.content.decode('utf-8'))
     expected = [{"url": "http://testserver/api/v1/carriers/carrier3merchant1"},
@@ -113,10 +111,10 @@ def test_details_of_new_carrier(merchant_client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
-                           location="kozikkod", merchant=merchant, user=cu1,slug="carrier1merchant1")
+                           merchant=merchant, user=cu1,slug="carrier1merchant1")
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=['carrier1merchant1']))
-    assert response.data == {"location":"kozikkod", "name":"carrier",
+    assert response.data == {"location":None, "name":"carrier",
                              "phone":"9656888871", "email":"user@tracker.com","delivery":""}
     # Wrong args
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
@@ -128,13 +126,13 @@ def test_change_name_of_carrier (merchant_client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
-                           location="kozikkod", merchant=merchant, user=cu1,slug="carrier1merchant1")
+                            merchant=merchant, user=cu1,slug="carrier1merchant1")
 
     merchant_client.patch(reverse('tracker_api:carrierdetail',
                                   args=["carrier1merchant1"]), {"name":"new name"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
-    assert response.data == {"location":"kozikkod", "name":"new name",
+    assert response.data == {"location":None, "name":"new name",
                              "phone":"9656888871", "email":"user@tracker.com","delivery":""}
     
 
@@ -143,12 +141,12 @@ def test_change_phone_of_carrier(merchant_client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
-                           location="kozikkod", merchant=merchant, user=cu1, slug="carrier1merchant1")
+                            merchant=merchant, user=cu1, slug="carrier1merchant1")
     merchant_client.patch(reverse('tracker_api:carrierdetail',
                                   args=["carrier1merchant1"]), {"phone":"+9999999999"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
-    assert response.data == {"location":"kozikkod", "name":"carrier",
+    assert response.data == {"location":None, "name":"carrier",
                              "phone":"+9999999999", "email":"user@tracker.com","delivery":""}
      
 
@@ -157,13 +155,13 @@ def test_change_location_of_carrier(merchant_client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
-                           location="kozikkod", merchant=merchant, user=cu1,slug="carrier1merchant1")
+                           merchant=merchant, user=cu1,slug="carrier1merchant1")
 
     merchant_client.patch(reverse('tracker_api:carrierdetail',
-                                  args=["carrier1merchant1"]), {"location":"kerala"})
+                                  args=["carrier1merchant1"]), {"location":"{[75.7804,11.2588]}"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
-    assert response.data == {"location":"kerala", "name":"carrier",
+    assert response.data == {"location":None, "name":"carrier",
                              "phone":"9656888871", "email":"user@tracker.com","delivery":""}
 
 
@@ -333,7 +331,7 @@ def test_carrier_ongoing_deliveries(merchant_client, delivery_data):
                                     delivery_data)
      response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrierusermerchant1"]))
-     assert response.data == {"location":"here", "name":"carrier",
+     assert response.data == {"location":None, "name":"carrier",
                               "phone":"99798798", "email":"test@example.com","delivery":['/deliveries/1010carrier']}
 
 

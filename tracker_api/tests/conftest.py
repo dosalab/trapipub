@@ -34,7 +34,6 @@ def carrier_data(request):
     "Creates a valid dict of carrier data"
     return {'name':"carrier",
             'phone':"99798798",
-           # 'location':"here",
             "email" : "test@example.com",
             "username":"carrieruser",
             "password":"aaasssddd"}

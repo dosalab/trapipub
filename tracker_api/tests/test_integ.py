@@ -38,13 +38,12 @@ def test_merchant(live_server):
     carrier = client.post("{}/api/v1/carriers/".format(host),
                           data=data,
                           headers=headers)
-
     #get a particular carrier details
-    carrier = client.get('{}/api/v1/carriers/carriernewusernewmerchant'.format(host),
+    carriers = client.get('{}/api/v1/carriers/carriernewusernewmerchant'.format(host),
                         headers={'Authorization':'Token '+token1})
-    assert json.loads(carrier.text) == {"name":"newcarrier",
+    assert json.loads(carriers.text) == {"name":"newcarrier",
                                         "phone":"99999",
-                                        "location":"",
+                                        "location":None,
                                         "email":"carrier@trcker.com",
                                          "delivery":""}
 
