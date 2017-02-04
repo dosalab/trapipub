@@ -20,7 +20,7 @@ class CarrierSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    location = GeometryField(required=False, default="")
+    location = GeometryField(required=False)
             
     def create(self, validated_data):
         merchant = self.context['merchant']
@@ -29,7 +29,7 @@ class CarrierSerializer(serializers.Serializer):
         username = validated_data['username']
         password = validated_data['password']
         email = validated_data['email']
-        location = validated_data['location']
+        location = validated_data.get('location')
         with transaction.atomic():
             u = User.objects.create_user(username, email, password)
             c = Carrier(name=name,

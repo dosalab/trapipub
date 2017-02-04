@@ -29,7 +29,7 @@ class Carrier (models.Model):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     name = models.CharField(max_length=50)
     phone = models.CharField(validators=[phone_regex],max_length=15)
-    location = gmodels.PointField()
+    location = gmodels.PointField(null=True)
     merchant = models.ForeignKey('Merchant')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=50, default='slug', primary_key=True)
