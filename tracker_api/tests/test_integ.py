@@ -31,7 +31,6 @@ def test_merchant(live_server):
     # carrier creation
     data = {'name'     :"newcarrier",
             'phone'    :"99999",
-            'location' :"here",
             'username' :"carriernewuser",
             'password' :"aaasssddd",
             'email'    :"carrier@trcker.com"}
@@ -45,7 +44,7 @@ def test_merchant(live_server):
                         headers={'Authorization':'Token '+token1})
     assert json.loads(carrier.text) == {"name":"newcarrier",
                                         "phone":"99999",
-                                        "location":"here",
+                                        "location":"",
                                         "email":"carrier@trcker.com",
                                          "delivery":""}
 
