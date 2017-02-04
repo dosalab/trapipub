@@ -12,7 +12,7 @@ USE_X_FORWARDED_HOST = True
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'tracker',
         'USER': 'ubuntu',
     }
