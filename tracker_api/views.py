@@ -83,7 +83,7 @@ class carrierView(viewsets.ModelViewSet):
 class GetCarrierDetailsView(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
     lookup_field = 'slug'
-    
+    queryset = Carrier.objects.all()
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return GetCarrierSerializer
@@ -91,14 +91,7 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             return PatchCarrier
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-    def get_queryset(self):
-        try:
-            Carrier.objects.filter(merchant=self.request.user.merchant)
-            return Carrier.objects.filter(merchant=self.request.user.merchant)
-        except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant",
-                             status=status.HTTP_403_FORBIDDEN))
-
+  
     def retrieve(self, request, *args, **kwargs):
         try:
             merchant = User.objects.get(username=self.request.user).merchant
