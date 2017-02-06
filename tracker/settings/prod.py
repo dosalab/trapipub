@@ -18,3 +18,5 @@ DATABASES = {
     }
 }
 
+STATIC_ROOT = '/home/ubuntu/static'
+
