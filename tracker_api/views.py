@@ -104,14 +104,14 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         try:
-            merchant = User.objects.get(username=self.request.user).merchant
+            carrier = User.objects.get(username=self.request.user).carrier
             kwargs['partial'] = True
             if request.data == {}:
                 return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
             else:
                 return self.update(request, *args, **kwargs)
-        except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant",
+        except User.carrier.RelatedObjectDoesNotExist:
+            return (Response("User is not a carrier",
                              status=status.HTTP_403_FORBIDDEN))
        
 # Create a customer
