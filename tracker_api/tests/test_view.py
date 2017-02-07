@@ -74,13 +74,6 @@ def test_carrier_create_bad_phone(merchant_client, carrier_data):
     #                                 carrier_data)
     # assert response.status_code == 400
 
-# @pytest.mark.django_db
-# def test_carrier_create_bad_location(merchant_client, carrier_data):
-#     # without location
-#     del carrier_data['location']
-#     response = merchant_client.post(reverse('tracker_api:carrier'),
-#                                     carrier_data)
-#     assert response.status_code == 201
 # GET ALL CARRIERS
 @pytest.mark.django_db
 def test_all_carriers_of_merchant(merchant_client, client):
