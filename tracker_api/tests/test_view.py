@@ -24,13 +24,19 @@ def test_carrier_create_by_merchant(merchant_client, carrier_data):
 
 
 @pytest.mark.django_db
-def test_carrier_creation_with_existing_username(merchant_client, carrier_data):
+def test_carrier_create_bad_username(merchant_client, carrier_data):
     response1 = merchant_client.post(reverse('tracker_api:carrier'),
                                      carrier_data)
     response2 = merchant_client.post(reverse('tracker_api:carrier'),
                                      carrier_data)
     assert response1.status_code == 201
     assert response2.status_code == 409
+
+    #without user name
+    del carrier_data['username']
+    response = merchant_client.post(reverse('tracker_api:carrier'),
+                                    carrier_data)
+    assert response.status_code == 400
 
 @pytest.mark.django_db
 def test_carrier_create_bad_email(merchant_client, carrier_data):
@@ -75,14 +81,6 @@ def test_carrier_create_bad_phone(merchant_client, carrier_data):
 #     response = merchant_client.post(reverse('tracker_api:carrier'),
 #                                     carrier_data)
 #     assert response.status_code == 201
-    
-@pytest.mark.django_db
-def test_carrier_creation_bad_username(merchant_client, carrier_data):
-    #without user name
-    del carrier_data['username']
-    response = merchant_client.post(reverse('tracker_api:carrier'),
-                                    carrier_data)
-    assert response.status_code == 400
 # GET ALL CARRIERS
 @pytest.mark.django_db
 def test_all_carriers_of_merchant(merchant_client, client):
