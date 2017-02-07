@@ -80,12 +80,12 @@ class CustomerSerializer(serializers.Serializer):
     #username = serializers.CharField(required=True)
     #password = serializers.CharField(required=True)
     #email = serializers.EmailField(required=True)
-    address = serializers.CharField(required=True)
+    address = GeometryField(required=False)
 
     def create(self, validated_data):
         name = validated_data['name']
         phone = validated_data['phone']
-        address = validated_data['address']
+        address = validated_data.get('address')
         with transaction.atomic():
             cus = Customer(name=name,
                            phone=phone,
