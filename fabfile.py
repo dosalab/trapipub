@@ -9,19 +9,19 @@ def pre_deploy():
 
 def deploy(tree='master'):
     pre_deploy()
-    with cd("/home/ubuntu/deployments/trapi"):
+    with cd("/home/ubuntu/deployments/repos/trapi"):
         run("git pull")
-        run("git archive --prefix={tree}/ --output=../{tree}.tar {tree}".format(tree=tree))
+        run("git archive --prefix={tree}/ --output=../trapi-deploy/{tree}.tar {tree}".format(tree=tree))
 
 
     sudo("sudo service supervisor stop")
 
-    with cd("/home/ubuntu/deployments/"):
+    with cd("/home/ubuntu/deployments/repos/trapi-deploy"):
         run("rm -Rf {tree}".format(tree=tree))
         run("tar -xvf {tree}.tar".format(tree=tree))
         run("rm {}.tar".format(tree))
 
     with cd("/home/ubuntu"):
         run("rm -f current")
-        run("ln -s deployments/{} current".format(tree))
+        run("ln -s deployments/repos/trapi-deploy/{} current".format(tree))
     sudo("sudo service supervisor restart")
