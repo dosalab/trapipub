@@ -122,27 +122,22 @@ def test_details_of_new_carrier(merchant_client):
     assert response.status_code == 404
 
 @pytest.mark.django_db
-def test_change_name_of_carrier (merchant_client):
-    merchant = User.objects.get(username="newuser").merchant
-    cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
-    Carrier.objects.create(name="carrier", phone="9656888871",
-                            merchant=merchant, user=cu1,slug="carrier1merchant1")
-
-    merchant_client.patch(reverse('tracker_api:carrierdetail',
-                                  args=["carrier1merchant1"]), {"name":"new name"})
+def test_change_name_of_carrier_by_carrier (carrier_client, merchant_client):
+    resp = carrier_client.patch(reverse('tracker_api:carrierdetail',
+                                  args=["carrierusermerchant1"]), {"name":"new name"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
-                                           args=["carrier1merchant1"]))
+                                           args=["carrierusermerchant1"]))
     assert response.data == {"location":None, "name":"new name",
-                             "phone":"9656888871", "email":"user@tracker.com","delivery":""}
+                             "phone":"99798798", "email":"test@example.com","delivery":""}
     
 
 @pytest.mark.django_db
-def test_change_phone_of_carrier(merchant_client):
+def test_change_phone_of_carrier(merchant_client,carrier_client):
     merchant = User.objects.get(username="newuser").merchant
     cu1 = User.objects.create_user("carrier1", "user@tracker.com", "aaasssddd")
     Carrier.objects.create(name="carrier", phone="9656888871",
                             merchant=merchant, user=cu1, slug="carrier1merchant1")
-    merchant_client.patch(reverse('tracker_api:carrierdetail',
+    carrier_client.patch(reverse('tracker_api:carrierdetail',
                                   args=["carrier1merchant1"]), {"phone":"+9999999999"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrier1merchant1"]))
