@@ -123,6 +123,26 @@ def test_details_of_new_carrier(merchant_client):
     assert response.status_code == 404
 
 
+@pytest.mark.django_db
+def test_carrier_ongoing_deliveries(merchant_client, delivery_data):
+     merchant_client.post(reverse('tracker_api:delivery'),
+                          delivery_data)
+     response = merchant_client.get(reverse('tracker_api:carrierdetail',
+                                            args=["carrierusermerchant1"]))
+     assert response.data == {"location":None, "name":"carrier",
+                              "phone":"99798798", "email":"test@example.com",
+                              "delivery":['/deliveries/1010carrier']}
+
+
+@pytest.mark.django_db
+def test_carrier_free(merchant_client,carrier_data):
+     merchant_client.post(reverse('tracker_api:carrier'),
+                          carrier_data)
+     response = merchant_client.get(reverse('tracker_api:carrierdetail',
+                                           args=["carrierusermerchant1"]))
+     assert response.data == {"location":None, "name":"carrier",
+                              "phone":"99798798", "email":"test@example.com","delivery":""}
+
 # CHANGE CARRIER DETAILS
 @pytest.mark.django_db
 def test_change_name_of_carrier_by_carrier (carrier_client, merchant_client):
