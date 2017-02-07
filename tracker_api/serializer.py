@@ -1,12 +1,13 @@
+import datetime
 from django.contrib.auth.models import User
-from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
 from rest_framework import serializers
 from django.db import transaction
 from django.utils.text import slugify
-import datetime
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
 from rest_framework_gis.fields import GeometryField
+from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
+
 #Merchant details view
 class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,7 +22,7 @@ class CarrierSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
     location = GeometryField(required=False)
-            
+
     def create(self, validated_data):
         merchant = self.context['merchant']
         name = validated_data['name']
@@ -31,16 +32,16 @@ class CarrierSerializer(serializers.Serializer):
         email = validated_data['email']
         location = validated_data.get('location')
         with transaction.atomic():
-            u = User.objects.create_user(username, email, password)
-            c = Carrier(name=name,
-                        phone=phone,
-                        location=location,
-                        merchant=merchant,
-                        user=u)
-            c.slug = slugify(u.username+merchant.name)
-            c.save()
-            return c
-    
+            user = User.objects.create_user(username, email, password)
+            carrier = Carrier(name=name,
+                              phone=phone,
+                              location=location,
+                              merchant=merchant,
+                              user=user)
+            carrier.slug = slugify(user.username+merchant.name)
+            carrier.save()
+            return carrier
+
 # Get details of a carrier
 class GetCarrierSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
@@ -80,26 +81,19 @@ class CustomerSerializer(serializers.Serializer):
     #password = serializers.CharField(required=True)
     #email = serializers.EmailField(required=True)
     address = serializers.CharField(required=True)
-   
+
     def create(self, validated_data):
-        #merchant = self.context['merchant']
         name = validated_data['name']
         phone = validated_data['phone']
-        #username = validated_data['username']
-        #password = validated_data['password']
-        #email = validated_data['email']
         address = validated_data['address']
         with transaction.atomic():
-           # usr = User.objects.create_user(username, email, password)
             cus = Customer(name=name,
                            phone=phone,
                            address=address)
-                          # merchant=merchant,
-                           #user=usr)
             cus.slug = slugify(cus.phone)
             cus.save()
             return cus
-        
+
 # Get all orders under a carrier
 class CustomerUrlSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
@@ -122,7 +116,7 @@ class OrderSerializer(serializers.Serializer):
     notes = serializers.CharField(required=True)
     amount = serializers.IntegerField(required=True)
     invoice_number = serializers.CharField(required=True)
-   
+
     def create(self, validated_data):
         merchant = self.context['merchant']
         customer = self.context['customer']
@@ -140,7 +134,7 @@ class OrderSerializer(serializers.Serializer):
             order.slug = slugify(invoice_number)
             order.save()
             return order
-        
+
 # Get all orders under a carrier
 class OrderUrlSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
@@ -164,18 +158,18 @@ class DeliverySerializer(serializers.Serializer):
     def create(self, validated_data):
         order = self.context['order']
         carrier = self.context['carrier']
-        stat= self.context['stat']
+        stat = self.context['stat']
         delivery = Delivery(order=order,
                             carrier=carrier,
-                            status = stat)
+                            status=stat)
         delivery.slug = slugify(order.slug+carrier.name)
         with transaction.atomic():
             delivery.save()
             delivery = Delivery.objects.get(slug=delivery.slug)
             date = datetime.datetime.now()
             dlog = DeliveryLog(delivery=delivery,
-                        date=date,
-                        details="Get ready")
+                               date=date,
+                               details="Get ready")
             dlog.save()
         return delivery
 

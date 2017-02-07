@@ -1,39 +1,42 @@
+import datetime
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.views import APIView
+#from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
-from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
-from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer
 from registration.views import RegistrationView
-from registration.signals import user_registered
+#from registration.signals import user_registered
 from django.contrib.auth import authenticate
-from django.contrib.auth import login
 from django.db import transaction
 from rest_framework import authentication
 from django.http import HttpResponse
+#from django.contrib.auth import login
 from django.db.utils import IntegrityError
-import datetime
-from django.contrib.sites.models import Site
+#from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
+from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
+from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer
+
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
 
     def register(self, form):
         data = form.cleaned_data
-        username, email, password = data['username'], data['email'], data['password1']
+        username = data['username']
+        email = data['email']
+        password = data['password1']
         with transaction.atomic():
             user = User.objects.create_user(username, email, password)
-            m = Merchant(user=user)
-            m.name = data['name']
-            m.address = data['address']
-            m.save()
+            merchant = Merchant(user=user)
+            merchant.name = data['name']
+            merchant.address = data['address']
+            merchant.save()
 
     def get_success_url(self, user):
         return 'index'
 
-#  /carriers/ 
+#/carriers/
 class carrierView(viewsets.ModelViewSet):
     lookup_field = 'slug'
     
@@ -48,7 +51,8 @@ class carrierView(viewsets.ModelViewSet):
         try:
             merchant = User.objects.get(username=self.request.user).merchant
             queryset = Carrier.objects.filter(merchant=self.request.user.merchant)
-            serializer = CarrierSerializer(data=request.data, context={'merchant' : merchant})
+            serializer = CarrierSerializer(data=request.data,
+                                           context={'merchant' : merchant})
             if serializer.is_valid():
                 try:
                     carrier = serializer.save()
@@ -79,7 +83,7 @@ class carrierView(viewsets.ModelViewSet):
                              status=status.HTTP_403_FORBIDDEN))
 
 
-#  /carriers/{id} 
+#/carriers/{id}
 class GetCarrierDetailsView(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
     lookup_field = 'slug'
@@ -91,10 +95,10 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             return PatchCarrier
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-  
+
     def retrieve(self, request, *args, **kwargs):
         try:
-            merchant = User.objects.get(username=self.request.user).merchant
+            User.objects.get(username=self.request.user).merchant
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
@@ -104,7 +108,7 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         try:
-            carrier = User.objects.get(username=self.request.user).carrier
+            User.objects.get(username=self.request.user).carrier
             kwargs['partial'] = True
             if request.data == {}:
                 return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
@@ -125,7 +129,7 @@ class CustomerView(viewsets.ModelViewSet):
     authentication_classes = (authentication.TokenAuthentication,)
     def create(self, request, *args, **kwargs):
         try:
-            merchant = User.objects.get(username=self.request.user).merchant
+            User.objects.get(username=self.request.user).merchant
             queryset = Customer.objects.all()
             serializer = CustomerSerializer(data=request.data)
             if serializer.is_valid():
@@ -141,7 +145,8 @@ class CustomerView(viewsets.ModelViewSet):
                 return (Response(serializer.errors,
                                  status=status.HTTP_400_BAD_REQUEST))
         except User.merchant.RelatedObjectDoesNotExist:
-            return (Response("User is not a merchant", status=status.HTTP_403_FORBIDDEN))
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
 
     def list(self, request, *args, **kwargs):
         try:
@@ -156,20 +161,20 @@ class CustomerView(viewsets.ModelViewSet):
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
 
-#  /customers/{id} 
+#/customers/{id} 
 class CustomerDetails(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
     lookup_field = 'slug'
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
     queryset = Customer.objects.all()
-    
+
     def get_serializer_class(self):
         if self.action == 'partial_update':
             return CustomerDetailsSerializer
     def retrieve(self, request, *args, **kwargs):
         try:
-            merchant = User.objects.get(username=self.request.user).merchant
+            User.objects.get(username=self.request.user).merchant
             instance = self.get_object()
             serializer = CustomerDetailsSerializer(instance)
             return Response(serializer.data)
@@ -179,7 +184,7 @@ class CustomerDetails(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         try:
-            merchant = User.objects.get(username=self.request.user).merchant
+            User.objects.get(username=self.request.user).merchant
             kwargs['partial'] = True
             if request.data == {}:
                 return (Response("Changes not given",
@@ -203,7 +208,7 @@ class OrderView(viewsets.ModelViewSet):
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 
-    def create(self, request, *args, **kwargs):            
+    def create(self, request, *args, **kwargs):
         try:
             merchant = User.objects.get(username=self.request.user).merchant
             customerid = request.data['customer']
@@ -232,7 +237,7 @@ class OrderView(viewsets.ModelViewSet):
 
 # Get details of a order
 class OrderDetails(viewsets.ModelViewSet):
-    lookup_field = 'slug'   
+    lookup_field = 'slug'
     serializer_class = orderdetailsSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
@@ -240,7 +245,7 @@ class OrderDetails(viewsets.ModelViewSet):
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 
-    
+
 class DeliveryView(viewsets.ModelViewSet):
     """
     View to handle all /delivery APIs
@@ -248,7 +253,7 @@ class DeliveryView(viewsets.ModelViewSet):
     lookup_field = 'slug'
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-    
+
     def get_serializer_class(self):
         if self.action == 'create':
             return DeliverySerializer
@@ -261,7 +266,7 @@ class DeliveryView(viewsets.ModelViewSet):
         Creates a delivery with the given params
         """
         try:
-            merchant = User.objects.get(username=self.request.user).merchant
+            User.objects.get(username=self.request.user).merchant
             order = Order.objects.get(slug=request.data['order'])
             carrier = Carrier.objects.get(slug=request.data['carrier'])
             stat = DeliveryStatus.objects.get(name="Assigned")

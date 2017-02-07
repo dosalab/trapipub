@@ -29,6 +29,16 @@ def merchant_client(request, client):
     api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
     return api_client
 
+
+@pytest.fixture
+def carrier_client(request, carrier_data, merchant_client):
+    merchant_client.post(reverse('tracker_api:carrier'),
+                         carrier_data)
+    token = Token.objects.get(user__username='carrieruser')
+    api2_client = APIClient()
+    api2_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    return api2_client
+
 @pytest.fixture
 def carrier_data(request):
     "Creates a valid dict of carrier data"
