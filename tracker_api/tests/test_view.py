@@ -157,11 +157,11 @@ def test_change_name_of_carrier_by_carrier (carrier_client, merchant_client):
 @pytest.mark.django_db
 def test_change_phone_of_carrier(merchant_client, carrier_client):
     carrier_client.patch(reverse('tracker_api:carrierdetail',
-                                 args=["carrieruser1merchant1"]), {"phone":"+9999999999"})
+                                 args=["carrierusermerchant1"]), {"phone":"+9999999999"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrierusermerchant1"]))
     assert response.data == {"location":None, "name":"carrier",
-                             "phone":"+9999999999", "email":"user@tracker.com","delivery":""}
+                             "phone":"+9999999999", "email":"test@example.com","delivery":""}
 
 # @pytest.mark.django_db
 # def test_change_password_of_carrier(merchant_client, carrier_client):
