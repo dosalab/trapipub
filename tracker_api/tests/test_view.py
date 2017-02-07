@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from tracker_api.models import Carrier, Order, Customer, DeliveryStatus
 
+#CARRIER CREATION
 @pytest.mark.django_db
 def test_carrier_create_with_no_merchant(client, carrier_data):
     User.objects.create_user("user", "useraddress", "aaasssddd")
@@ -82,7 +83,7 @@ def test_carrier_creation_bad_username(merchant_client, carrier_data):
     response = merchant_client.post(reverse('tracker_api:carrier'),
                                     carrier_data)
     assert response.status_code == 400
-
+# GET ALL CARRIERS
 @pytest.mark.django_db
 def test_all_carriers_of_merchant(merchant_client, client):
     merchant = User.objects.get(username="newuser").merchant
@@ -112,6 +113,7 @@ def test_all_carriers_of_merchant(merchant_client, client):
     response = client.post(reverse('tracker_api:carrier'))
     assert response.status_code == 401
 
+# GET DETAILS OF A CARRIER
 @pytest.mark.django_db
 def test_details_of_new_carrier(merchant_client):
     merchant = User.objects.get(username="newuser").merchant
@@ -129,6 +131,8 @@ def test_details_of_new_carrier(merchant_client):
                                            args=[2]))
     assert response.status_code == 404
 
+
+# CHANGE CARRIER DETAILS
 @pytest.mark.django_db
 def test_change_name_of_carrier_by_carrier (carrier_client, merchant_client):
     carrier_client.patch(reverse('tracker_api:carrierdetail',
