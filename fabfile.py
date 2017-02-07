@@ -24,4 +24,8 @@ def deploy(tree='master'):
     with cd("/home/ubuntu"):
         run("rm -f current")
         run("ln -s deployments/repos/trapi-deploy/{} current".format(tree))
+
+    with cd("/home/ubuntu/current"):
+        run(". /home/ubuntu/track_env/bin/activate && python manage.py collectstatic --settings tracker.settings.prod --noinput")
+            
     sudo("sudo service supervisor restart")
