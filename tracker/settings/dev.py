@@ -17,3 +17,5 @@ DATABASES = {
     }
 }
 
+#STATICFILES_DIRS = ('/home/abu/track/tracker/static/',)
+STATIC_ROOT = '/home/abu/projects/tracker/static'
