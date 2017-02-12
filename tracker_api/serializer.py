@@ -1,3 +1,4 @@
+from rest_framework.serializers import ValidationError
 import datetime
 from django.contrib.auth.models import User
 from rest_framework import serializers
@@ -7,6 +8,11 @@ from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
 from rest_framework_gis.fields import GeometryField
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
+from mapbox import Geocoder
+from django.contrib.gis.geos import Point
+from tracker_api.customfields import ForwardField
+
+
 
 #Merchant details view
 class MerchantSerializer(serializers.ModelSerializer):
@@ -21,7 +27,12 @@ class CarrierSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    location = GeometryField(required=False)
+    location = ForwardField(required=True)
+    locationpoint = ForwardField(required=False)
+    def validate_location(self, value):
+        if value =="bad":
+            raise ValidationError("Invalid address")
+        return value
 
     def create(self, validated_data):
         merchant = self.context['merchant']
@@ -35,7 +46,8 @@ class CarrierSerializer(serializers.Serializer):
             user = User.objects.create_user(username, email, password)
             carrier = Carrier(name=name,
                               phone=phone,
-                              location=location,
+                              location=location['address'],
+                              locationpoint=location['point'],
                               merchant=merchant,
                               user=user)
             carrier.slug = slugify(user.username+merchant.name)

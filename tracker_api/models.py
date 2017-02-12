@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.sites.models import Site
 from django.core.validators import RegexValidator
 from django.contrib.sites.models import Site
-
+from tracker_api.customfields import ForwardField
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
@@ -30,7 +30,8 @@ class Carrier (models.Model):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     name = models.CharField(max_length=50)
     phone = models.CharField(validators=[phone_regex],max_length=15)
-    location = gmodels.PointField(null=True)
+    location = models.CharField(max_length=500)
+    locationpoint = gmodels.PointField(null=True)
     merchant = models.ForeignKey('Merchant')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=50, default='slug', primary_key=True)
