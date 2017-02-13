@@ -1,5 +1,5 @@
-from rest_framework.serializers import ValidationError
 import datetime
+from rest_framework.serializers import ValidationError
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.db import transaction
@@ -8,8 +8,6 @@ from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
 from rest_framework_gis.fields import GeometryField
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
-from mapbox import Geocoder
-from django.contrib.gis.geos import Point
 from tracker_api.customfields import ForwardField
 
 
@@ -28,9 +26,8 @@ class CarrierSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
     location = ForwardField(required=True)
-    locationpoint = ForwardField(required=False)
     def validate_location(self, value):
-        if value =="bad":
+        if value == "bad":
             raise ValidationError("Invalid address")
         return value
 
