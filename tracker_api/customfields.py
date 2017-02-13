@@ -3,6 +3,7 @@ from mapbox import Geocoder
 from django.contrib.gis.geos import Point
 
 class ForwardField(serializers.Field):
+
     def to_internal_value(self, data):
         geocoder = Geocoder()
         response = geocoder.forward(data)
@@ -22,3 +23,4 @@ class ForwardField(serializers.Field):
         fullfield["address"] = data
         fullfield["point"] = point
         return fullfield
+
