@@ -10,8 +10,6 @@ from rest_framework_gis.fields import GeometryField
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
 from tracker_api.customfields import ForwardField
 
-
-
 #Merchant details view
 class MerchantSerializer(serializers.ModelSerializer):
     class Meta:
