@@ -17,7 +17,7 @@ from django.db.utils import IntegrityError
 from django.contrib.sites.shortcuts import get_current_site
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
 from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer
-
+from tracker_api.helpers import Geoconverter
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
 
@@ -112,12 +112,23 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             kwargs['partial'] = True
             if request.data == {}:
                 return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
+            elif request.data.get("location"):
+                resp = Geoconverter.forward(self,request.data["location"])
+                request.data["location"] = resp["address"]
+                request.data["locationpoint"] = resp["point"]
+                return self.update(request, *args, **kwargs)
+            elif request.data.get("locationpoint"):
+                resp = Geoconverter.reverse(self,request.data["locationpoint"])
+                request.data["location"] = resp["address"]
+                request.data["locationpoint"] = resp["point"]
+                return self.update(request, *args, **kwargs)
+          
             else:
                 return self.update(request, *args, **kwargs)
         except User.carrier.RelatedObjectDoesNotExist:
             return (Response("User is not a carrier",
                              status=status.HTTP_403_FORBIDDEN))
-       
+   
 # Create a customer
 class CustomerView(viewsets.ModelViewSet):
     def get_serializer_class(self):
