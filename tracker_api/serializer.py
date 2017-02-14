@@ -85,7 +85,7 @@ class CustomerSerializer(serializers.Serializer):
     name = serializers.CharField(required=True)
     phone = serializers.IntegerField(required=True)
     address = ForwardField(required=True)
-    def validate_location(self, value):
+    def validate_address(self, value):
         if value == "bad":
             raise ValidationError("Invalid address")
         return value

@@ -63,7 +63,7 @@ class Customer(models.Model):
 
 
     def __str__(self):
-        return "Customers(id={}, name='{}')".format(self.slug, repr(self.name))
+        return "Customer(id={}, name='{}')".format(self.slug, repr(self.name))
 
     def url(self):
         return "/customers/{}".format(self.slug)
@@ -71,7 +71,7 @@ class Customer(models.Model):
 class Order(models.Model):
     merchant = models.ForeignKey('Merchant')
     customer = models.ForeignKey('Customer')
-    date =  models.DateTimeField(default=date.today)
+    date = models.DateTimeField(default=date.today)
     notes = models.CharField(max_length=50)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     invoice_number = models.CharField(max_length=20,unique=True)
