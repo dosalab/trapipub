@@ -62,10 +62,10 @@ class Customer(models.Model):
 
 
     def __str__(self):
-        return "Customer(id={}, name='{}')".format(self.slug, repr(self.name))
+        return "Customers(id={}, name='{}')".format(self.slug, repr(self.name))
 
     def url(self):
-        return "/customer/{}".format(self.slug)
+        return "/customers/{}".format(self.slug)
 
 class Order(models.Model):
     merchant = models.ForeignKey('Merchant')

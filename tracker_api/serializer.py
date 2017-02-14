@@ -84,9 +84,6 @@ class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
 class CustomerSerializer(serializers.Serializer):
     name = serializers.CharField(required=True)
     phone = serializers.IntegerField(required=True)
-    #username = serializers.CharField(required=True)
-    #password = serializers.CharField(required=True)
-    #email = serializers.EmailField(required=True)
     address = GeometryField(required=False)
 
     def create(self, validated_data):
