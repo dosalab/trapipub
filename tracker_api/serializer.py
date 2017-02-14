@@ -84,7 +84,11 @@ class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
 class CustomerSerializer(serializers.Serializer):
     name = serializers.CharField(required=True)
     phone = serializers.IntegerField(required=True)
-    address = GeometryField(required=False)
+    address = ForwardField(required=True)
+    def validate_location(self, value):
+        if value == "bad":
+            raise ValidationError("Invalid address")
+        return value
 
     def create(self, validated_data):
         name = validated_data['name']
@@ -93,7 +97,8 @@ class CustomerSerializer(serializers.Serializer):
         with transaction.atomic():
             cus = Customer(name=name,
                            phone=phone,
-                           address=address)
+                           address=address['address'],
+                           point=address['point'])
             cus.slug = slugify(cus.phone)
             cus.save()
             return cus
@@ -112,7 +117,7 @@ class CustomerUrlSerializer(serializers.ModelSerializer):
 class CustomerDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('name', 'phone', 'address')
+        fields = ('name', 'phone', 'address','point')
 
 # Create an order
 class OrderSerializer(serializers.Serializer):
