@@ -112,16 +112,16 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             kwargs['partial'] = True
             if request.data == {}:
                 return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
-            elif request.data.get("location"):
-                resp = Geoconverter.forward(self,request.data["location"])
-                request.data["location"] = resp["address"]
-                request.data["locationpoint"] = resp["point"]
-                return self.update(request, *args, **kwargs)
-            elif request.data.get("locationpoint"):
-                resp = Geoconverter.reverse(self,request.data["locationpoint"])
-                request.data["location"] = resp["address"]
-                request.data["locationpoint"] = resp["point"]
-                return self.update(request, *args, **kwargs)
+            # elif request.data.get("location"):
+            #     resp = Geoconverter.forward(self,request.data["location"])
+            #     request.data["location"] = resp["address"]
+            #     request.data["locationpoint"] = resp["point"]
+            #     return self.update(request, *args, **kwargs)
+            # elif request.data.get("locationpoint"):
+            #     resp = Geoconverter.reverse(self,request.data["locationpoint"])
+            #     request.data["location"] = resp["address"]
+            #     request.data["locationpoint"] = resp["point"]
+            #     return self.update(request, *args, **kwargs)
           
             else:
                 return self.update(request, *args, **kwargs)

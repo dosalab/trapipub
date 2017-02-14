@@ -41,8 +41,7 @@ class CarrierSerializer(serializers.Serializer):
             user = User.objects.create_user(username, email, password)
             carrier = Carrier(name=name,
                               phone=phone,
-                              location=location['address'],
-                              locationpoint=location['point'],
+                              point=location['point'],
                               merchant=merchant,
                               user=user)
             carrier.slug = slugify(user.username+merchant.name)
@@ -54,13 +53,13 @@ class GetCarrierSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
     class Meta:
         model = Carrier
-        fields = ("name", "phone", "location","locationpoint", "email", "delivery")
+        fields = ("name", "phone","point", "email", "delivery")
 
 # Update details of a carrier
 class PatchCarrier(serializers.ModelSerializer):
     class Meta:
         model = Carrier
-        fields = ("name", "phone", "location","locationpoint")
+        fields = ("name", "phone","point")
 
 class CustomHyperlink(serializers.HyperlinkedIdentityField):
     def get_url(self, obj, view_name, request, format):
