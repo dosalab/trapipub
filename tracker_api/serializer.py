@@ -125,6 +125,16 @@ class OrderSerializer(serializers.Serializer):
     notes = serializers.CharField(required=True)
     amount = serializers.IntegerField(required=True)
     invoice_number = serializers.CharField(required=True)
+    from_address = ForwardField(required=True)
+    to_address = ForwardField(required=True)
+    def validate_to_address(self, value):
+        if value == "bad":
+            raise ValidationError("Invalid address")
+        return value
+    def validate_from_address(self, value):
+        if value == "bad":
+            raise ValidationError("Invalid address")
+        return value
 
     def create(self, validated_data):
         merchant = self.context['merchant']
@@ -133,13 +143,19 @@ class OrderSerializer(serializers.Serializer):
         amount = validated_data['amount']
         invoice_number = validated_data['invoice_number']
         date = datetime.datetime.now()
+        from_address = validated_data.get('from_address')
+        to_address = validated_data.get('to_address')
         with transaction.atomic():
             order = Order(merchant=merchant,
                           customer=customer,
                           notes=notes,
                           invoice_number=invoice_number,
                           amount=amount,
-                          date=date)
+                          date=date,
+                          from_address=from_address["address"],
+                          from_point=from_address["point"],
+                          to_address=to_address["address"],
+                          to_point=to_address["point"])
             order.slug = slugify(invoice_number)
             order.save()
             return order
@@ -157,7 +173,7 @@ class OrderUrlSerializer(serializers.ModelSerializer):
 class orderdetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ('invoice_number', 'date', 'amount', 'customer', 'notes')
+        fields = ('invoice_number', 'date', 'amount', 'customer', 'notes',"from_address","from_point","to_address","to_point")
 
 
 # Create a delivery
