@@ -221,3 +221,21 @@ class DeliveryStatus(serializers.ModelSerializer):
 #         model = Delivery
 #         fields = ('id', 'carrier', 'order', 'status')
     
+class DeliveryUrls(serializers.HyperlinkedModelSerializer):
+    url = CustomHyperlink(
+        view_name='tracker_api:deliverydetails',
+        lookup_field='slug'
+    )
+    class Meta:
+        model = Delivery
+        fields = ("url",)
+
+class DeliverystatusUrls(serializers.HyperlinkedModelSerializer):
+    url = CustomHyperlink(
+        view_name='tracker_api:deliverydetails',
+        lookup_field='slug'
+    )
+    status = StatusRelatedField(read_only=True)
+    class Meta:
+        model = Delivery
+        fields = ("url",'status')
