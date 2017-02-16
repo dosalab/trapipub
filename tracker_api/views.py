@@ -20,17 +20,18 @@ from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer,
 from tracker_api.helpers import Geoconverter
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
-
     def register(self, form):
         data = form.cleaned_data
         username = data['username']
         email = data['email']
         password = data['password1']
+        resp = Geoconverter.forward(self, data["address"])
         with transaction.atomic():
             user = User.objects.create_user(username, email, password)
             merchant = Merchant(user=user)
             merchant.name = data['name']
             merchant.address = data['address']
+            merchant.point = resp["point"]
             merchant.save()
 
     def get_success_url(self, user):
