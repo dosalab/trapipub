@@ -43,7 +43,15 @@ class Carrier (models.Model):
             return [x.url() for x in ret]
         else:
             return ''
-        
+     
+    @property
+    def deliveries(self):
+        ret = self.delivery_set.all()
+        if ret:
+            return [x.url() for x in ret]
+        else:
+            return ''
+           
     def __str__(self):
         return "Carrier(id={}, name='{}')".format(self.slug, repr(self.name))
 

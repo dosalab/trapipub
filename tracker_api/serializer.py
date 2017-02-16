@@ -73,6 +73,13 @@ class CarrierUrlSerializer(serializers.HyperlinkedModelSerializer):
         model = Carrier
         fields = ("url",)
 
+# Get deliveries of a carrier
+class CarrierDeliveries(serializers.ModelSerializer):
+    class Meta:
+        model = Carrier
+        fields = ("deliveries",)
+
+        
 # create a customer
 class CustomerSerializer(serializers.Serializer):
     name = serializers.CharField(required=True)

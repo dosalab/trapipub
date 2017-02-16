@@ -8,8 +8,9 @@ router = routers.DefaultRouter()
 app_name='tracker_api'
 
 urlpatterns = [
-    url(r'^carriers/?$',views.carrierView.as_view({'post':'create','get':'list'}),name='carrier'),
-    url(r'^carriers/(?P<slug>[-\w]+)/?$',views.GetCarrierDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='carrierdetail'),
+    url(r'^carriers$',views.carrierView.as_view({'post':'create','get':'list'}),name='carrier'),
+    url(r'^carriers/(?P<slug>[-\w]+)$',views.GetCarrierDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='carrierdetail'),
+    url(r'^carriers/(?P<slug>[-\w]+)/deliveries$',views.CarrierDeliveryView.as_view({'get':'retrieve'}), name='carrierdeliveries'),
     url(r'^customers/?$',views.CustomerView.as_view({'post':'create','get':'list'}),name='customer'),
     url(r'^customers/(?P<slug>[-\w]+)/?$',views.CustomerDetails.as_view({'get':'retrieve','patch':'partial_update'}), name='customerdetails'),
     url(r'^orders/?$',views.OrderView.as_view({'post':'create','get' : 'list'}),name='orders'),

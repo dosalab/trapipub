@@ -129,7 +129,28 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
         except User.carrier.RelatedObjectDoesNotExist:
             return (Response("User is not a carrier",
                              status=status.HTTP_403_FORBIDDEN))
-   
+
+#/carriers/{id}/deliveries
+class CarrierDeliveryView(viewsets.ModelViewSet):
+    """ View for get the deliveries of a specific carrier """
+    lookup_field = 'slug'
+    queryset = Carrier.objects.all()
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return  CarrierDeliveries
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            User.objects.get(username=self.request.user).merchant
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
+
 # Create a customer
 class CustomerView(viewsets.ModelViewSet):
     def get_serializer_class(self):
