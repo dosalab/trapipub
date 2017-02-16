@@ -17,7 +17,7 @@ from django.db.utils import IntegrityError
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
-from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls
+from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls,CarrierDeliveryStatusSerilaizer
 from tracker_api.helpers import Geoconverter
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
@@ -152,6 +152,27 @@ class CarrierDeliveryView(viewsets.ModelViewSet):
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
 
+class CarrierDeliveryStatusView(viewsets.ModelViewSet):
+    """ View for get the deliveries of a specific carrier """
+    lookup_field = 'slug'
+    queryset = Carrier.objects.all()
+    def get_serializer_class(self):
+        if self.action == 'list':
+          return  CarrierDeliveryStatusSerilaizer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+    def list(self, request, *args, **kwargs):
+        carrier = Carrier.objects.get(slug=kwargs['slug'])
+        queryset = Delivery.objects.filter(Q(order__merchant=self.request.user.merchant),Q(status__name=kwargs["status"]),Q(carrier=carrier))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+        
 # Create a customer
 class CustomerView(viewsets.ModelViewSet):
     def get_serializer_class(self):
