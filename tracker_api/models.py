@@ -18,8 +18,8 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class Merchant(models.Model):
     name = models.CharField(max_length=50)
-    address = models.CharField(max_length=50)
-    #address = gmodels.PointField(null=True)
+    address = models.CharField(max_length=150)
+    point = gmodels.PointField(null=True)
     payment_info = models.CharField(max_length=50)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
