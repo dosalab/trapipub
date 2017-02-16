@@ -1,6 +1,6 @@
 from registration.forms import RegistrationForm
 from django import forms
-from django.contrib.gis.forms.fields import GeometryField
+#from django.contrib.gis.forms.fields import GeometryField
 class MerchantRegistrationForm(RegistrationForm):
     name = forms.CharField(label='name', max_length=30)
     #address = GeometryField()
