@@ -19,7 +19,4 @@ urlpatterns = [
     url(r'^deliveries$',views.DeliveryView.as_view({'post':'create','get':'list'}),name='delivery'),
     url(r'^deliveries/(?:status=(?P<status>[-\w+]+))$',views.DeliveryStatusView.as_view({'get':'list'}),name='deliverystatus'),
     url(r'^deliveries/(?P<slug>[-\w+]+)$',views.DeliveryDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='deliverydetails'),
-    # url(r'^status/$',views.StatusView.as_view({'post':'create'}),name='status'),
-    
 ]
-
