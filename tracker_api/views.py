@@ -363,6 +363,17 @@ class DeliveryStatusView(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     
+class DeliveryDetailsView(viewsets.ModelViewSet):
+    lookup_field = 'slug'
+    serializer_class = DeliveryDetails
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    def get_queryset(self):
+        return Delivery.objects.filter(order__merchant=self.request.user.merchant)
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 # class StatusView(viewsets.ModelViewSet):
 #     serializer_class = StatusSerializer

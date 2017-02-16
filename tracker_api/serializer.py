@@ -205,21 +205,21 @@ class DeliveryStatus(serializers.ModelSerializer):
         fields = ("__all__")
 
 
-# #custom related field for status
-# class StatusRelatedField(serializers.RelatedField):
-#     def to_representation(self, value):
-#         return {"date":value.date,
-#                 "info":value.info,
-#                 "terminal":value.terminal}
-        
-# # get delivery details
-# class DeliveryDetails(serializers.ModelSerializer):
-#     # order = orderdetailsSerializer()
-#     # carrier = GetCarrierSerializer()
-#     status = StatusRelatedField(many=True, read_only=True)
-#     class Meta:
-#         model = Delivery
-#         fields = ('id', 'carrier', 'order', 'status')
+#custom related field for status
+class StatusRelatedField(serializers.RelatedField):
+    def to_representation(self, value):
+        return {value.name}
+                
+# get delivery details
+class DeliveryDetails(serializers.ModelSerializer):
+    order = OrderUrlSerializer()
+    carrier = CarrierUrlSerializer()
+    status = StatusRelatedField(read_only=True)
+    customer = serializers.CharField(source='order.customer.slug')
+    location = serializers.CharField(source='carrier.point')
+    class Meta:
+        model = Delivery
+        fields = ('order','carrier','customer','location','status')
     
 class DeliveryUrls(serializers.HyperlinkedModelSerializer):
     url = CustomHyperlink(
