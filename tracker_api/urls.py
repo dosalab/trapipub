@@ -15,8 +15,9 @@ urlpatterns = [
     url(r'^customers/(?P<slug>[-\w]+)/?$',views.CustomerDetails.as_view({'get':'retrieve','patch':'partial_update'}), name='customerdetails'),
     url(r'^orders/?$',views.OrderView.as_view({'post':'create','get' : 'list'}),name='orders'),
     url(r'^orders/(?P<slug>[-\w]+)/?$',views.OrderDetails.as_view({'get':'retrieve','patch':'partial_update'}),name='orderdetail'),
-    url(r'^deliveries/?$',views.DeliveryView.as_view({'post':'create','get':'list'}),name='delivery'),
-    #url(r'^deliveries/(?P<slug>[-\w+]+)/?$',views.DeliveryDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='delivery_details'),
+    url(r'^deliveries$',views.DeliveryView.as_view({'post':'create','get':'list'}),name='delivery'),
+    url(r'^deliveries/status/(?P<status>[-\w+]+)$',views.DeliveryStatusView.as_view({'get':'list'}),name='deliverystatus'),
+    url(r'^deliveries/(?P<slug>[-\w+]+)$',views.DeliveryDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='deliverydetails'),
     # url(r'^status/$',views.StatusView.as_view({'post':'create'}),name='status'),
     
 ]

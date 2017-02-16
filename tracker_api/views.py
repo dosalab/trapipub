@@ -15,8 +15,9 @@ from django.http import HttpResponse
 from django.db.utils import IntegrityError
 #from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Q
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
-from .serializer import  MerchantSerializer, CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer
+from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls
 from tracker_api.helpers import Geoconverter
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
@@ -347,6 +348,26 @@ class DeliveryView(viewsets.ModelViewSet):
 #     queryset = Delivery.objects.get()
 #     permission_classes = (permissions.IsAuthenticated,)
 #     authentication_classes = (authentication.TokenAuthentication,)
+
+class DeliveryStatusView(viewsets.ModelViewSet):
+    """
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return DeliverystatusUrls
+    
+    def list(self, request, *args, **kwargs):
+        queryset = Delivery.objects.filter(Q(order__merchant=self.request.user.merchant),Q(status__name=kwargs["status"]) )
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     
 
 # class StatusView(viewsets.ModelViewSet):
