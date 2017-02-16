@@ -81,7 +81,7 @@ class Order(models.Model):
     date = models.DateTimeField(default=date.today)
     notes = models.CharField(max_length=50)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    invoice_number = models.CharField(max_length=20,unique=True)
+    invoice_number = models.CharField(max_length=20, unique=True)
     from_address = models.CharField(max_length=150)
     from_point = gmodels.PointField(null=True)
     to_address = models.CharField(max_length=150)
@@ -102,7 +102,7 @@ class DeliveryStatus(models.Model):
 class Delivery(models.Model):
     order = models.OneToOneField('Order') 
     carrier = models.ForeignKey('Carrier')
-    slug = models.SlugField(max_length=50, default='slug')
+    slug = models.SlugField(max_length=50, default='slug',unique=True)
     status = models.ForeignKey('DeliveryStatus')
     
     # def get_status(self):
