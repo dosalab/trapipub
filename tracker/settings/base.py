@@ -15,6 +15,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+os.environ['MAPBOX_ACCESS_TOKEN'] = 'pk.eyJ1IjoiYWJvb2JhY2tlciIsImEiOiJjaXl3bGhpcncwMDAzMzJwZGxwYmRucXJrIn0.lLdu0c1vxZjXNSZjGPsPUg'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
