@@ -17,7 +17,7 @@ from django.db.utils import IntegrityError
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
-from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls,CarrierDeliveryStatusSerilaizer
+from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls,CarrierDeliveryStatusSerilaizer, CarrierDeliveryOrderSeriliazer
 from tracker_api.helpers import Geoconverter
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
@@ -141,7 +141,42 @@ class CarrierDeliveryView(viewsets.ModelViewSet):
             return  CarrierDeliveries
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
-
+    def create(self, request, *args, **kwargs):
+        """
+        Creates a delivery with the given order
+        """
+        try:
+            User.objects.get(username=self.request.user).merchant
+            order = Order.objects.get(slug=request.data['order'])
+            carrier = Carrier.objects.get(slug=kwargs["slug"])
+            stat = DeliveryStatus.objects.get(name="Assigned")
+            serializer =  CarrierDeliveryOrderSeriliazer(data=request.data,
+                                                         context = {'order' : order, 'carrier':carrier, 'stat':stat})
+            if serializer.is_valid():
+                delivery = serializer.save()
+                sitename = get_current_site(request).domain
+                return (Response({"url" :'http://{}/api/v1{}'.format(sitename,delivery.url())},
+                                 status=status.HTTP_201_CREATED))
+            else: 
+                return (Response(serializer.errors,
+                                 status=status.HTTP_400_BAD_REQUEST))
+                
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
+        except IntegrityError:
+            return (Response("Order already deliverd",
+                             status=status.HTTP_400_BAD_REQUEST))
+        except Carrier.DoesNotExist:
+            return (Response("Give proper Carrier",
+                             status=status.HTTP_400_BAD_REQUEST))
+        except Order.DoesNotExist:
+            return (Response("Give proper Order",
+                             status=status.HTTP_400_BAD_REQUEST))
+        except KeyError:
+            return (Response("Give proper data",
+                             status=status.HTTP_400_BAD_REQUEST))
+   
     def retrieve(self, request, *args, **kwargs):
         try:
             User.objects.get(username=self.request.user).merchant

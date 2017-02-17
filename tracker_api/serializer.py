@@ -255,3 +255,24 @@ class CarrierDeliveryStatusSerilaizer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Delivery
         fields = ("order","delivery",'status','location')
+
+# Create a delivery
+class  CarrierDeliveryOrderSeriliazer(serializers.Serializer):
+    order = serializers.CharField(required=True)
+    def create(self, validated_data):
+        order = self.context['order']
+        carrier = self.context['carrier']
+        stat = self.context['stat']
+        delivery = Delivery(order=order,
+                            carrier=carrier,
+                            status=stat)
+        delivery.slug = slugify(order.slug+carrier.name)
+        with transaction.atomic():
+            delivery.save()
+            delivery = Delivery.objects.get(slug=delivery.slug)
+            date = datetime.datetime.now()
+            dlog = DeliveryLog(delivery=delivery,
+                               date=date,
+                               details="Get ready")
+            dlog.save()
+        return delivery
