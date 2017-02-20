@@ -127,8 +127,10 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             #     request.data["locationpoint"] = resp["point"]
             #     return self.update(request, *args, **kwargs)
           
+                else:
+                    return self.update(request, *args, **kwargs)
             else:
-                return self.update(request, *args, **kwargs)
+                return Response("Its not your id",status=status.HTTP_400_BAD_REQUEST)
         except User.carrier.RelatedObjectDoesNotExist:
             return (Response("User is not a carrier",
                              status=status.HTTP_403_FORBIDDEN))
@@ -148,21 +150,22 @@ class CarrierDeliveryView(viewsets.ModelViewSet):
         Creates a delivery with the given order
         """
         try:
-            User.objects.get(username=self.request.user).merchant
-            order = Order.objects.get(slug=request.data['order'])
-            carrier = Carrier.objects.get(slug=kwargs["slug"])
-            stat = DeliveryStatus.objects.get(name="Assigned")
-            serializer =  CarrierDeliveryOrderSeriliazer(data=request.data,
-                                                         context = {'order' : order, 'carrier':carrier, 'stat':stat})
-            if serializer.is_valid():
-                delivery = serializer.save()
-                sitename = get_current_site(request).domain
-                return (Response({"url" :'http://{}/api/v1{}'.format(sitename,delivery.url())},
-                                 status=status.HTTP_201_CREATED))
-            else: 
-                return (Response(serializer.errors,
-                                 status=status.HTTP_400_BAD_REQUEST))
-                
+            if  User.objects.get(username =self.request.user).merchant == Carrier.objects.get(slug=kwargs["slug"]).merchant:
+                order = Order.objects.get(slug=request.data['order'])
+                carrier = Carrier.objects.get(slug=kwargs["slug"])
+                stat = DeliveryStatus.objects.get(name="Assigned")
+                serializer =  CarrierDeliveryOrderSeriliazer(data=request.data,
+                                                             context = {'order' : order, 'carrier':carrier, 'stat':stat})
+                if serializer.is_valid():
+                    delivery = serializer.save()
+                    sitename = get_current_site(request).domain
+                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename,delivery.url())},
+                                     status=status.HTTP_201_CREATED))
+                else: 
+                    return (Response(serializer.errors,
+                                     status=status.HTTP_400_BAD_REQUEST))
+            else:
+                return Response("Its not your carrier",status=status.HTTP_400_BAD_REQUEST)
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
