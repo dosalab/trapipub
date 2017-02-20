@@ -112,10 +112,10 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         try:
-            User.objects.get(username=self.request.user).carrier
-            kwargs['partial'] = True
-            if request.data == {}:
-                return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
+            if User.objects.get(username=self.request.user).carrier == Carrier.objects.get(slug=kwargs["slug"]):
+                kwargs['partial'] = True
+                if request.data == {}:
+                    return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
             # elif request.data.get("location"):
             #     resp = Geoconverter.forward(self,request.data["location"])
             #     request.data["location"] = resp["address"]
