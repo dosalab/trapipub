@@ -184,10 +184,12 @@ class CarrierDeliveryView(viewsets.ModelViewSet):
    
     def retrieve(self, request, *args, **kwargs):
         try:
-            User.objects.get(username=self.request.user).merchant
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+            if  User.objects.get(username =self.request.user).merchant == Carrier.objects.get(slug=kwargs["slug"]).merchant:
+                instance = self.get_object()
+                serializer = self.get_serializer(instance)
+                return Response(serializer.data)
+            else:
+                return Response("Its not your carrier",status=status.HTTP_400_BAD_REQUEST)
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
