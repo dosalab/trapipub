@@ -463,6 +463,8 @@ class ChangePasswordView(viewsets.ModelViewSet):
                                 status=status.HTTP_400_BAD_REQUEST)
             queryset.set_password(serializer.data.get("new_password"))
             queryset.save()
+            Token.objects.get(user_id=request.user.id).delete()
+            Token.objects.create(user_id=request.user.id)
             return Response("Success.", status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
