@@ -114,9 +114,9 @@ def test_details_of_new_carrier(merchant_client):
                            user=cu1, slug="carrier1merchant1")
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=['carrier1merchant1']))
-    assert response.data == {"location":None, "name":"carrier",
+    assert response.data == {"name":"carrier",
                              "phone":"9656888871",
-                             "email":"user@tracker.com", "delivery":""}
+                             "email":"user@tracker.com", "delivery":"","point":None}
     # Wrong args
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=[2]))
@@ -129,7 +129,8 @@ def test_carrier_ongoing_deliveries(merchant_client, delivery_data):
                          delivery_data)
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrierusermerchant1"]))
-    assert response.data == {"location":None, "name":"carrier",
+    assert response.data == {"point": {'type': 'Point','coordinates': (75.955277777778, 11.136944444444)},
+                             "name":"carrier",
                              "phone":"99798798", "email":"test@example.com",
                              "delivery":['/deliveries/1010carrier']}
 
@@ -140,7 +141,8 @@ def test_carrier_free(merchant_client,carrier_data):
                          carrier_data)
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrierusermerchant1"]))
-    assert response.data == {"location":None, "name":"carrier",
+    assert response.data == {"point":{'type': 'Point','coordinates': (75.955277777778, 11.136944444444)},
+                             "name":"carrier",
                              "phone":"99798798",
                              "email":"test@example.com",
                              "delivery":""}
@@ -153,7 +155,8 @@ def test_change_name_of_carrier_by_carrier (carrier_client, merchant_client):
                          {"name":"new name"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrierusermerchant1"]))
-    assert response.data == {"location":None, "name":"new name",
+    assert response.data == {'point': {'type': 'Point','coordinates': (75.955277777778, 11.136944444444)},
+                             "name":"new name",
                              "phone":"99798798",
                              "email":"test@example.com",
                              "delivery":""}
@@ -165,7 +168,9 @@ def test_change_phone_of_carrier(merchant_client, carrier_client):
                          {"phone":"+9999999999"})
     response = merchant_client.get(reverse('tracker_api:carrierdetail',
                                            args=["carrierusermerchant1"]))
-    assert response.data == {"location":None, "name":"carrier",
+    assert response.data == {'point': {'type': 'Point',
+                                       'coordinates': (75.955277777778, 11.136944444444)},
+                             "name":"carrier",
                              "phone":"+9999999999",
                              "email":"test@example.com",
                              "delivery":""}
@@ -211,9 +216,12 @@ def test_details_of_customer(merchant_client, customer_data):
                          customer_data)
     response=merchant_client.get(reverse('tracker_api:customerdetails',
                                          args=["91239798798"]))
-    assert response.data== {'address': None,
+    assert response.data== {'address': 'Calicut',
                             'phone': '91239798798',
-                            'name': 'customer1'}
+                            'name': 'customer1',
+                            'point': {'type': 'Point',
+                                      'coordinates': (75.955277777778, 11.136944444444)}}
+
 
 @pytest.mark.django_db
 def test_customer_creation_bad_name(merchant_client, customer_data):
@@ -222,12 +230,12 @@ def test_customer_creation_bad_name(merchant_client, customer_data):
                                     customer_data)
     assert response.status_code == 400
 
-# @pytest.mark.django_db
-# def test_customer_creation_bad_address(merchant_client, customer_data):
-#     del customer_data['address']
-#     response = merchant_client.post(reverse('tracker_api:customer'),
-#                                     customer_data)
-#     assert response.status_code == 400
+@pytest.mark.django_db
+def test_customer_creation_bad_address(merchant_client, customer_data):
+    del customer_data['address']
+    response = merchant_client.post(reverse('tracker_api:customer'),
+                                    customer_data)
+    assert response.status_code == 400
 
 @pytest.mark.django_db
 def test_customer_creation_bad_phone(merchant_client, customer_data):
@@ -332,7 +340,11 @@ def test_details_order(merchant_client):
     expected = {"invoice_number":"1010",
                 "amount":"100.00",
                 "customer":"slug",
-                "notes":"items1"}
+                "notes":"items1",
+                "from_address":"",
+                "to_address":"",
+                "from_point":None,
+                "to_point":None}
 
     assert response.data == expected
 

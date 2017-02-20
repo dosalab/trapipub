@@ -23,7 +23,7 @@ def merchant_client(request, client):
                  "password1" :"test_password",
                  "password2" :'test_password',
                  "name"      :"merchant1",
-                 'address'   :"merchantaddress"})
+                 'address'   :"calicut"})
     token = Token.objects.get(user__username='newuser')
     api_client = APIClient()
     api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -46,13 +46,14 @@ def carrier_data(request):
             'phone':"99798798",
             "email" : "test@example.com",
             "username":"carrieruser",
-            "password":"aaasssddd"}
+            "password":"aaasssddd",
+            "location":"calicut"}
 
 @pytest.fixture
 def customer_data(request):
-    return{'name':"customer1",
-           'phone':"+91239798798",
-           'address':"india"}
+    return{"name":"customer1",
+           "phone":"+91239798798",
+           "address":"Calicut"}
 
 @pytest.fixture
 def order_data(request,merchant_client,customer_data):
@@ -61,7 +62,9 @@ def order_data(request,merchant_client,customer_data):
     return{'customer':"91239798798",
            'notes':"include item1,2",
            'amount':"100",
-           "invoice_number":"1010"}
+           "invoice_number":"1010",
+           "from_address":"calicut",
+           "to_address":"calicut"}
 
 
 @pytest.fixture
