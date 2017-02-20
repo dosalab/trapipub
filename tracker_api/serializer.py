@@ -276,3 +276,11 @@ class  CarrierDeliveryOrderSeriliazer(serializers.Serializer):
                                details="Get ready")
             dlog.save()
         return delivery
+ 
+#Change password
+class ChangePasswordSerializer(serializers.Serializer):
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

@@ -17,7 +17,7 @@ from django.db.utils import IntegrityError
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
-from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls,CarrierDeliveryStatusSerilaizer, CarrierDeliveryOrderSeriliazer
+from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls,CarrierDeliveryStatusSerilaizer, CarrierDeliveryOrderSeriliazer,CustomerOrderDetailsSerializer,CustomerRegisterSerializer,ChangePasswordSerializer
 from tracker_api.helpers import Geoconverter
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
@@ -435,3 +435,27 @@ class DeliveryDetailsView(viewsets.ModelViewSet):
 #     serializer_class = StatusSerializer
 #     permission_classes = (permissions.IsAuthenticated,)
 #     authentication_classes = (authentication.TokenAuthentication,)
+
+
+##PASSWORD CHANGE
+
+class ChangePasswordView(viewsets.ModelViewSet):
+    """
+    A view  for changing password.
+  """
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        queryset = request.user
+        serializer = ChangePasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+            if not queryset.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]},
+                                status=status.HTTP_400_BAD_REQUEST)
+            queryset.set_password(serializer.data.get("new_password"))
+            queryset.save()
+            return Response("Success.", status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
