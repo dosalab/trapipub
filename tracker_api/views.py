@@ -116,7 +116,9 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
                 kwargs['partial'] = True
                 if request.data == {}:
                     return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
-          
+                elif request.data.get("point"):
+                    request.data["date"] = datetime.datetime.now()
+                    return self.update(request, *args, **kwargs)
                 else:
                     return self.update(request, *args, **kwargs)
             else:
@@ -124,6 +126,9 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
         except User.carrier.RelatedObjectDoesNotExist:
             return (Response("User is not a carrier",
                              status=status.HTTP_403_FORBIDDEN))
+                    elif request.data.get("point"):
+                        request.data["date"] = datetime.datetime.now()
+                        return self.update(request, *args, **kwargs)
 
 #/carriers/{id}/deliveries
 class CarrierDeliveryView(viewsets.ModelViewSet):

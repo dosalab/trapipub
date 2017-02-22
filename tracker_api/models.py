@@ -34,7 +34,7 @@ class Carrier (models.Model):
     merchant = models.ForeignKey('Merchant')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=50, default='slug', primary_key=True)
-
+    date = models.DateTimeField(default=date.today)
     @property
     def delivery(self):
         c = Q(status__name = "Assigned") | Q(status__name = "On route")
