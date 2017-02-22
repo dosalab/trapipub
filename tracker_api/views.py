@@ -126,7 +126,7 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
                 else:
                     return self.update(request, *args, **kwargs)
             else:
-                return Response("Its not your id",status=status.HTTP_400_BAD_REQUEST)
+                return Response("Wrong id ",status=status.HTTP_400_BAD_REQUEST)
         except User.carrier.RelatedObjectDoesNotExist:
             return (Response("User is not a carrier",
                              status=status.HTTP_403_FORBIDDEN))
