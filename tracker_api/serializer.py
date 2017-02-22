@@ -181,6 +181,12 @@ class orderdetailsSerializer(serializers.ModelSerializer):
         model = Order
         fields = ('invoice_number', 'date', 'amount', 'customer', 'notes',"from_address","from_point","to_address","to_point")
 
+#Patch details of a order
+class OrderPatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ('invoice_number', 'date', 'amount', 'notes',"from_address","to_address")
+
 
 # Create a delivery
 class DeliverySerializer(serializers.Serializer):

@@ -345,7 +345,7 @@ class OrderView(viewsets.ModelViewSet):
             return OrderSerializer
         if self.action == 'list':
             return OrderUrlSerializer
-           
+            
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 
@@ -378,7 +378,6 @@ class OrderView(viewsets.ModelViewSet):
 # Get details of a order
 class OrderDetails(viewsets.ModelViewSet):
     lookup_field = 'slug'
-    serializer_class = orderdetailsSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 
