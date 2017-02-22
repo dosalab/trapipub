@@ -277,6 +277,9 @@ class CustomerDetails(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'partial_update':
             return CustomerDetailsSerializer
+        if self.action == 'create':
+            return CustomerSerializer
+ 
     def retrieve(self, request, *args, **kwargs):
         try:
             User.objects.get(username=self.request.user).merchant
@@ -294,6 +297,11 @@ class CustomerDetails(viewsets.ModelViewSet):
             if request.data == {}:
                 return (Response("Changes not given",
                                  status=status.HTTP_400_BAD_REQUEST))
+            elif request.data.get("address"):
+                resp = Geoconverter.forward(self,request.data["address"])
+                request.data["address"] = resp["address"]
+                request.data["point"] = resp["point"]
+                return self.update(request, *args, **kwargs)
             else:
                 return self.update(request, *args, **kwargs)
         except User.merchant.RelatedObjectDoesNotExist:
