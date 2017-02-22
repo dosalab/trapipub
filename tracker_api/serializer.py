@@ -53,7 +53,7 @@ class GetCarrierSerializer(serializers.ModelSerializer):
 class PatchCarrier(serializers.ModelSerializer):
     class Meta:
         model = Carrier
-        fields = ("name", "phone","point")
+        fields = ("name", "phone","point","date")
 
 class CustomHyperlink(serializers.HyperlinkedIdentityField):
     def get_url(self, obj, view_name, request, format):
