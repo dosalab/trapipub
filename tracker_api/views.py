@@ -287,6 +287,7 @@ class CustomerDetails(viewsets.ModelViewSet):
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
 
+#/customers/{id} /register
 class CustomerRegister(viewsets.ModelViewSet):
     """ View for get the details of a specific carrier """
     lookup_field = 'slug'
@@ -335,6 +336,8 @@ class CustomerOrderDetails(viewsets.ModelViewSet):
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
+
+    
 #Create an order 
 class OrderView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)

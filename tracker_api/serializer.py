@@ -220,9 +220,8 @@ class DeliveryStatus(serializers.ModelSerializer):
 #custom related field for status
 class StatusRelatedField(serializers.RelatedField):
     def to_representation(self, value):
-        return {value.name}
-                
-# get delivery details
+        return value.name
+
 class DeliveryDetails(serializers.ModelSerializer):
     order = OrderUrlSerializer()
     from_address =GeometryField(source='order.from_point')
