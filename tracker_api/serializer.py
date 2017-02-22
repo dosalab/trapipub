@@ -213,13 +213,18 @@ class StatusRelatedField(serializers.RelatedField):
 # get delivery details
 class DeliveryDetails(serializers.ModelSerializer):
     order = OrderUrlSerializer()
+    from_address =GeometryField(source='order.from_point')
+    to_address  = GeometryField(source='order.to_point')
     carrier = CarrierUrlSerializer()
     status = StatusRelatedField(read_only=True)
     customer = serializers.CharField(source='order.customer.slug')
-    location = serializers.CharField(source='carrier.point')
+    current_location = GeometryField(source='carrier.point')
+    last_updated = serializers.DateTimeField(source='carrier.date')
+    progress = GeometryField()
+
     class Meta:
         model = Delivery
-        fields = ('order','carrier','customer','location','status')
+        fields = ('progress','order','carrier','customer','status','last_updated','from_address','to_address','current_location')
     
 class DeliveryUrls(serializers.HyperlinkedModelSerializer):
     url = CustomHyperlink(

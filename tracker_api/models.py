@@ -1,3 +1,5 @@
+import json
+from geojson import Feature, Point, FeatureCollection
 from datetime import date
 from django.db import models
 from django.db.models import Q
@@ -114,6 +116,17 @@ class Delivery(models.Model):
     
     def url(self):
         return "/deliveries/{}".format(self.slug)
+
+    @property
+    def progress(self):
+        from_address=json.loads((self.order.from_point).geojson)
+        to_address = json.loads((self.order.to_point).geojson)
+        current_address = json.loads((self.carrier.point).geojson)
+        from_feature = Feature(geometry=Point((from_address["coordinates"])))
+        to_feature = Feature(geometry=Point((to_address["coordinates"])))
+        current_feature = Feature(geometry=Point((current_address["coordinates"])))
+        return FeatureCollection([from_feature, to_feature, current_feature])
+        
 
 class DeliveryLog(models.Model):
     delivery = models.ForeignKey('Delivery')
