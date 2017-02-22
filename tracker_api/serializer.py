@@ -119,6 +119,12 @@ class CustomerDetailsSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ('name', 'phone', 'address','point')
 
+# Get details of a customer
+class CustomerRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ('user',)
+
 # Create an order
 class OrderSerializer(serializers.Serializer):
     customer = serializers.CharField(required=True)
