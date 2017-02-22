@@ -287,6 +287,38 @@ class CustomerDetails(viewsets.ModelViewSet):
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
 
+class CustomerRegister(viewsets.ModelViewSet):
+    """ View for get the details of a specific carrier """
+    lookup_field = 'slug'
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    queryset = Customer.objects.all()
+    def get_serializer_class(self):
+        if self.action == 'partial_update':
+            return CustomerRegisterSerializer
+    def partial_update(self, request, *args, **kwargs):
+        try:
+            customer = Customer.objects.get(slug=kwargs["slug"])
+            User.objects.get(username=self.request.user).merchant
+            kwargs['partial'] = True
+            if request.data == {}:
+                try:
+                    user = User.objects.create_user(customer.phone,"null",customer.name)
+                    request.data._mutable = True
+                    request.data["user"]=user.pk
+                    request.data._mutable = False
+                except IntegrityError:
+                     return (Response("Customer already registerd",
+                                      status=status.HTTP_403_FORBIDDEN))
+            else:
+                user = User.objects.create_user(customer.phone,request.data["email"],customer.name)
+                request.data["user"]=user.pk
+            return self.update(request, *args, **kwargs)
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
+
+
 class CustomerOrderDetails(viewsets.ModelViewSet):
     """ View for get the details of customer with their orders """
     lookup_field = 'slug'
@@ -350,6 +382,11 @@ class OrderDetails(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return orderdetailsSerializer
+        if self.action == 'partial_update':
+            return OrderPatchSerializer
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 

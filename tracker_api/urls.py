@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^customers/?$',views.CustomerView.as_view({'post':'create','get':'list'}),name='customer'),
     url(r'^customers/(?P<slug>[-\w]+)$',views.CustomerDetails.as_view({'get':'retrieve','patch':'partial_update'}), name='customerdetails'),
     url(r'^customers/(?P<slug>[-\w]+)/orders$',views.CustomerOrderDetails.as_view({'get':'retrieve'}), name='customeroderdetails'),
+    url(r'^customers/(?P<slug>[-\w]+)/register$',views.CustomerRegister.as_view({'post':'partial_update'}), name='customerregister'),
     url(r'^orders$',views.OrderView.as_view({'post':'create','get' : 'list'}),name='orders'),
     url(r'^orders/(?P<slug>[-\w]+)/?$',views.OrderDetails.as_view({'get':'retrieve','patch':'partial_update'}),name='orderdetail'),
     url(r'^deliveries$',views.DeliveryView.as_view({'post':'create','get':'list'}),name='delivery'),
