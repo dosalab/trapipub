@@ -13,6 +13,7 @@ from rest_framework import authentication
 from django.http import HttpResponse
 #from django.contrib.auth import login
 from django.db.utils import IntegrityError
+from rest_framework.authtoken.models import Token
 #from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
