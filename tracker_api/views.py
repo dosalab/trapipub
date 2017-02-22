@@ -260,7 +260,6 @@ class CustomerDetails(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
     queryset = Customer.objects.all()
-
     def get_serializer_class(self):
         if self.action == 'partial_update':
             return CustomerDetailsSerializer
@@ -296,7 +295,7 @@ class OrderView(viewsets.ModelViewSet):
             return OrderSerializer
         if self.action == 'list':
             return OrderUrlSerializer
-
+           
     def get_queryset(self):
         return Order.objects.filter(merchant=self.request.user.merchant)
 
@@ -325,8 +324,7 @@ class OrderView(viewsets.ModelViewSet):
         except KeyError:
              return (Response("Give Customer",
                               status=status.HTTP_400_BAD_REQUEST))
-
-
+   
 # Get details of a order
 class OrderDetails(viewsets.ModelViewSet):
     lookup_field = 'slug'

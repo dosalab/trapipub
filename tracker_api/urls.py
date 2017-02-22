@@ -8,7 +8,7 @@ router = routers.DefaultRouter()
 app_name='tracker_api'
 
 urlpatterns = [
-    url(r'^changepwdd$',views.ChangePasswordView.as_view({'patch':'partial_update'}),name='change_password'),
+    url(r'^changepwd$',views.ChangePasswordView.as_view({'patch':'partial_update'}),name='change_password'),
     url(r'^carriers$',views.carrierView.as_view({'post':'create','get':'list'}),name='carrier'),
     url(r'^carriers/(?P<slug>[-\w]+)$',views.GetCarrierDetailsView.as_view({'get':'retrieve','patch':'partial_update'}), name='carrierdetail'),
     url(r'^carriers/(?P<slug>[-\w]+)/deliveries$',views.CarrierDeliveryView.as_view({'post':'create','get':'retrieve'}), name='carrierdeliveries'),

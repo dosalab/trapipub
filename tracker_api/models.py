@@ -11,8 +11,6 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token 
 from django.contrib.sites.models import Site
 from django.core.validators import RegexValidator
-from django.contrib.sites.models import Site
-from tracker_api.customfields import ForwardField
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
@@ -107,10 +105,6 @@ class Delivery(models.Model):
     slug = models.SlugField(max_length=50, default='slug',unique=True)
     status = models.ForeignKey('DeliveryStatus')
     
-    # def get_status(self):
-    #     status = Status.objects.filter(delivery=self)
-    #     return status
-
     def __str__(self):
         return "Delivery(id={})".format(self.slug)
     
