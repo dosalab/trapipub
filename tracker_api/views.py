@@ -128,11 +128,21 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             else:
                 return Response("Wrong id ",status=status.HTTP_400_BAD_REQUEST)
         except User.carrier.RelatedObjectDoesNotExist:
-            return (Response("User is not a carrier",
-                             status=status.HTTP_403_FORBIDDEN))
+            try:
+                if User.objects.get(username=self.request.user).merchant == Carrier.objects.get(slug=kwargs["slug"]).merchant:
+                    kwargs['partial'] = True
+                    if request.data == {}:
+                        return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
                     elif request.data.get("point"):
                         request.data["date"] = datetime.datetime.now()
                         return self.update(request, *args, **kwargs)
+                    else:
+                        return self.update(request, *args, **kwargs)
+                else:
+                    return Response("Its not your carrier",status=status.HTTP_400_BAD_REQUEST)
+            except User.merchant.RelatedObjectDoesNotExist:
+                return (Response("You are not a carrier or a merchant",
+                                 status=status.HTTP_403_FORBIDDEN))
 
 #/carriers/{id}/deliveries
 class CarrierDeliveryView(viewsets.ModelViewSet):
