@@ -110,6 +110,9 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
+        except Carrier.DoesNotExist:
+            return (Response("Wrong id",
+                             status=status.HTTP_404_NOT_FOUND))
 
     def partial_update(self, request, *args, **kwargs):
         try:
