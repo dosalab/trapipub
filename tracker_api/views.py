@@ -18,7 +18,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
-from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls,CarrierDeliveryStatusSerilaizer, CarrierDeliveryOrderSeriliazer,CustomerOrderDetailsSerializer,CustomerRegisterSerializer,ChangePasswordSerializer
+from .serializer import  CarrierSerializer, OrderSerializer, GetCarrierSerializer, CarrierUrlSerializer, PatchCarrier, CustomerSerializer,CustomerUrlSerializer,CustomerDetailsSerializer,OrderUrlSerializer,orderdetailsSerializer,DeliverySerializer,CarrierDeliveries,DeliveryUrls,DeliveryDetails,DeliverystatusUrls,CarrierDeliveryStatusSerilaizer, CarrierDeliveryOrderSeriliazer,CustomerOrderDetailsSerializer,CustomerRegisterSerializer,ChangePasswordSerializer, OrderPatchSerializer
 from tracker_api.helpers import Geoconverter
 #AS A MERCHANT
 class MerchantRegistration(RegistrationView):
@@ -283,6 +283,23 @@ class CustomerDetails(viewsets.ModelViewSet):
                                  status=status.HTTP_400_BAD_REQUEST))
             else:
                 return self.update(request, *args, **kwargs)
+        except User.merchant.RelatedObjectDoesNotExist:
+            return (Response("User is not a merchant",
+                             status=status.HTTP_403_FORBIDDEN))
+
+class CustomerOrderDetails(viewsets.ModelViewSet):
+    """ View for get the details of customer with their orders """
+    lookup_field = 'slug'
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+    queryset = Customer.objects.all()
+    
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            User.objects.get(username=self.request.user).merchant
+            instance = self.get_object()
+            serializer = CustomerOrderDetailsSerializer(instance)
+            return Response(serializer.data)
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))

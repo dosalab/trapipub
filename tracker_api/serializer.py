@@ -281,6 +281,14 @@ class  CarrierDeliveryOrderSeriliazer(serializers.Serializer):
                                details="Get ready")
             dlog.save()
         return delivery
+
+
+# Get details of a customer
+class CustomerOrderDetailsSerializer(serializers.ModelSerializer):
+   # order = OrderUrlSerializer()
+    class Meta:
+        model = Customer
+        fields = ('name', 'phone', 'address','point','order_set')
  
 #Change password
 class ChangePasswordSerializer(serializers.Serializer):
