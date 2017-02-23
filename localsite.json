@@ -1,1 +1,1 @@
-[{"model": "sites.site", "pk": 1, "fields": {"domain": "localhost:8000", "name": "local"}}]
+[{"model": "sites.site", "pk": 1, "fields": {"domain": "localhost:8000", "name": "local"}},{"model": "sites.site", "pk": 2, "fields": {"domain": "ec2-54-64-56-135.ap-northeast-1.compute.amazonaws.com", "name": "aws"}}]
