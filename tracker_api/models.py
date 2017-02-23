@@ -129,21 +129,3 @@ class DeliveryLog(models.Model):
 
     def __str__(self):
         return "<Status(delivery='{}')>".format(self.delivery)
-
-class TrackerSite(models.Model):
-    title =  models.CharField(max_length=50)
-    sites =  models.ManyToManyField(Site)
-
-    
-# class Package (models.Model):
-#     orders = models.ForeignKey('Order', on_delete=models.CASCADE)
-#     deliverys = models.ForeignKey('Delivery', on_delete=models.CASCADE)
-#     description = models.CharField(max_length=50)
-#     date =  models.DateTimeField(default=date.today)
-    
-# class DeliveryStage(models.Model):
-#     order = models.ForeignKey('Order')
-#     date =  models.DateTimeField(default=date.today)
-#     info = models.CharField(max_length=50)
-#     terminal = models.BooleanField()
-#     location = models.CharField(max_length=50)

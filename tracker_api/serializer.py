@@ -175,7 +175,7 @@ class OrderUrlSerializer(serializers.ModelSerializer):
         model = Order
         fields = ('url',)
 
-#get detaisl of a order
+#get details of a order
 class orderdetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order

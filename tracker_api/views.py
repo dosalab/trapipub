@@ -2,19 +2,15 @@ import datetime
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-#from rest_framework.views import APIView
 from rest_framework import permissions
 from django.contrib.auth.models import User
 from registration.views import RegistrationView
-#from registration.signals import user_registered
 from django.contrib.auth import authenticate
 from django.db import transaction
 from rest_framework import authentication
 from django.http import HttpResponse
-#from django.contrib.auth import login
 from django.db.utils import IntegrityError
 from rest_framework.authtoken.models import Token
-#from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from .models import Carrier, Order, Merchant, Customer, Delivery, DeliveryStatus,DeliveryLog
@@ -509,11 +505,6 @@ class DeliveryDetailsView(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-# class StatusView(viewsets.ModelViewSet):
-#     serializer_class = StatusSerializer
-#     permission_classes = (permissions.IsAuthenticated,)
-#     authentication_classes = (authentication.TokenAuthentication,)
-
 
 ##PASSWORD CHANGE
 
@@ -536,6 +527,6 @@ class ChangePasswordView(viewsets.ModelViewSet):
             queryset.save()
             Token.objects.get(user_id=request.user.id).delete()
             Token.objects.create(user_id=request.user.id)
-            return Response("Success.", status=status.HTTP_200_OK)
+            return Response("Success", status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

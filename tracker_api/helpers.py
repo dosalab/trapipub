@@ -18,13 +18,13 @@ class Geoconverter():
         fullfield["address"] = data
         fullfield["point"] = point
         return fullfield
-    def reverse(self,data):
-        lon = data["coordinates"][0]
-        lat = data["coordinates"][1]
-        geocoder = Geocoder()
-        response = geocoder.reverse(lon=lon, lat=lat)
-        address = response.geojson()["features"][0]["place_name"]
-        fullfield = {}
-        fullfield["address"] = address
-        fullfield["point"] = data
-        return fullfield
+    # def reverse(self,data):
+    #     lon = data["coordinates"][0]
+    #     lat = data["coordinates"][1]
+    #     geocoder = Geocoder()
+    #     response = geocoder.reverse(lon=lon, lat=lat)
+    #     address = response.geojson()["features"][0]["place_name"]
+    #     fullfield = {}
+    #     fullfield["address"] = address
+    #     fullfield["point"] = data
+    #     return fullfield

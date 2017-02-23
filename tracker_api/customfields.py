@@ -12,8 +12,6 @@ class ForwardField(serializers.Field):
         if not features:
             return "bad"
             #raise ValidationError("Invalid address")
-        # if len(features) > 1:
-        #     raise ValidationError("Have more points in this address")
         first = response.geojson()['features'][0]
         point = first['geometry']
         latitude = point['coordinates'][0]
@@ -23,4 +21,3 @@ class ForwardField(serializers.Field):
         fullfield["address"] = data
         fullfield["point"] = point
         return fullfield
-
