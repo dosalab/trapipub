@@ -4,9 +4,14 @@ from rest_framework.serializers import ValidationError
 from tracker_api.customfields import ForwardField
 
 def test_bad_name(request):
-    with raises(ValidationError) as exc:
-        ForwardField.to_representation(request, "kozikkod")
-    assert "Invalid address" in str(exc.value)
+    response = ForwardField.to_internal_value(request, "kozikkod")
+    assert response =="bad"
+
+def test_currect_name(request):
+    response = ForwardField.to_internal_value(request, "Calicut")
+    response = response['point'].geojson
+    assert '\"coordinates\": [75.955277777778, 11.136944444444]' in str(response)
+
 
 # def test_repeated_names(request):
 #     with raises(ValidationError) as exc:
