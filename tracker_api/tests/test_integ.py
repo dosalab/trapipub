@@ -30,11 +30,11 @@ def test_merchant(live_server):
 
     # carrier creation
     data =  {'name':"carrier",
-            'phone':"99798798",
-            "email" : "test@example.com",
-            "username":"carrieruser",
-            "password":"aaasssddd",
-            "location":"calicut"}
+             'phone':"99798798",
+             "email" : "test@example.com",
+             "username":"carrieruser",
+             "password":"aaasssddd",
+             "location":"calicut"}
 
     headers = {'Authorization': 'Token '+token1}
     client.post("{}/api/v1/carriers".format(host),
@@ -42,11 +42,11 @@ def test_merchant(live_server):
                 headers=headers)
     #get a particular carrier details
     carriers = client.get('{}/api/v1/carriers/carrierusernewmerchant'.format(host),
-                        headers={'Authorization':'Token '+token1})
+                          headers={'Authorization':'Token '+token1})
     assert json.loads(carriers.text) == {"name":"carrier",
-                                        "phone":"99798798",
-                                        'point': {'coordinates': [75.955277777778, 11.136944444444], 'type': 'Point'},
-                                        "email":"test@example.com",
+                                         "phone":"99798798",
+                                         'point': {'coordinates': [75.955277777778, 11.136944444444], 'type': 'Point'},
+                                         "email":"test@example.com",
                                          "delivery":""}
 
     #get all carriers
@@ -77,11 +77,11 @@ def test_merchant(live_server):
     # creat an order
     order=client.post('{}/api/v1/orders'.format(host),
                       {'customer':"99999",
-                        'notes':"include item1,2",
-                        'amount':"100",
-                        "invoice_number":"1010",
-                        "from_address":"calicut",
-                        "to_address":"calicut"},
+                       'notes':"include item1,2",
+                       'amount':"100",
+                       "invoice_number":"1010",
+                       "from_address":"calicut",
+                       "to_address":"calicut"},
                       headers={'Authorization':'Token '+token1})
     #get all orders of a merchant
     order = client.get('{}/api/v1/orders'.format(host),
@@ -90,16 +90,16 @@ def test_merchant(live_server):
 
     #get a particular order details
     order=client.get('{}/api/v1/orders/1010'.format(host),headers={'Authorization':'Token '+token1})
-    op=json.loads(order.text)
+    op = json.loads(order.text)
     del op["date"]
-    assert op =={"invoice_number":"1010",
-                 "amount":"100.00",
-                 "customer":"99999",
-                 "notes":"include item1,2",
-                 "from_address": "calicut",
-                 "from_point": {'coordinates': [75.955277777778, 11.136944444444],'type': 'Point'},
-                 "to_address": "calicut",
-                 "to_point": {'coordinates': [75.955277777778, 11.136944444444],'type': 'Point'}}
+    assert op == {"invoice_number":"1010",
+                  "amount":"100.00",
+                  "customer":"99999",
+                  "notes":"include item1,2",
+                  "from_address": "calicut",
+                  "from_point": {'coordinates': [75.955277777778, 11.136944444444],'type': 'Point'},
+                  "to_address": "calicut",
+                  "to_point": {'coordinates': [75.955277777778, 11.136944444444],'type': 'Point'}}
 
     
     # creat a delivery
@@ -114,13 +114,9 @@ def test_merchant(live_server):
     # Get deliveries of a merchant
     deliveries = client.get('{}/api/v1/deliveries'.format(host),
                             headers={'Authorization':'Token '+token1})
-    #assert json.loads(deliveries.text) == [{"url":"{}/api/v1/".format(host)}]
-    
     carriersdelivery = client.post('{}/api/v1/carriers/carrierusernewmerchant/deliveries'.format(host),
                                    {"order":"1010"},
                                    headers={'Authorization':'Token '+token1})
     deliveries = client.get('{}/api/v1/deliveries'.format(host),
                             headers={'Authorization':'Token '+token1})
-   # assert json.loads(deliveries.text) == [{"url":"{}/api/v1/".format(host)}]
-    
-                            
+

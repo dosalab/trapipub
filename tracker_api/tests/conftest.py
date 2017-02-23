@@ -1,7 +1,7 @@
 import time
 from django.core.management import call_command
 from django.urls import reverse
-import requests
+#import requests
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 import pytest
@@ -56,7 +56,7 @@ def customer_data(request):
            "address":"Calicut"}
 
 @pytest.fixture
-def order_data(request,merchant_client,customer_data):
+def order_data(request, merchant_client, customer_data):
     merchant_client.post(reverse('tracker_api:customer'),
                          customer_data)
     return{'customer':"91239798798",
@@ -68,7 +68,7 @@ def order_data(request,merchant_client,customer_data):
 
 
 @pytest.fixture
-def delivery_data(request,merchant_client,carrier_data,order_data):
+def delivery_data(request, merchant_client, carrier_data, order_data):
     merchant_client.post(reverse('tracker_api:carrier'),
                          carrier_data)
     merchant_client.post(reverse('tracker_api:orders'),

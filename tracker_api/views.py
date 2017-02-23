@@ -36,7 +36,7 @@ class MerchantRegistration(RegistrationView):
         return 'index'
 
 #/carriers/
-class carrierView(viewsets.ModelViewSet):
+class CarrierView(viewsets.ModelViewSet):
     lookup_field = 'slug'
     
     def get_serializer_class(self):
@@ -56,7 +56,8 @@ class carrierView(viewsets.ModelViewSet):
                 try:
                     carrier = serializer.save()
                     sitename = get_current_site(request).domain
-                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename, carrier.url())},
+                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename,
+                                                                         carrier.url())},
                                      status=status.HTTP_201_CREATED))
                 except IntegrityError:
                     return((Response("Username already exist",
@@ -102,7 +103,8 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)
             else:
-                return Response("Its not your carrier",status=status.HTTP_400_BAD_REQUEST)
+                return Response("Its not your carrier",
+                                status=status.HTTP_400_BAD_REQUEST)
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
@@ -115,27 +117,31 @@ class GetCarrierDetailsView(viewsets.ModelViewSet):
             if User.objects.get(username=self.request.user).carrier == Carrier.objects.get(slug=kwargs["slug"]):
                 kwargs['partial'] = True
                 if request.data == {}:
-                    return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
+                    return (Response("Changes not given",
+                                     status=status.HTTP_400_BAD_REQUEST))
                 elif request.data.get("point"):
                     request.data["date"] = datetime.datetime.now()
                     return self.update(request, *args, **kwargs)
                 else:
                     return self.update(request, *args, **kwargs)
             else:
-                return Response("Wrong id ",status=status.HTTP_400_BAD_REQUEST)
+                return Response("Wrong id ",
+                                status=status.HTTP_400_BAD_REQUEST)
         except User.carrier.RelatedObjectDoesNotExist:
             try:
                 if User.objects.get(username=self.request.user).merchant == Carrier.objects.get(slug=kwargs["slug"]).merchant:
                     kwargs['partial'] = True
                     if request.data == {}:
-                        return (Response("Changes not given", status=status.HTTP_400_BAD_REQUEST))
+                        return (Response("Changes not given",
+                                         status=status.HTTP_400_BAD_REQUEST))
                     elif request.data.get("point"):
                         request.data["date"] = datetime.datetime.now()
                         return self.update(request, *args, **kwargs)
                     else:
                         return self.update(request, *args, **kwargs)
                 else:
-                    return Response("Its not your carrier",status=status.HTTP_400_BAD_REQUEST)
+                    return Response("Its not your carrier",
+                                    status=status.HTTP_400_BAD_REQUEST)
             except User.merchant.RelatedObjectDoesNotExist:
                 return (Response("You are not a carrier or a merchant",
                                  status=status.HTTP_403_FORBIDDEN))
@@ -170,7 +176,8 @@ class CarrierDeliveryView(viewsets.ModelViewSet):
                     return (Response(serializer.errors,
                                      status=status.HTTP_400_BAD_REQUEST))
             else:
-                return Response("Its not your carrier",status=status.HTTP_400_BAD_REQUEST)
+                return Response("Its not your carrier",
+                                status=status.HTTP_400_BAD_REQUEST)
         except User.merchant.RelatedObjectDoesNotExist:
             return (Response("User is not a merchant",
                              status=status.HTTP_403_FORBIDDEN))
@@ -205,13 +212,15 @@ class CarrierDeliveryStatusView(viewsets.ModelViewSet):
     queryset = Carrier.objects.all()
     def get_serializer_class(self):
         if self.action == 'list':
-          return  CarrierDeliveryStatusSerilaizer
+            return  CarrierDeliveryStatusSerilaizer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 
     def list(self, request, *args, **kwargs):
         carrier = Carrier.objects.get(slug=kwargs['slug'])
-        queryset = Delivery.objects.filter(Q(order__merchant=self.request.user.merchant),Q(status__name=kwargs["status"]),Q(carrier=carrier))
+        queryset = Delivery.objects.filter(Q(order__merchant=self.request.user.merchant),
+                                           Q(status__name=kwargs["status"]),
+                                           Q(carrier=carrier))
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -238,7 +247,8 @@ class CustomerView(viewsets.ModelViewSet):
                 try:
                     customer = serializer.save()
                     sitename = get_current_site(request).domain
-                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename, customer.url())},
+                    return (Response({"url" :'http://{}/api/v1{}'.format(sitename,
+                                                                         customer.url())},
                                      status=status.HTTP_201_CREATED))
                 except IntegrityError:
                     return((Response("Username already exist",
@@ -294,7 +304,7 @@ class CustomerDetails(viewsets.ModelViewSet):
                 return (Response("Changes not given",
                                  status=status.HTTP_400_BAD_REQUEST))
             elif request.data.get("address"):
-                resp = Geoconverter.forward(self,request.data["address"])
+                resp = Geoconverter.forward(self, request.data["address"])
                 request.data["address"] = resp["address"]
                 request.data["point"] = resp["point"]
                 return self.update(request, *args, **kwargs)
@@ -321,15 +331,19 @@ class CustomerRegister(viewsets.ModelViewSet):
             kwargs['partial'] = True
             if request.data == {}:
                 try:
-                    user = User.objects.create_user(customer.phone,"null",customer.name)
+                    user = User.objects.create_user(customer.phone,
+                                                    "null",
+                                                    customer.name)
                     request.data._mutable = True
-                    request.data["user"]=user.pk
+                    request.data["user"] = user.pk
                     request.data._mutable = False
                 except IntegrityError:
-                     return (Response("Customer already registerd",
-                                      status=status.HTTP_403_FORBIDDEN))
+                    return (Response("Customer already registerd",
+                                     status=status.HTTP_403_FORBIDDEN))
             else:
-                user = User.objects.create_user(customer.phone,request.data["email"],customer.name)
+                user = User.objects.create_user(customer.phone,
+                                                request.data["email"],
+                                                customer.name)
                 request.data["user"]=user.pk
             return self.update(request, *args, **kwargs)
         except User.merchant.RelatedObjectDoesNotExist:
@@ -343,7 +357,7 @@ class CustomerOrderDetails(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
     queryset = Customer.objects.all()
-    
+
     def retrieve(self, request, *args, **kwargs):
         try:
             User.objects.get(username=self.request.user).merchant
@@ -380,7 +394,8 @@ class OrderView(viewsets.ModelViewSet):
             if serializer.is_valid():
                 order = serializer.save()
                 sitename = get_current_site(request).domain
-                return (Response({"url" :'http://{}/api/v1{}'.format(sitename, order.url())},
+                return (Response({"url" :'http://{}/api/v1{}'.format(sitename,
+                                                                     order.url())},
                                  status=status.HTTP_201_CREATED))
             else:
                 return (Response(serializer.errors,
@@ -392,8 +407,8 @@ class OrderView(viewsets.ModelViewSet):
             return (Response("Wrong customer",
                              status=status.HTTP_400_BAD_REQUEST))
         except KeyError:
-             return (Response("Give Customer",
-                              status=status.HTTP_400_BAD_REQUEST))
+            return (Response("Give Customer",
+                             status=status.HTTP_400_BAD_REQUEST))
    
 # Get details of a order
 class OrderDetails(viewsets.ModelViewSet):
@@ -435,7 +450,9 @@ class DeliveryView(viewsets.ModelViewSet):
             carrier = Carrier.objects.get(slug=request.data['carrier'])
             stat = DeliveryStatus.objects.get(name="Assigned")
             serializer = DeliverySerializer(data=request.data,
-                                            context = {'order' : order, 'carrier':carrier, 'stat':stat})
+                                            context = {'order' : order,
+                                                       'carrier':carrier,
+                                                       'stat':stat})
             if serializer.is_valid():
                 delivery = serializer.save()
                 sitename = get_current_site(request).domain

@@ -102,7 +102,7 @@ class DeliveryStatus(models.Model):
 class Delivery(models.Model):
     order = models.OneToOneField('Order') 
     carrier = models.ForeignKey('Carrier')
-    slug = models.SlugField(max_length=50, default='slug',unique=True)
+    slug = models.SlugField(max_length=50, default='slug', unique=True)
     status = models.ForeignKey('DeliveryStatus')
     
     def __str__(self):
@@ -113,18 +113,18 @@ class Delivery(models.Model):
 
     @property
     def progress(self):
-        from_address=json.loads((self.order.from_point).geojson)
+        from_address = json.loads((self.order.from_point).geojson)
         to_address = json.loads((self.order.to_point).geojson)
         current_address = json.loads((self.carrier.point).geojson)
         from_feature = Feature(geometry=Point((from_address["coordinates"])))
         to_feature = Feature(geometry=Point((to_address["coordinates"])))
         current_feature = Feature(geometry=Point((current_address["coordinates"])))
         return FeatureCollection([from_feature, to_feature, current_feature])
-        
+
 
 class DeliveryLog(models.Model):
     delivery = models.ForeignKey('Delivery')
-    date =  models.DateTimeField(default=date.today)
+    date = models.DateTimeField(default=date.today)
     details = models.CharField(max_length=50)
 
     def __str__(self):
