@@ -201,7 +201,7 @@ def create_delivery_from_carrier_id (order_data,carrier_data, merchant_client):
     response = merchant_client.post(reverse('tracker_api:carrierdeliveries',
                                             args=["carrierusermerchant1"]),
                                     {"order":""})
-    import pdb;pdb.set_trace()
+
     assert response.data == {'point': {'type': 'Point',
                                        'coordinates': (75.955277777778, 11.136944444444)},
                              "name":"new name",
@@ -531,7 +531,7 @@ def test_deliveries_details(merchant_client, delivery_data):
 
     response = merchant_client.get(reverse('tracker_api:deliverydetails',
                                            args=['1010carrier']))
-
+    last_update = response.json()['last_updated']
     assert response.json() == {'to_address': {'coordinates': [75.955277777778, 11.136944444444], 'type': 'Point'},
                                'progress': {'features': [{'properties': {}, 'geometry': {'coordinates': [75.955277777778, 11.136944444444],
                                                                                          'type': 'Point'},
@@ -545,7 +545,7 @@ def test_deliveries_details(merchant_client, delivery_data):
                                'status': 'Assigned', 'customer': '91239798798',
                                'from_address': {'coordinates': [75.955277777778, 11.136944444444], 'type': 'Point'},
                                'carrier': {'url': 'http://testserver/api/v1/carriers/carrierusermerchant1'},
-                               'last_updated': '2017-02-23T00:00:00Z',
+                               'last_updated': last_update,
                                'order': {'url': 'http://testserver/api/v1/orders/1010'}}
 
 
